@@ -14,16 +14,16 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# landing page that will display all the books in our database
+# landing page that will display all the recipes in our database
 # This function will operate on the Read operation.
 @app.route('/')
 @app.route('/recipes')
 def showRecipe():
     recipes = session.query(Recipe).all()
-    return render_template('books.html', books=recipes)
+    return render_template('recipes.html', recipes=recipes)
 
 
-# This will let us Create a new book and save it in our database
+# This will let us Create a new recipe and save it in our database
 @app.route('/recipes/new/', methods=['GET', 'POST'])
 def newRecipe():
     if request.method == 'POST':
@@ -37,7 +37,7 @@ def newRecipe():
         return render_template('newRecipe.html')
 
 
-# This will let us Update our books and save it in our database
+# This will let us Update our recipes and save it in our database
 @app.route("/recipes/<int:recipe_id>/edit/", methods=['GET', 'POST'])
 def editRecipe(recipe_id):
     editedRecipe = session.query(Recipe).filter_by(id=recipe_id).one()
@@ -49,7 +49,7 @@ def editRecipe(recipe_id):
         return render_template('editRecipe.html', recipe=editedRecipe)
 
 
-# This will let us Delete our book
+# This will let us Delete our recipe
 @app.route('/recipes/<int:recipe_id>/delete/', methods=['GET', 'POST'])
 def deleteRecipe(recipe_id):
     recipeToDelete = session.query(Recipe).filter_by(id=recipe_id).one()
@@ -149,4 +149,4 @@ def recipeBrows():
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0', port=4996)
+    app.run(host='localhost', port=4996)
