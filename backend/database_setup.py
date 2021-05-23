@@ -37,10 +37,10 @@ Base = declarative_base()
 class Recipe(Base):
     __tablename__ = 'recipe'
 
-    id = Column(Integer, primary_key=True)
+    recipeId = Column(Integer, primary_key=True)
     title = Column(String(250), nullable=False)
-    img = Column(String(250), nullable = False)
-    desc = Column(String(250), nullable = False)
+    img = Column(String(250), nullable=False)
+    desc = Column(String(250), nullable=False)
 
     @property
     def serialize(self):
@@ -48,7 +48,7 @@ class Recipe(Base):
             'title': self.title,
             'img': self.img,
             'desc': self.desc,
-            'id': self.id,
+            'recipeId': self.recipeId,
         }
 
 # CREATE TABLE RECIPE(
@@ -61,6 +61,7 @@ class Recipe(Base):
 # 	PROFILE_ID INTEGER NOT NULL,
 # 	PRIMARY KEY (REC_ID)
 # );
+
 
 # creates a create_engine instance at the bottom of the file
 engine = create_engine('sqlite:///recipes-collection.db')
