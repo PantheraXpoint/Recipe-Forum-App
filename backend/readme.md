@@ -1,6 +1,9 @@
 # Setup
+
 pip install Flask
+
 pip install sqlalchemy
+
 pip install sqlalchemy-media
 
 python database_setup.py
