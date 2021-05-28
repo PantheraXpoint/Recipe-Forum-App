@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "f0b04877-9321-4045-b884-e57e8f5e4f10",
+		"name": "PSE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET all_recipe",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipesApi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipesApi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET browse",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipesBrowse",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipesBrowse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET one_recipe",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipesApi/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipesApi",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET image",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/getImage/1622172460.577985.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"getImage",
+						"1622172460.577985.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "7n1OUsf8P/1605659784835.jpg"
+						},
+						{
+							"key": "testkey1",
+							"value": "30000",
+							"description": "111",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4996/sendImage",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"sendImage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST recipe_via_body",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "TEsst POST",
+							"type": "text"
+						},
+						{
+							"key": "desc",
+							"value": "Hey folks, just got a few dozen messages complaining about the influx of upvote begging posts on my way to secure my second multi-billion deal this week for a global conglomerate. Now I don't like interruptions on my private jets when flying to make said deals in the far reaches of the globe but this matter is clearly very important and I would like to address it head on.\n\nPosts that fall under \"For every upvote I will ____\" and other upvote begging posts will be removed as they are not copypasta and redditors who post them will be temporarily banned going forward.\n\nThat kind of content is not copypasta or original and belongs more on subreddits like r/circlejerk or r/braveryjerk. Upvote begging posts have ruined many a subreddits that you show your friends and then nervously laugh while reassuring them that the sub was better way back in the day as they look on in disgust.",
+							"type": "text"
+						},
+						{
+							"key": "img",
+							"value": "1622172460.577985.jpg",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4996/recipes/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipes",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST register new account - formdata in body",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "me",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345678",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:4996/register",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET account",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/accounts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "me",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4996/deleteaccount",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"deleteaccount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE recipe",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipes/1/delete/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipes",
+						"1",
+						"delete",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET login account",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "me",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345678",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:4996/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET profile page",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "http://localhost:4996/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
