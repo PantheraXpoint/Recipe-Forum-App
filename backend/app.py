@@ -110,9 +110,14 @@ def login():
     flash('Logged in successfully.')
 
     # NEXT = pop from frontend navigation stack
-    return redirect( url_for('getProfile') )
+    # return redirect( url_for('getProfile') )
 
-    return make_response( {"status": "Failed", "message": "Login failed"}, 400)
+    # return make_response( {"status": "Failed", "message": "Login failed"}, 400)
+    try:
+        t = (flask_login.current_user.serialize)
+        return make_response( {"status": "OK", "current user": t['email']}, 200)
+    except:
+        return make_response( {"status": "Forbidden", "message": 'not logged in' }, 403)
 
 #test loginrequired
 @app.route('/profile', methods=["GET"])
