@@ -5,6 +5,7 @@ from flask import Flask, request, Response, jsonify, make_response, send_file
 from flask_mongoengine import MongoEngine
 from models.RecipeDetail import RecipeDetail
 from models.RecipePreview import RecipePreview
+from bson import ObjectId
 import pymongo
 
 app = Flask(__name__)
@@ -16,42 +17,26 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine()
 db.init_app(app)
 
-<<<<<<< HEAD
 # path to image saving
 uploads_dir = os.path.join(app.instance_path, 'images')
-=======
-    flash('Logged in successfully.')
-
-    # NEXT = pop from frontend navigation stack
-    # return redirect( url_for('getProfile') )
-
-    # return make_response( {"status": "Failed", "message": "Login failed"}, 400)
-    try:
-        t = (flask_login.current_user.serialize)
-        return make_response( {"status": "OK", "current user": t['email']}, 200)
-    except:
-        return make_response( {"status": "Forbidden", "message": 'not logged in' }, 403)
-
-#test loginrequired
-@app.route('/profile', methods=["GET"])
-@flask_login.login_required
-def getProfile():
-    try:
-        t = (flask_login.current_user.serialize)
-        return make_response( {"status": "OK", "current user": t['email']}, 200)
-    except:
-        return make_response( {"status": "Forbidden", "message": 'not logged in' }, 403)
->>>>>>> 1f99817008314c147568e32aacad7472a9d0fb21
 
 @app.route('/recipe', methods=["GET"])
 def list_recipe_preview():
-    recipes = RecipePreview.objects[:int(request.form.get('limit'))].to_json()
-    return Response(recipes, mimetype="application/json", status=200)
+    try:
+        if request.form.get('limit'):
+            lim = int(request.form.get('limit'))
+        else:
+            lim = 10
+        recipes = RecipePreview.objects[:lim].only("Name","AvgRating","Img","Level","TotalTime","Id").to_json()
+        
+        return Response(recipes, mimetype="application/json", status=200)
+    except:
+        return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
-@app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
-def browse_recipe(lim):
-    recipes = RecipePreview.objects[frm:too].to_json()
-    return Response(recipes, mimetype="application/json", status=200)
+# @app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
+# def browse_recipe(lim):
+#     recipes = RecipePreview.objects[frm:too].only("Name","AvgRating","Img","Level","TotalTime").to_json()
+#     return Response(recipes, mimetype="application/json", status=200)
 
 @app.route('/recipe-detail', methods=["GET", "POST"])
 def handle_recipe_detail():
@@ -64,24 +49,32 @@ def handle_recipe_detail():
 
         return jsonify(movie), 200
 
+@app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
+def oneRecipe(id):
+    if request.method == 'GET':
+        recipes = RecipeDetail.objects(id=id).only("steps","ingredients","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+        return Response(recipes, mimetype="application/json", status=200)
+    elif request.method == 'DELETE':
+        RecipeDetail.objects(id=id).delete()
+        return 'delete successful', 200
 
-@app.route('/recipe/<id>', methods=['DELETE'])
-def deleteRecipe(id):
-    RecipeDetail.objects.get(id=id).delete()
-    return 'delete successful', 200
-
-
+#
+#   Image handling
+#
 @ app.route('/image/<string:filename>', methods=['GET'])
 def handle_image(filename):
     try:
         print(os.path.join(uploads_dir, filename))
         return send_file(os.path.join(uploads_dir, filename), mimetype='image/jpg')
     except:
-        return make_response({'status':'Not found', 'message' : 'file not found'},404)
+        return make_response({'status':'Bad request', 'message' : 'File not found, or the requested file has the wrong extension'},400)
+
+from imghdr import what
 
 @ app.route('/image', methods=['POST'])
 def send_image():
     saved_image = request.files["image"]
+    print(what(saved_image))
     img_name = str(time())+'.jpg'
     saved_image.save(os.path.join(uploads_dir, img_name))
     return make_response({'status':'OK', 'filename':img_name},200)
