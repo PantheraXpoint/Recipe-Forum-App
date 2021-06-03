@@ -14,86 +14,107 @@ class RecipeCard extends StatefulWidget {
 class RecipeCardState extends State<RecipeCard> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Colors.transparent, Colors.black],
-        ),
-        image: DecorationImage(
-          image: NetworkImage(
-            widget.recipe.imageUrl,
+    return GestureDetector(
+      onTap: () {
+        print(widget.recipe.title);
+      }, // tap for detail of recipe
+      child: Container(
+        width: 300,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Colors.transparent, Colors.black],
           ),
-          fit: BoxFit.cover,
+          image: DecorationImage(
+            image: NetworkImage(
+              widget.recipe.imageUrl,
+            ),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  widget.recipe.imageUrl,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                    widget.recipe.imageUrl,
+                  ),
+                  fit: BoxFit.cover,
                 ),
-                fit: BoxFit.cover,
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              padding: EdgeInsets.only(left: 10, right: 20),
-              width: double.infinity,
-              height: 100,
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Color(0xFF2C2E2D),
+                      borderRadius: BorderRadius.circular(10)),
+                  padding: EdgeInsets.all(10),
+                  width: double.infinity,
+                  height: 100,
+                  child: Column(
                     children: [
-                      SizedBox(
-                        width: 120,
-                        child: Text(
-                          widget.recipe.title,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            child: Text(
+                              widget.recipe.title,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.bookmark_outline,
+                            color: Colors.yellow,
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Row(
+                            children: [
+                              Text(
+                                  widget.recipe.totalPrepTime.toString() +
+                                      " | ",
+                                  style: TextStyle(color: Color(0xFF7A7A7A))),
+                              //VerticalDivider(),
+                              Text(
+                                widget.recipe.difficulty,
+                                style: TextStyle(color: Color(0xFF7A7A7A)),
+                              )
+                            ],
                           ),
                         ),
-                      ),
-                      Icon(
-                        Icons.bookmark_outline,
-                        color: Colors.yellow,
-                      ),
+                      )
                     ],
                   ),
-                  Row(
-                    children: [
-                      Text(
-                        widget.recipe.totalPrepTime.toString(),
-                      ),
-                      VerticalDivider(),
-                      Text(widget.recipe.difficulty)
-                    ],
-                  )
-                ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
