@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_2/model/Ingredient.dart';
 import 'package:flutter_application_2/model/Step.dart';
+import 'package:flutter_application_2/model/Creator.dart';
 
 class RecipeDetail {
   List<Ingredient> ingredients;
   List<Step> steps;
+  Creator creator;
   double avgRating;
   int totalRating;
   int likes;
@@ -13,6 +15,7 @@ class RecipeDetail {
   RecipeDetail(
       {@required this.ingredients,
       @required this.steps,
+      @required this.creator,
       @required this.avgRating,
       this.totalRating,
       @required this.likes,
@@ -26,7 +29,8 @@ class RecipeDetail {
         ingredients:
             List<Ingredient>.from(ing.map((e) => Ingredient.fromJson(e))),
         steps: List<Step>.from(st.map((e) => Step.fromJson(e))),
-        avgRating: json['avgRating'],
+        creator: Creator.fromJson(json['creator']),
+        avgRating: double.parse(json['avgRating'].toString()),
         likes: json['likes'],
         description: json['description']);
   }

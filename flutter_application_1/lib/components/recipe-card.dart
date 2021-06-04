@@ -109,9 +109,7 @@ class RecipeCardState extends State<RecipeCard> {
                           alignment: Alignment.bottomLeft,
                           child: Row(
                             children: [
-                              Text(
-                                  widget.recipe.totalPrepTime.toString() +
-                                      " phút | ",
+                              Text("${widget.recipe.totalPrepTime} phút | ",
                                   style: TextStyle(color: Color(0xFF7A7A7A))),
                               //VerticalDivider(),
                               Text(
