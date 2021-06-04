@@ -5,6 +5,7 @@ import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/model/RecipeDetail.dart';
 import 'package:http/http.dart' as http;
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
@@ -44,9 +45,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Widget build(BuildContext context) {
     if (detail != null && detail.creator != null) {
       return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Column(
-          children: [
+          resizeToAvoidBottomInset: false,
+          body: Column(children: [
             Container(
               padding: EdgeInsets.only(top: 40),
               color: kPrimaryColor,
@@ -78,55 +78,133 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
             ),
             Container(
-              height: 300,
-              padding: EdgeInsets.fromLTRB(40, 200, 40, 10),
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(widget.recipe.imageUrl))),
-              child: Container(
-                padding: EdgeInsets.fromLTRB(30, 10, 0, 10),
+                height: 300,
+                padding: EdgeInsets.fromLTRB(40, 200, 40, 10),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color(0xFF2C2E2D).withOpacity(0.9)),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                        radius: 30,
-                        backgroundImage:
-                            NetworkImage(detail.creator.avatarUrl)),
-                    SizedBox(
-                      width: 15,
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(widget.recipe.imageUrl))),
+                child: Container(
+                    padding: EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF2C2E2D).withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Row(
                       children: [
-                        Text(
-                          "Recipe by:",
-                          style: TextStyle(color: Color(0xFF7A7A7A)),
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              "https://image.cooky.vn/usr/g13/126457/avt/s140/cooky-avatar-636658845110260221.jpg"),
                         ),
-                        //SizedBox(height: 5),
-                        Text(
-                          detail.creator.name,
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Recipe by:",
+                                style: TextStyle(color: Color(0xFF7A7A7A))),
+                            Text("Tau Nhat Quang",
+                                style: TextStyle(color: Colors.white)),
+                          ],
                         ),
                       ],
-                    )
+                    ))),
+            Column(
+              children: [
+                Padding(padding: EdgeInsets.only(top: 20)),
+                Row(
+                  children: [
+                    Padding(padding: EdgeInsets.only(left: 20)),
+                    Text("Bánh Crepe Kem Sầu Riêng",
+                        style: TextStyle(color: Color(0xFF2C2E2D))),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Icon(Icons.bookmark_outline, color: Colors.green),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-      );
+                Row(
+                  children: [
+                    Padding(padding: EdgeInsets.only(left: 20)),
+                    SmoothStarRating(
+                        allowHalfRating: true,
+                        onRated: (v) {},
+                        starCount: 5,
+                        rating: 3.5,
+                        size: 25.0,
+                        isReadOnly: true,
+                        color: Colors.green,
+                        borderColor: Colors.green,
+                        spacing: 0.0),
+                    SizedBox(width: 40, child: Text("3.5")),
+                    Icon(Icons.visibility),
+                    Text("10"),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: 10)),
+                Row(
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all<Size>(Size(
+                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black),
+                          shape: MaterialStateProperty.all<
+                                  ContinuousRectangleBorder>(
+                              ContinuousRectangleBorder()),
+                        ),
+                        child: Text(
+                          "Ingredients",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all<Size>(Size(
+                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black),
+                          shape: MaterialStateProperty.all<
+                                  ContinuousRectangleBorder>(
+                              ContinuousRectangleBorder()),
+                        ),
+                        child: Text(
+                          "Instructions",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    SizedBox(
+                      width: 2,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all<Size>(Size(
+                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black),
+                          shape: MaterialStateProperty.all<
+                                  ContinuousRectangleBorder>(
+                              ContinuousRectangleBorder()),
+                        ),
+                        child: Text(
+                          "Reviews",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ],
+                )
+              ],
+            )
+          ]));
     }
-
     return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
+      body: CircularProgressIndicator(),
     );
   }
 }
