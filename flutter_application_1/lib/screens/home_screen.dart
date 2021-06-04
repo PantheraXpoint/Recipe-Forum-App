@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
-import 'package:flutter_application_2/components/recipe-card-list-horizontal.dart';
+import 'package:flutter_application_2/components/recipe-slider.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,31 +13,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  //int _index = 0;
+  List<Recipe> list = [];
 
-  List<Recipe> recipeList = [
-    Recipe(
-        recipeId: 1,
-        title: "Bún đậu mắm tôm",
-        totalPrepTime: 30.0,
-        difficulty: "BEGINNER",
-        imageUrl:
-            "https://media.istockphoto.com/photos/vietnamese-traditional-plate-pork-vermicelli-tofu-the-popular-lunch-picture-id1220057044?s=612x612"),
-    Recipe(
-        recipeId: 2,
-        title: "Bún bò giò heo",
-        totalPrepTime: 60.0,
-        difficulty: "INTERMEDIATE",
-        imageUrl:
-            "https://cdn.pixabay.com/photo/2016/05/09/10/26/rice-1381146__340.jpg"),
-    Recipe(
-        recipeId: 3,
-        title: "Phở gà",
-        difficulty: "ADVANCE",
-        totalPrepTime: 180.0,
-        imageUrl:
-            "https://cdn.pixabay.com/photo/2016/03/09/15/22/food-1246621__340.jpg"),
-  ];
+  Future<List<Recipe>> listRecipes() async {
+    final response = await http.get(Uri.http(BASE_URL, "/recipe"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        });
+    if (response.statusCode == 200) {
+      Iterable i = json.decode(response.body);
+      List<Recipe> list =
+          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+      return list;
+    }
+    return null;
+  }
+
+  Future<void> initRecipeList() async {
+    list = await listRecipes();
+    setState(() {});
+  }
+
+  List<Recipe> recipeList = [];
+  @override
+  void initState() {
+    super.initState();
+    initRecipeList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,24 +99,20 @@ class HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 40,
               ),
-              Text("Trending recipes",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              SizedBox(
-                height: 20,
+              RecipeSlider(
+                list: list,
               ),
-              RecipeCardListHorizontal(
-                recipeList: recipeList,
+              RecipeSlider(
+                list: list,
+                difficulty: "Dễ",
               ),
-              SizedBox(
-                height: 20,
+              RecipeSlider(
+                list: list,
+                difficulty: "Trung bình",
               ),
-              Text("Món nhậu",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              SizedBox(
-                height: 20,
-              ),
-              RecipeCardListHorizontal(
-                recipeList: recipeList,
+              RecipeSlider(
+                list: list,
+                difficulty: "Khó",
               ),
             ],
           ),

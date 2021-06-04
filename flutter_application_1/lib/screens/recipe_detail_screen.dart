@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/model/RecipeDetail.dart';
+import 'package:http/http.dart' as http;
 
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
@@ -11,8 +15,35 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool isBookmark = false;
+  RecipeDetail detail;
+
+  Future<RecipeDetail> getDetail() async {
+    final response = await http
+        .get(Uri.http(BASE_URL, "recipe-detail/${widget.recipe.recipeId}"));
+    print("Done requesting");
+    if (response.statusCode == 200) {
+      print("Request successfully");
+      return RecipeDetail.fromJson(json.decode(response.body)[0]);
+    }
+
+    return null;
+  }
+
+  Future<void> initDetail() async {
+    detail = await getDetail();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDetail();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (detail != null) print(detail.ingredients.length);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
@@ -87,7 +118,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

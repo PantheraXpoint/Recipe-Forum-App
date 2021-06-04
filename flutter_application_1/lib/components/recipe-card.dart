@@ -18,13 +18,13 @@ class RecipeCardState extends State<RecipeCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print(widget.recipe.title);
+        print(widget.recipe.recipeId);
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
                     RecipeDetailScreen(recipe: widget.recipe)));
-      }, // tap for detail of recipe
+      },
       child: Container(
         width: 300,
         clipBehavior: Clip.antiAlias,
@@ -73,7 +73,7 @@ class RecipeCardState extends State<RecipeCard> {
                       borderRadius: BorderRadius.circular(10)),
                   padding: EdgeInsets.all(10),
                   width: double.infinity,
-                  height: 100,
+                  height: widget.recipe.title.length < 40 ? 90 : 110,
                   child: Column(
                     children: [
                       Row(
@@ -81,13 +81,13 @@ class RecipeCardState extends State<RecipeCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 120,
+                            width: 220,
                             child: Text(
                               widget.recipe.title,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             ),
                           ),
@@ -111,7 +111,7 @@ class RecipeCardState extends State<RecipeCard> {
                             children: [
                               Text(
                                   widget.recipe.totalPrepTime.toString() +
-                                      " | ",
+                                      " phút | ",
                                   style: TextStyle(color: Color(0xFF7A7A7A))),
                               //VerticalDivider(),
                               Text(
