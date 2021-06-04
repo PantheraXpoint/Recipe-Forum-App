@@ -1,105 +1,52 @@
-from flask import Flask, render_template, request, redirect, url_for
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Recipe, Account
+import os
+from time import time
+from json import loads
+from flask import Flask, request, Response, jsonify, make_response, send_file
+from flask_mongoengine import MongoEngine
+from models.RecipeDetail import RecipeDetail
+from models.RecipePreview import RecipePreview
+from models.Profile import Profile
+from bson import ObjectId
+from imghdr import what
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import jsonify
+import pymongo
 
-# Connect to Database and create database session
-engine = create_engine('sqlite:///recipes-collection.db?check_same_thread=False')
-Base.metadata.bind = engine
+db = MongoEngine()
+#
+#   RECIPE FUNCTION
+#
+def queryBrowse(lim):
+    return RecipePreview.objects[:lim].only("Name","AvgRating","Img","Level","TotalTime","Id").to_json()
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+def queryRecipe(id_num):
+    if id_num:
+        return RecipeDetail.objects(id=id_num).only("steps","ingredients","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+    else:
+        return RecipeDetail.objects.only("steps","ingredients","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
 
+def deleteRecipe(id_num):
+    RecipeDetail.objects(id=id_num).delete()
 
 #
-#       Account
+#   ACCOUNT FUNCTION
 #
+def queryId(user_id):
+    return Profile.objects(Id=user_id)[0]
 
-def getAccountList():
-    accounts = session.query(Account.id, Account.email, Account.password).all()
-    lst = []
-    for res in accounts:
-        lst.append({'id': res[0], 'email' : res[1], 'password hash': res[2]})
-    return jsonify(lst)
+def queryUsername(username):
+    """
+    Look up account_detail collection with the username
+    returns a list
+    """
+    return Profile.objects(UserName=username)
 
-def createAccount(email, password):
+def checkinAccount(username,password):
     try:
-        session.query(Account).filter_by(email=email).one()
-        return None
-    except:
-        newAccount = Account(email = email, password = generate_password_hash(password) )
-        session.add(newAccount)
-        session.commit()
-        return jsonify(Account=newAccount.serialize)
-
-def removeAccount(email):
-    try:
-        account = session.query(Account).filter_by(email=email).one()
-        session.delete(account)
-        session.commit()
-        return True
-    except:
-        return False
-
-def checkinAccount(email,password):
-    try:
-        account = session.query(Account).filter_by(email=email).one()
-        if check_password_hash(account.serialize['password'], password):
-            return account
-        return -1
-    except:
+        acc = Profile.objects(UserName=username)[0]
+        # print( Profile(**deats) )
+        hased_pass = acc["PassWord"]
+        if check_password_hash(hased_pass, password):
+            return acc
         return 0
-
-def getAccount(id):
-    account = session.query(Account).filter_by(id=id).one()
-    return account
-
-#
-#   Recipes
-#
-
-def get_recipes():
-    recipes = session.query(Recipe).all()
-    return jsonify(recipes=[b.serialize for b in recipes])
-
-
-def get_recipe(recipe_id):
-    recipes = session.query(Recipe).filter_by(id=recipe_id).one()
-    return jsonify(recipes=recipes.serialize)
-
-
-def makeANewRecipe(title, desc, img, author):
-    addedrecipe = Recipe(title=title, description = desc, image = img, author_id = author)
-    session.add(addedrecipe)
-    session.commit()
-    return jsonify(Recipe=addedrecipe.serialize)
-
-
-def updateRecipe(id, title, desc, img):
-    updatedRecipe = session.query(Recipe).filter_by(id=id).one()
-    if not title:
-        updatedRecipe.title = title
-    if not desc:
-        updatedRecipe.description = desc
-    if not img:
-        updatedRecipe.image = img
-    session.add(updatedRecipe)
-    session.commit()
-    return 'Updated a Recipe with id %s' % id
-
-
-def deleteARecipe(id):
-    recipeToDelete = session.query(Recipe).filter_by(id=id).one()
-    session.delete(recipeToDelete)
-    session.commit()
-    return 'Removed Recipe with id %s' % id
-
-
-def get_preview():
-    recipes = session.query(Recipe.id, Recipe.title, Recipe.image).all()
-    lst = []
-    for res in recipes:
-        lst.append({'id' : res[0] , 'title': res[1], 'image': res[2]})
-    return jsonify(lst)
+    except:
+        return -1

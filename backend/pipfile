@@ -4,6 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+mongoengine = "*"
+mongoengine-goodjson = "*"
+flask = "*"
+flask-mongoengine = "*"
+pymongo = "*"
+flask-login = "*"
 
 [dev-packages]
 
