@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
   final Recipe recipe;
@@ -12,11 +13,17 @@ class RecipeCard extends StatefulWidget {
 }
 
 class RecipeCardState extends State<RecipeCard> {
+  bool isBookmark = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         print(widget.recipe.title);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    RecipeDetailScreen(recipe: widget.recipe)));
       }, // tap for detail of recipe
       child: Container(
         width: 300,
@@ -62,7 +69,7 @@ class RecipeCardState extends State<RecipeCard> {
                 alignment: Alignment.bottomLeft,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color(0xFF2C2E2D),
+                      color: Color(0xFF2C2E2D).withOpacity(0.6),
                       borderRadius: BorderRadius.circular(10)),
                   padding: EdgeInsets.all(10),
                   width: double.infinity,
@@ -84,10 +91,17 @@ class RecipeCardState extends State<RecipeCard> {
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.bookmark_outline,
-                            color: Colors.yellow,
-                          ),
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              isBookmark = !isBookmark;
+                            }),
+                            child: Icon(
+                              isBookmark
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_outline,
+                              color: Colors.yellow,
+                            ),
+                          )
                         ],
                       ),
                       Expanded(
