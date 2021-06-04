@@ -4,8 +4,8 @@ from models.RecipeDetail import RecipeDetail
 db = MongoEngine()
 
 class RecipePreview(gj.Document):
-    recipeId = db.SequenceField()
-    Id = db.IntField()
+    # recipeId = db.SequenceField()
+    Id = db.SequenceField()
     Name = db.StringField(required=True)
     AvgRating = db.DecimalField(required=True)
     Img = db.StringField()
