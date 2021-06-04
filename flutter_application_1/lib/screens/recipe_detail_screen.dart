@@ -6,6 +6,7 @@ import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/model/RecipeDetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:html/parser.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
@@ -48,34 +49,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           resizeToAvoidBottomInset: false,
           body: Column(children: [
             Container(
-                padding: EdgeInsets.only(top: 40),
-                color: kPrimaryColor,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      child: IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.arrow_back)),
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Ingredients",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 50,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                )),
+              padding: EdgeInsets.only(top: 40),
+              color: kPrimaryColor,
+              width: double.infinity,
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back)),
+            ),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 280,
@@ -84,84 +65,119 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       fit: BoxFit.cover,
                       image: NetworkImage(widget.recipe.imageUrl))),
             ),
-            Column(
-              children: [
-                Padding(padding: EdgeInsets.only(top: 20)),
-                Row(
+            Padding(
+                padding: EdgeInsets.only(left: 20, top: 20),
+                child: Column(
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
-                    Text("Bánh Crepe Kem Sầu Riêng",
-                        style: TextStyle(color: Color(0xFF2C2E2D))),
-                    SizedBox(
-                      width: 4,
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 250,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 160,
+                                  child: Text(widget.recipe.title,
+                                      style:
+                                          TextStyle(color: Color(0xFF2C2E2D))),
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Icon(Icons.bookmark_outline,
+                                    color: Colors.yellow),
+                              ],
+                            )),
+                        Expanded(
+                            child: Align(
+                          alignment: Alignment.center,
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(detail.creator.avatarUrl),
+                          ),
+                        ))
+                      ],
                     ),
-                    Icon(Icons.bookmark_outline, color: Colors.yellow),
-                    SizedBox(
-                      width: 100,
-                    ),
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://image.cooky.vn/usr/g13/126457/avt/s140/cooky-avatar-636658845110260221.jpg"),
+                    Row(
+                      children: [
+                        SizedBox(
+                            width: 250,
+                            child: Row(
+                              children: [
+                                SmoothStarRating(
+                                    allowHalfRating: true,
+                                    onRated: (v) {},
+                                    starCount: 5,
+                                    rating: detail.avgRating / 2,
+                                    size: 25.0,
+                                    isReadOnly: true,
+                                    color: Colors.yellow,
+                                    borderColor: Colors.yellow,
+                                    spacing: 0.0),
+                                Icon(Icons.visibility),
+                                Text("10"),
+                              ],
+                            )),
+                        Expanded(
+                            child: Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            width: 80,
+                            child: Text(
+                              detail.creator.name,
+                              style: TextStyle(color: Colors.black),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ))
+                      ],
                     ),
                   ],
-                ),
-                Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
-                    SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) {},
-                        starCount: 5,
-                        rating: 3.5,
-                        size: 25.0,
-                        isReadOnly: true,
-                        color: Colors.yellow,
-                        borderColor: Colors.yellow,
-                        spacing: 0.0),
-                    SizedBox(width: 40, child: Text("3.5")),
-                    Icon(Icons.visibility),
-                    Text("10"),
-                    SizedBox(width: 90),
-                    SizedBox(
-                      width: 70,
-                      child: Text(
-                        "Tau Nhat Quang",
-                        style: TextStyle(color: Colors.black),
-                        textAlign: TextAlign.center,
+                )),
+            SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+                height: 280,
+                width: 370,
+                child: ListView.separated(
+                  itemCount: detail.ingredients.length,
+                  separatorBuilder: (context, index) => Divider(),
+                  itemBuilder: (context, index) => Row(
+                    children: [
+                      SizedBox(
+                        width: 185,
+                        child: Text(detail.ingredients[index].name),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Text(
+                          _parseHtmlString(detail.ingredients[index].quantity +
+                              " " +
+                              detail.ingredients[index].unit),
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+            ElevatedButton(
+                onPressed: () {},
+                child: Text(
+                  "Hướng dẫn thực hiện",
+                  textAlign: TextAlign.right,
                 ),
-                Padding(padding: EdgeInsets.only(top: 30)),
-                Row(children: [
-                  Padding(padding: EdgeInsets.only(left: 20)),
-                  SizedBox(width: 150, child: Text("Nguyên liệu")),
-                  Expanded(
-                      child: Row(
-                    children: [
-                      Expanded(child: Text("")),
-                      SizedBox(width: 150, child: Text("Khẩu phần: 4 người"))
-                    ],
-                  ))
-                ]),
-                Padding(padding: EdgeInsets.only(top: 30)),
-                Row(children: [
-                  Padding(padding: EdgeInsets.only(left: 40)),
-                  SizedBox(width: 50, child: Text("Thịt bò")),
-                  Expanded(
-                      child: Row(
-                    children: [
-                      Expanded(child: Text("")),
-                      SizedBox(width: 60, child: Text("300gr"))
-                    ],
-                  ))
-                ]),
-              ],
-            )
+                style: ElevatedButton.styleFrom(primary: kSecondaryColor))
           ]));
     }
+
     return Scaffold(
-      body: CircularProgressIndicator(),
+      body: Center(child: CircularProgressIndicator()),
     );
   }
+}
+
+String _parseHtmlString(String htmlString) {
+  final document = parse(htmlString);
+  final String parsedString = parse(document.body.text).documentElement.text;
+  return parsedString;
 }
