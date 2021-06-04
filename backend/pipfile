@@ -9,6 +9,7 @@ mongoengine-goodjson = "*"
 flask = "*"
 flask-mongoengine = "*"
 pymongo = "*"
+flask-login = "*"
 
 [dev-packages]
 
