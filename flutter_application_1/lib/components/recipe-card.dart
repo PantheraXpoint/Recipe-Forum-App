@@ -13,18 +13,18 @@ class RecipeCard extends StatefulWidget {
 }
 
 class RecipeCardState extends State<RecipeCard> {
+  bool isBookmark = false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print(widget.recipe.title);
+        print(widget.recipe.recipeId);
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => RecipeDetailScreen(
-                      recipe: widget.recipe,
-                    )));
-      }, // tap for detail of recipe
+                builder: (context) =>
+                    RecipeDetailScreen(recipe: widget.recipe)));
+      },
       child: Container(
         width: 300,
         clipBehavior: Clip.antiAlias,
@@ -69,11 +69,11 @@ class RecipeCardState extends State<RecipeCard> {
                 alignment: Alignment.bottomLeft,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Color(0xFF2C2E2D).withOpacity(0.7),
+                      color: Color(0xFF2C2E2D).withOpacity(0.6),
                       borderRadius: BorderRadius.circular(10)),
                   padding: EdgeInsets.all(10),
                   width: double.infinity,
-                  height: 100,
+                  height: widget.recipe.title.length < 40 ? 90 : 110,
                   child: Column(
                     children: [
                       Row(
@@ -81,20 +81,27 @@ class RecipeCardState extends State<RecipeCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 120,
+                            width: 220,
                             child: Text(
                               widget.recipe.title,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: 18,
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.bookmark_outline,
-                            color: Colors.yellow,
-                          ),
+                          GestureDetector(
+                            onTap: () => setState(() {
+                              isBookmark = !isBookmark;
+                            }),
+                            child: Icon(
+                              isBookmark
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_outline,
+                              color: Colors.yellow,
+                            ),
+                          )
                         ],
                       ),
                       Expanded(
@@ -102,9 +109,7 @@ class RecipeCardState extends State<RecipeCard> {
                           alignment: Alignment.bottomLeft,
                           child: Row(
                             children: [
-                              Text(
-                                  widget.recipe.totalPrepTime.toString() +
-                                      " | ",
+                              Text("${widget.recipe.totalPrepTime} phút | ",
                                   style: TextStyle(color: Color(0xFF7A7A7A))),
                               //VerticalDivider(),
                               Text(

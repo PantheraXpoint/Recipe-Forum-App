@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "eb0443e3-5e6b-4712-89cd-925643ab6db7",
+		"name": "PSE_mongofork",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST recipe",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"food test 1\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4996/recipe-detail",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe-detail"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE post : http://localhost:4996/recipe/60b0fa0d2d0ca1332111ba64",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipe-detail/8",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe-detail",
+						"8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST register account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\":\"test1\",\r\n    \"DisplayName\": \"firstaccount\",\r\n    \"FirstName\": \"Bob\",\r\n    \"LastName\": \"McTester\",\r\n    \"PassWord\":\"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4996/register",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST image localhost:4996/image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "pkxbIXgJg/1606041320566.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:4996/image",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"image"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View all recipe detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/recipe-detail",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe-detail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET image",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/image/default_avatar.jpg",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"image",
+						"default_avatar.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET browse - pass limit via body/json",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"limit\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4996/recipe",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET browse - pass limit via multipart/form-data",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "limit",
+							"value": "3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:4996/recipe",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET recipe detail 1 post",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/recipe-detail/33870",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"recipe-detail",
+						"33870"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET account username lookup 1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/account/test1",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"account",
+						"test1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\": \"test1\",\r\n    \"PassWord\": \"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4996/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserName\":\"test1\",\r\n    \"PassWord\":\"123456789\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4996/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET myprofile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/myprofile",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"myprofile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

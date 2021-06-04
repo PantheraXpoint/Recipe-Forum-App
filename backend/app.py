@@ -1,219 +1,173 @@
 import os
-from pathlib import Path
 from time import time
 
 import flask_login
-from flask import (Flask, flash, jsonify, make_response, redirect,
-                   render_template, request, send_file, session, url_for)
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from flask import Flask, request, Response, jsonify, make_response, send_file
+from flask_mongoengine import MongoEngine
+from bson import ObjectId
+from imghdr import what
+import pymongo
 
 from api_functions import *
-from database_setup import Account, Base, Recipe
+from models.RecipeDetail import RecipeDetail
+from models.RecipePreview import RecipePreview
 
 app = Flask(__name__)
 app.secret_key = b'supasecretstring'
 
-uploads_dir = os.path.join(app.instance_path, 'images')
+app.config['MONGODB_SETTINGS'] = {
+    'host': 'mongodb+srv://QuangTau:panthera02@cluster0.g3n9q.mongodb.net/RECIPE_APP'
+}
 
-# Connect to Database and create database dbsession
-engine = create_engine(
-    'sqlite:///recipes-collection.db?check_same_thread=False')
-Base.metadata.bind = engine
-
-DBSession = sessionmaker(bind=engine)
-dbsession = DBSession()
+# mongoengine init for queries
+db = MongoEngine()
+db.init_app(app)
 
 # login manager from flask_login
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
+# path to image saving
+uploads_dir = os.path.join(app.instance_path, 'images')
+
 #   Cookie loader
 @login_manager.user_loader
 def load_user(user_id):
-    return getAccount(user_id)
+    return queryId(user_id)
 
-# #   Login from request
-# @login_manager.request_loader
-# def load_user_from_request(request):
+#
+#   Account handling
+#
+@app.route('/account/<username>', methods=["GET"])
+def accountLookup(username):
+    try :
+        acc = queryUsername(username)
+        if len(acc) == 0:
+            return make_response( {"status": "Not found", "message": "Account not found"}, 404)
+        return jsonify(acc) ,200
+    except:
+        return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
 
-#     # # first, try to login using the api_key url arg
-#     # api_key = request.args.get('api_key')
-#     # if api_key:
-#     #     user = User.query.filter_by(api_key=api_key).first()
-#     #     if user:
-#     #         return user
+@app.route('/register', methods=['POST'])
+def createAccount():
+    body = request.get_json()
+    if len(queryUsername(body["UserName"])) != 0:
+        return make_response( {"status": "Conflict", "message": "Account with this username already existed"}, 400)
+    if body == None:
+        return make_response( {"status": "Missing paramter", "message": "Put the account credential in the request body please"}, 400)
+    acc = Profile(**body)
+    acc['PassWord'] = generate_password_hash( body["PassWord"] )
+    acc.save()
+    return jsonify(acc), 200
 
-#     # next, try to login using Basic Auth
-#     api_key = request.headers.get('Authorization')
-#     if api_key:
-#         api_key = api_key.replace('Basic ', '', 1)
-#         try:
-#             api_key = base64.b64decode(api_key)
-#         except TypeError:
-#             pass
-#         user = User.query.filter_by(api_key=api_key).first()
-#         if user:
-#             return user
-
-#     # finally, return None if both methods did not login the user
-#     return None
-
-@app.route('/')
-def defaultPage():
-    response = make_response(
-        jsonify({"status": "OK", "message": "Server initialized successfully"}),
-        400,
-    )
-    response.headers["Content-Type"] = "application/json"
-    return response
-
-@app.route('/register', methods=["POST"])
-def registerAccount():
-    email = request.form.get('email','')
-    password = request.form.get('password','')
-    if email == '' or password == '':
-        return make_response( {"status": "Missing parameter", "message": "Please enter an email and a password"}, 201)
+#
+#       Login handling
+#
+@app.route('/login',methods=['GET','POST'])
+def loginAccount():
+    body = request.get_json()
+    try:
+        username = body["UserName"]
+        password = body["PassWord"]
+    except:
+        return make_response( {"status": "Bad request", "message": "Missing parameters, enter username and password"}, 400)
     
-    result = createAccount(email, password)
-    if result:
-        return make_response( {"status": "OK", "message": "Account created successfully"}, 200)
-    return make_response( {"status": "Conflict", "message": "Account with this email already existed"}, 400)
+    acc = checkinAccount(username, password)
+    if acc == -1:
+        return make_response( {"status": "Not found", "message": "Account not found"}, 404)
+    if acc == 0:
+        return make_response( {"status": "Bad request", "message": "Incorrect password"}, 400)
 
-@app.route('/accounts', methods=['GET'])
-def getListAccount():
-    return getAccountList()
+    flask_login.login_user(acc)
 
-@app.route('/deleteaccount', methods = ['DELETE'])
-def deleteAccount():
-    t = removeAccount( request.form.get('email') )
-    if t:
-        return make_response( {"status": "OK", "message": "Account deleted successfully"}, 200)
-    return make_response( {"status": "Not found", "message": "Selected account was not found"}, 400)
+    return jsonify(flask_login.current_user),200
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
-    # Login and validate the user.
-    # user should be an instance of your `User` class
-    account = checkinAccount( request.form.get('email','') , request.form.get('password',''))
-
-    if account == 0:
-        return make_response( {'status': 'Bad request', 'message':'Entered email is incorrect'}, 400 )
-    if account == -1:
-        return make_response( {'status': 'Forbidden', 'message':'Entered password is incorrect'}, 403 )
-
-    flask_login.login_user(account)
-
-    flash('Logged in successfully.')
-
-    # NEXT = pop from frontend navigation stack
-    # return redirect( url_for('getProfile') )
-
-    # return make_response( {"status": "Failed", "message": "Login failed"}, 400)
-    try:
-        t = (flask_login.current_user.serialize)
-        return make_response( {"status": "OK", "current user": t['email']}, 200)
-    except:
-        return make_response( {"status": "Forbidden", "message": 'not logged in' }, 403)
-
-#test loginrequired
-@app.route('/profile', methods=["GET"])
+@app.route("/logout")
 @flask_login.login_required
-def getProfile():
+def logout():
     try:
-        t = (flask_login.current_user.serialize)
-        return make_response( {"status": "OK", "current user": t['email']}, 200)
+        flask_login.logout_user()
+        return make_response( {"status": "OK", "message": "Logout successful"}, 200)
     except:
-        return make_response( {"status": "Forbidden", "message": 'not logged in' }, 403)
+        return make_response( {"status": "uh oh", "message": "something went wrong"}, 400)
 
-# get one recipe
+@app.route("/myprofile")
+@flask_login.login_required
+def getMyProfile():
+    return jsonify(flask_login.current_user)
+
+#
+#       Recipe request handling
+#
 @app.route('/recipe', methods=["GET"])
-def showRecipe():
-    recipeId = request.args.get("recipeId")
-    queryRecipe = dbsession.query(Recipe).filter_by(id=recipeId).one()
-    print(queryRecipe)
-    if flask_login.current_user.is_authenticated:
-        print('hey you are logged in')
-    return make_response(queryRecipe.serialize(), 200)
-
-# This will let us Update our recipes and save it in our database
-@ app.route("/recipes/<int:recipe_id>/edit/", methods=['PUT'])
-def editRecipe(recipe_id):
-    editedRecipe = dbsession.query(Recipe).filter_by(id=recipe_id).one()
-    if request.method == 'PUT':
-        if request.form['name']:
-            editedRecipe.title = request.form['name']
-            return make_response( {"status": "OK", "message": "Recipe editted succesfully"}, 200)
-
-# delete one recipe
-@ app.route('/recipes/<int:recipe_id>/delete/', methods=['DELETE'])
-def deleteRecipe(recipe_id):
+def list_recipe_preview():
     try:
-        recipeToDelete = dbsession.query(Recipe).filter_by(id=recipe_id).one()
-        if request.method == 'DELETE':
-            dbsession.delete(recipeToDelete)
-            dbsession.commit()
-            return make_response( {"status": "OK", "message": "Recipe deleted successfully"}, 200)
+        lim = request.get_json()['limit']
+        recipes = queryBrowse(lim)
+        return Response(recipes, mimetype="application/json", status=200)
     except:
-        return make_response( {"status": "Not found", "message": "Selected recipe was not found"}, 400)
+        try:
+            if request.form.get('limit'):
+                lim = int(request.form.get('limit'))
+            else:
+                lim = 100
+            recipes = queryBrowse(lim)
+            
+            return Response(recipes, mimetype="application/json", status=200)
+        except:
+            return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
-# get all recipe
-@ app.route('/recipesApi', methods=['GET'])
-def recipesFunction():
-    if request.method == 'GET':
-        return get_recipes()
+# @app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
+# def browse_recipe(lim):
+#     recipes = RecipePreview.objects[frm:too].only("Name","AvgRating","Img","Level","TotalTime").to_json()
+#     return Response(recipes, mimetype="application/json", status=200)
 
-@app.route('/recipes/new', methods = ['POST'] )
+@app.route('/recipe-detail', methods=["GET"])
+def get_recipe_detail():
+    # if (request.method == "GET"):
+    recipes = RecipeDetail.objects.to_json()
+    return Response(recipes, mimetype="application/json", status=200)
+    # elif (request.method == "POST"):
+
+@app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
-def postRecipe():
-    if request.method == 'POST':
-        title = request.form.get('title', '')
-        desc = request.form.get('desc', '')
-        img = request.form.get('img', '')
-        author = flask_login.current_user.get_id()
-        return makeANewRecipe(title, desc, img, author)
+def post_recipe_detail():
+    body = request.get_json()
+    recipe = RecipeDetail(**body)
+    recipe['creator'] = flask_login.current_user.generateCreator()
+    recipe.save()
+    return jsonify(recipe), 200
 
-@ app.route('/recipesApi/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-def recipeFunctionId(id):
+@app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
+def oneRecipe(id):
+    if request.method == 'GET':
+        recipes = queryRecipe(id)
+        return Response(recipes, mimetype="application/json", status=200)
+    elif request.method == 'DELETE':
+        try:
+            deleteRecipe( int(id) )
+            return make_response({'status':'OK', 'message' : 'Recipe deleted'},200)
+        except:
+            return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+#
+#   Image handling
+#
+@ app.route('/image/<string:filename>', methods=['GET'])
+def handle_image(filename):
     try:
-        if request.method == 'GET':
-            return get_recipe(id)
-
-        elif request.method == 'PUT':
-            title = request.args.get('title', '')
-            desc = request.args.get('desc', '')
-            img = request.args.get('img', '')
-            return updateRecipe(id, title, desc, img)
-
-        elif request.method == 'DELETE':
-            return deleteARecipe(id)
-    except:
-        make_response( {"status": "Not found", "message": "Selected recipe was not found"}, 400)
-
-
-
-@ app.route('/recipesBrowse', methods=['GET'])
-def recipeBrows():
-    return get_preview()
-
-
-@ app.route('/getImage/<string:filename>', methods=['GET'])
-def get_image(filename):
-    try:
+        print(os.path.join(uploads_dir, filename))
         return send_file(os.path.join(uploads_dir, filename), mimetype='image/jpg')
     except:
-        return make_response({'status':'Not found', 'message' : 'file not found'},404)
+        return make_response({'status':'Bad request', 'message' : 'File not found, or the requested file has the wrong extension'},400)
 
-@ app.route('/sendImage', methods=['POST'])
+@ app.route('/image', methods=['POST'])
 def send_image():
     saved_image = request.files["image"]
+    print(what(saved_image))
     img_name = str(time())+'.jpg'
     saved_image.save(os.path.join(uploads_dir, img_name))
     return make_response({'status':'OK', 'filename':img_name},200)
-
 
 if __name__ == '__main__':
     app.run(debug=True, port='4996')
