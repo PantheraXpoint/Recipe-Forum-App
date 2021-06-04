@@ -197,12 +197,7 @@
 							"value": "3",
 							"type": "text"
 						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					]
 				},
 				"url": {
 					"raw": "localhost:4996/recipe",
@@ -238,19 +233,19 @@
 			"response": []
 		},
 		{
-			"name": "GET account lookup 1",
+			"name": "GET account username lookup 1",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:4996/account/whitecat13",
+					"raw": "localhost:4996/account/test1",
 					"host": [
 						"localhost"
 					],
 					"port": "4996",
 					"path": [
 						"account",
-						"whitecat13"
+						"test1"
 					]
 				}
 			},
@@ -312,6 +307,24 @@
 					"port": "4996",
 					"path": [
 						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET myprofile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/myprofile",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"myprofile"
 					]
 				}
 			},
