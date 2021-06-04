@@ -44,40 +44,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ]),
           ),
           Container(
-              width: MediaQuery.of(context).size.width,
-              height: 280,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(widget.recipe.imageUrl))),
-              padding: EdgeInsets.fromLTRB(40, 180, 40, 20),
-              child: Container(
-                  padding: EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF2C2E2D).withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            "https://image.cooky.vn/usr/g13/126457/avt/s140/cooky-avatar-636658845110260221.jpg"),
-                      ),
-                      SizedBox(
-                        width: 50,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Recipe by:",
-                              style: TextStyle(color: Color(0xFF7A7A7A))),
-                          Text("Tau Nhat Quang",
-                              style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ],
-                  ))),
+            width: MediaQuery.of(context).size.width,
+            height: 280,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(widget.recipe.imageUrl))),
+          ),
           Column(
             children: [
               Padding(padding: EdgeInsets.only(top: 20)),
@@ -87,9 +60,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   Text("Bánh Crepe Kem Sầu Riêng",
                       style: TextStyle(color: Color(0xFF2C2E2D))),
                   SizedBox(
-                    width: 20,
+                    width: 4,
                   ),
-                  Icon(Icons.bookmark_outline, color: Colors.green),
+                  Icon(Icons.bookmark_outline, color: Colors.yellow),
+                  SizedBox(
+                    width: 100,
+                  ),
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "https://image.cooky.vn/usr/g13/126457/avt/s140/cooky-avatar-636658845110260221.jpg"),
+                  ),
                 ],
               ),
               Row(
@@ -102,70 +82,47 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       rating: 3.5,
                       size: 25.0,
                       isReadOnly: true,
-                      color: Colors.green,
-                      borderColor: Colors.green,
+                      color: Colors.yellow,
+                      borderColor: Colors.yellow,
                       spacing: 0.0),
                   SizedBox(width: 40, child: Text("3.5")),
                   Icon(Icons.visibility),
                   Text("10"),
+                  SizedBox(width: 90),
+                  SizedBox(
+                    width: 70,
+                    child: Text(
+                      "Tau Nhat Quang",
+                      style: TextStyle(color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
               ),
-              Padding(padding: EdgeInsets.only(top: 10)),
-              Row(
-                children: [
-                  ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(Size(
-                            (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.black),
-                        shape: MaterialStateProperty.all<
-                                ContinuousRectangleBorder>(
-                            ContinuousRectangleBorder()),
-                      ),
-                      child: Text(
-                        "Ingredients",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(Size(
-                            (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.black),
-                        shape: MaterialStateProperty.all<
-                                ContinuousRectangleBorder>(
-                            ContinuousRectangleBorder()),
-                      ),
-                      child: Text(
-                        "Instructions",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all<Size>(Size(
-                            (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.black),
-                        shape: MaterialStateProperty.all<
-                                ContinuousRectangleBorder>(
-                            ContinuousRectangleBorder()),
-                      ),
-                      child: Text(
-                        "Reviews",
-                        style: TextStyle(color: Colors.white),
-                      )),
-                ],
-              )
+              Padding(padding: EdgeInsets.only(top: 30)),
+              Row(children: [
+                Padding(padding: EdgeInsets.only(left: 20)),
+                SizedBox(width: 150, child: Text("Nguyên liệu")),
+                Expanded(
+                    child: Row(
+                  children: [
+                    Expanded(child: Text("")),
+                    SizedBox(width: 150, child: Text("Khẩu phần: 4 người"))
+                  ],
+                ))
+              ]),
+              Padding(padding: EdgeInsets.only(top: 30)),
+              Row(children: [
+                Padding(padding: EdgeInsets.only(left: 40)),
+                SizedBox(width: 50, child: Text("Thịt bò")),
+                Expanded(
+                    child: Row(
+                  children: [
+                    Expanded(child: Text("")),
+                    SizedBox(width: 60, child: Text("300gr"))
+                  ],
+                ))
+              ]),
             ],
           )
         ]));
