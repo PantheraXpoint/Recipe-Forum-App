@@ -40,13 +40,13 @@ def load_user(user_id):
 #
 @app.route('/account/<username>', methods=["GET"])
 def accountLookup(username):
-    # try :
-    acc = queryUsername(username)
-    if acc == '[]':
-        return make_response( {"status": "Not found", "message": "Account not found"}, 404)
-    return jsonify(acc) ,200
-    # except:
-    #     return make_response( {"status": "Missing paramter", "message": "Enter an email after the url please"}, 400)
+    try :
+        acc = queryUsername(username)
+        if len(acc) == 0:
+            return make_response( {"status": "Not found", "message": "Account not found"}, 404)
+        return jsonify(acc) ,200
+    except:
+        return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
 
 @app.route('/register', methods=['POST'])
 def createAccount():
@@ -80,7 +80,7 @@ def loginAccount():
 
     flask_login.login_user(acc)
 
-    return make_response( {"status": "OK", "message": "Login successful"}, 200)
+    return jsonify(flask_login.current_user),200
 
 @app.route("/logout")
 @flask_login.login_required
@@ -90,6 +90,12 @@ def logout():
         return make_response( {"status": "OK", "message": "Logout successful"}, 200)
     except:
         return make_response( {"status": "uh oh", "message": "something went wrong"}, 400)
+
+@app.route("/myprofile")
+@flask_login.login_required
+def getMyProfile():
+    return jsonify(flask_login.current_user)
+
 #
 #       Recipe request handling
 #

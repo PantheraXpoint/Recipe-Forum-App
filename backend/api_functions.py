@@ -20,9 +20,9 @@ def queryBrowse(lim):
 
 def queryRecipe(id_num):
     if id_num:
-        return RecipeDetail.objects(id=id_num).only("steps","ingredients","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+        return RecipeDetail.objects(id=id_num).only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
     else:
-        return RecipeDetail.objects.only("steps","ingredients","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+        return RecipeDetail.objects.only("steps","ingredients","photos","creator","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
 
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
