@@ -110,7 +110,7 @@ def list_recipe_preview():
             if request.form.get('limit'):
                 lim = int(request.form.get('limit'))
             else:
-                lim = 10
+                lim = 100
             recipes = queryBrowse(lim)
             
             return Response(recipes, mimetype="application/json", status=200)
