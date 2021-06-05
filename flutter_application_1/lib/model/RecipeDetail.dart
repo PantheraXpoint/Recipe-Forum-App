@@ -8,7 +8,7 @@ class RecipeDetail {
   List<Step> steps;
   Creator creator;
   double avgRating;
-  int totalRating;
+  int totalView;
   int likes;
   String description;
 
@@ -17,7 +17,7 @@ class RecipeDetail {
       @required this.steps,
       @required this.creator,
       @required this.avgRating,
-      this.totalRating,
+      @required this.totalView,
       @required this.likes,
       @required this.description});
 
@@ -33,6 +33,7 @@ class RecipeDetail {
             st == null ? [] : List<Step>.from(st.map((e) => Step.fromJson(e))),
         creator: Creator.fromJson(json['creator']),
         avgRating: double.parse(json['avgRating'].toString()),
+        totalView: json['totalView'],
         likes: json['likes'],
         description: json['description']);
   }

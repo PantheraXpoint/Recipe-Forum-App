@@ -17,6 +17,9 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool isBookmark = false;
+  int currentTab = 0;
+  final pageController = PageController();
+  final listWidget = <Widget>[];
   RecipeDetail detail;
 
   Future<RecipeDetail> getDetail() async {
@@ -33,7 +36,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> initDetail() async {
     detail = await getDetail();
-    setState(() {});
+    setState(() {
+      listWidget.add(Introduction(
+        recipe: widget.recipe,
+        detail: detail,
+      ));
+      listWidget.add(Ingredient(detail: detail));
+      listWidget.add(SizedBox());
+    });
   }
 
   @override
@@ -59,114 +69,33 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       fit: BoxFit.cover,
                       image: NetworkImage(widget.recipe.imageUrl))),
             ),
-            Padding(
-                padding: EdgeInsets.only(left: 20, top: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                            width: 250,
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 160,
-                                  child: Text(widget.recipe.title,
-                                      style:
-                                          TextStyle(color: Color(0xFF2C2E2D))),
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Icon(Icons.bookmark_outline,
-                                    color: Colors.yellow),
-                              ],
-                            )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.center,
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(detail.creator.avatarUrl),
-                          ),
-                        ))
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                            width: 250,
-                            child: Row(
-                              children: [
-                                SmoothStarRating(
-                                    allowHalfRating: true,
-                                    onRated: (v) {},
-                                    starCount: 5,
-                                    rating: detail.avgRating / 2,
-                                    size: 25.0,
-                                    isReadOnly: true,
-                                    color: Colors.yellow,
-                                    borderColor: Colors.yellow,
-                                    spacing: 0.0),
-                                Icon(Icons.visibility),
-                                Text("10"),
-                              ],
-                            )),
-                        Expanded(
-                            child: Align(
-                          alignment: Alignment.center,
-                          child: SizedBox(
-                            width: 80,
-                            child: Text(
-                              detail.creator.name,
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ))
-                      ],
-                    ),
-                  ],
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-                height: 280,
-                width: 370,
-                child: ListView.separated(
-                    itemCount: detail.ingredients.length,
-                    separatorBuilder: (context, index) => Divider(),
-                    itemBuilder: (context, index) => ListTile(
-                          title: Row(
-                            children: [
-                              SizedBox(
-                                width: 185,
-                                child: Text(detail.ingredients[index].name),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  _parseHtmlString(
-                                      detail.ingredients[index].quantity +
-                                          " " +
-                                          detail.ingredients[index].unit),
-                                  textAlign: TextAlign.end,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ))),
-            SizedBox(
-              height: 15,
-            ),
-            ElevatedButton(
-                onPressed: () {},
-                child: Text(
-                  "Hướng dẫn thực hiện",
-                  textAlign: TextAlign.right,
-                ),
-                style: ElevatedButton.styleFrom(primary: kSecondaryColor))
-          ]));
+            Expanded(
+                child: PageView(
+              physics: NeverScrollableScrollPhysics(),
+              children: listWidget,
+              controller: pageController,
+            ))
+          ]),
+          bottomNavigationBar: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.new_label), label: "Giới thiệu"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.emoji_food_beverage), label: "Nguyên liệu"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.integration_instructions),
+                  label: "Hướng dẫn"),
+            ],
+            type: BottomNavigationBarType.fixed,
+            currentIndex: currentTab,
+            selectedItemColor: kSecondaryColor,
+            onTap: (index) => setState(() {
+              currentTab = index;
+              pageController.animateToPage(index,
+                  duration: Duration(milliseconds: 500), curve: Curves.ease);
+              print(currentTab);
+            }),
+          ));
     }
 
     return Scaffold(
@@ -175,10 +104,125 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       ),
     );
   }
+}
+
+class Introduction extends StatelessWidget {
+  final Recipe recipe;
+  final RecipeDetail detail;
+  Introduction({@required this.recipe, @required this.detail});
+  String _parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString = parse(document.body.text).documentElement.text;
+    return parsedString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, top: 20),
+      child: Column(children: [
+        Row(
+          children: [
+            SizedBox(
+                width: 250,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 175,
+                      child: Text(recipe.title,
+                          style: TextStyle(
+                              color: Color(0xFF2C2E2D), fontSize: 15.8)),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Icon(Icons.bookmark_outline, color: Colors.yellow),
+                  ],
+                )),
+            Expanded(
+                child: Align(
+              alignment: Alignment.center,
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(detail.creator.avatarUrl),
+              ),
+            ))
+          ],
+        ),
+        Row(
+          children: [
+            SizedBox(
+                width: 250,
+                child: Row(
+                  children: [
+                    SmoothStarRating(
+                        allowHalfRating: true,
+                        onRated: (v) {},
+                        starCount: 5,
+                        rating: detail.avgRating / 2,
+                        size: 25.0,
+                        isReadOnly: true,
+                        color: Colors.yellow,
+                        borderColor: Colors.yellow,
+                        spacing: 0.0),
+                    Icon(Icons.visibility),
+                    Text(detail.totalView.toString()),
+                  ],
+                )),
+            Expanded(
+                child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 80,
+                child: Text(
+                  detail.creator.name,
+                  style: TextStyle(color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ))
+          ],
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Text(_parseHtmlString(detail.description))
+      ]),
+    );
+  }
+}
+
+class Ingredient extends StatelessWidget {
+  final RecipeDetail detail;
+  Ingredient({@required this.detail});
 
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
     return parsedString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        itemCount: detail.ingredients.length,
+        separatorBuilder: (context, index) => Divider(),
+        itemBuilder: (context, index) => ListTile(
+              title: Row(
+                children: [
+                  SizedBox(
+                    width: 185,
+                    child: Text(detail.ingredients[index].name),
+                  ),
+                  Expanded(
+                    child: Text(
+                      _parseHtmlString(detail.ingredients[index].quantity +
+                          " " +
+                          detail.ingredients[index].unit),
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ],
+              ),
+            ));
   }
 }

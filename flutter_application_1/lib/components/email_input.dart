@@ -20,6 +20,15 @@ class UsernameInputState extends State<UsernameInput> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final displayNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    displayNameController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
