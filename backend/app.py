@@ -138,11 +138,11 @@ def post_recipe_detail():
     # print(recipe['name'])
     recipe.save()
     
-    name = recipe['name']
-    tempid = RecipeDetail.objects(name=name)[0]["id"]
-    prev = recipe.generatePreview()
-    prev['Id'] = tempid
-    prev.save()
+    # name = recipe['name']
+    # tempid = RecipeDetail.objects(name=name)[0].id
+    # prev = recipe.generatePreview()
+    # prev['Id'] = tempid
+    # prev.save()
     return jsonify(recipe), 200
 
 @app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
@@ -156,6 +156,14 @@ def oneRecipe(id):
             return make_response({'status':'OK', 'message' : 'Recipe deleted'},200)
         except:
             return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+@app.route('/recipe-detail/<id>/view', methods = ['PUT'])
+def increaseView(id):
+    try:
+        incrementViewCount(id)
+        return make_response({'status':'OK', 'message' : 'View incremented'},200)
+    except:
+        return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
 #
 #   Image handling

@@ -30,13 +30,25 @@ class RecipeDetail(gj.Document):
 
     creator = db.EmbeddedDocumentField(Creator)
 
+    # 'servings', 'hasVideo', 'url', 'videoUrl', '_id', 'hasCooked', 'hasLiked', 'createdOn', 'totalCook', 'urlRewrite'
+    # servings: db.IntField()
+    # hasVideo: db.BooleanField()
+    # url: db.StringField()
+    # videoUrl : db.StringField()
+    # _id: db.IntField()
+    # hasCooked: db.BooleanField()
+    # hasLiked: db.BooleanField()
+    # createdOn: db.IntField()
+    # totalCook: db.IntField()
+    # urlRewrite: db.StringField()
+
     meta = {'collection': 'recipe_detail'}
 
     def generatePreview(self):
-        return RecipePreview(Id=self.id, Name=self.name, AvgRating=0.0)
+        return RecipePreview( Id=self.id, Name=self.name, AvgRating=0.0, Img= self.getThumbnail() )
 
     def getId(self):
         return self.id
 
     def getThumbnail(self):
-        return 0
+        return self.photos[0][0]["url"]

@@ -9,7 +9,6 @@ from models.Profile import Profile
 from bson import ObjectId
 from imghdr import what
 from werkzeug.security import generate_password_hash, check_password_hash
-import pymongo
 
 db = MongoEngine()
 #
@@ -22,16 +21,25 @@ def queryRecipe(id_num):
     if id_num:
         recipe = RecipeDetail.objects(id=id_num)
         # print(recipe[0]["totalView"])
-        recipe.update(totalView=recipe[0]['totalView']+1)
-        try:
+        # recipe.update(totalView=recipe[0]['totalView']+1)
+        # try:
+        #     prev = RecipePreview.objects(Id=id_num)
+        #     prev.update(TotalView=prev[0]["TotalView"]+1)
+        # except:
+        #     print("preview of this recipe was not found")
+        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id").to_json()
+    else:
+        raise "id was not provided"
+
+def incrementViewCount(id_num):
+    recipe = RecipeDetail.objects(id=id_num)
+    recipe.update(totalView=recipe[0]['totalView']+1)
+    try:
             prev = RecipePreview.objects(Id=id_num)
             prev.update(TotalView=prev[0]["TotalView"]+1)
-        except:
-            print("preview of this recipe was not found")
-        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name").to_json()
-    else:
-        return RecipeDetail.objects.only("steps","ingredients","photos","creator","totalLike","avgRating","totalRating","totalView","totalTime","description","name").to_json()
-
+    except:
+        print("preview of this recipe was not found")
+    
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
 
