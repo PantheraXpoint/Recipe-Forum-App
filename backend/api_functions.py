@@ -20,9 +20,17 @@ def queryBrowse(lim):
 
 def queryRecipe(id_num):
     if id_num:
-        return RecipeDetail.objects(id=id_num).only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+        recipe = RecipeDetail.objects(id=id_num)
+        # print(recipe[0]["totalView"])
+        recipe.update(totalView=recipe[0]['totalView']+1)
+        try:
+            prev = RecipePreview.objects(Id=id_num)
+            prev.update(TotalView=prev[0]["TotalView"]+1)
+        except:
+            print("preview of this recipe was not found")
+        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name").to_json()
     else:
-        return RecipeDetail.objects.only("steps","ingredients","photos","creator","totalLike","avgRating","totalRating","totalTime","description","name").to_json()
+        return RecipeDetail.objects.only("steps","ingredients","photos","creator","totalLike","avgRating","totalRating","totalView","totalTime","description","name").to_json()
 
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
@@ -43,7 +51,6 @@ def queryUsername(username):
 def checkinAccount(username,password):
     try:
         acc = Profile.objects(UserName=username)[0]
-        # print( Profile(**deats) )
         hased_pass = acc["PassWord"]
         if check_password_hash(hased_pass, password):
             return acc

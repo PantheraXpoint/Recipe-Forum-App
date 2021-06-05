@@ -63,7 +63,7 @@ def createAccount():
 #
 #       Login handling
 #
-@app.route('/login',methods=['GET','POST'])
+@app.route('/login',methods=['POST'])
 def loginAccount():
     body = request.get_json()
     try:
@@ -135,7 +135,14 @@ def post_recipe_detail():
     body = request.get_json()
     recipe = RecipeDetail(**body)
     recipe['creator'] = flask_login.current_user.generateCreator()
+    # print(recipe['name'])
     recipe.save()
+    
+    name = recipe['name']
+    tempid = RecipeDetail.objects(name=name)[0]["id"]
+    prev = recipe.generatePreview()
+    prev['Id'] = tempid
+    prev.save()
     return jsonify(recipe), 200
 
 @app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
