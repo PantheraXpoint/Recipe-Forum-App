@@ -9,14 +9,15 @@ class Step {
   factory Step.fromJson(Map json) {
     print("Step fromJson");
     Iterable p = json['photos'];
-    if (p != null)
+    if (p != null) {
       return Step(
           content: json['content'],
           listImageUrl: List<String>.from(p.map((e) {
             print((e[0]['url']));
             return e[0]['url'];
           })));
-    else
+    } else {
       return Step(content: json['content'], listImageUrl: []);
+    }
   }
 }
