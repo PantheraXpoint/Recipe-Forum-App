@@ -26,9 +26,11 @@ class RecipeDetail {
     Iterable ing = json['ingredients'];
     Iterable st = json['steps'];
     return RecipeDetail(
-        ingredients:
-            List<Ingredient>.from(ing.map((e) => Ingredient.fromJson(e))),
-        steps: List<Step>.from(st.map((e) => Step.fromJson(e))),
+        ingredients: ing == null
+            ? []
+            : List<Ingredient>.from(ing.map((e) => Ingredient.fromJson(e))),
+        steps:
+            st == null ? [] : List<Step>.from(st.map((e) => Step.fromJson(e))),
         creator: Creator.fromJson(json['creator']),
         avgRating: double.parse(json['avgRating'].toString()),
         likes: json['likes'],

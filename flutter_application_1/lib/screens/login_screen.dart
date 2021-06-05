@@ -107,16 +107,16 @@ class LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(top: 15),
                   child: ElevatedButton(
                       onPressed: () {
-                        if (isValidInput())
-                          login().then((value) {
-                            setState(() {});
-                            if (value)
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomeScreen()));
-                          });
-                        setState(() {});
+                        setState(() {
+                          if (isValidInput())
+                            login().then((value) {
+                              if (value)
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => HomeScreen()));
+                            });
+                        });
                       },
                       style: ButtonStyle(
                           minimumSize:

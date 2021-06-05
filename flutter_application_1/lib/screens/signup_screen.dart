@@ -108,12 +108,12 @@ class SignupScreenState extends State<SignupScreen> {
                   padding: EdgeInsets.only(top: 15),
                   child: ElevatedButton(
                       onPressed: () {
-                        if (isValidInput())
-                          signup().then((value) {
-                            if (value) Navigator.pop(context);
-                            setState(() {});
-                          });
-                        setState(() {});
+                        setState(() {
+                          if (isValidInput())
+                            signup().then((value) {
+                              if (value) Navigator.pop(context);
+                            });
+                        });
                       },
                       style: ButtonStyle(
                           minimumSize:

@@ -46,17 +46,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Widget build(BuildContext context) {
     if (detail != null && detail.creator != null) {
       return Scaffold(
+          appBar: AppBar(
+            backgroundColor: kPrimaryColor,
+          ),
           resizeToAvoidBottomInset: false,
           body: Column(children: [
-            Container(
-              padding: EdgeInsets.only(top: 40),
-              color: kPrimaryColor,
-              width: double.infinity,
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(Icons.arrow_back)),
-            ),
             Container(
               width: MediaQuery.of(context).size.width,
               height: 280,
@@ -141,25 +135,30 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 height: 280,
                 width: 370,
                 child: ListView.separated(
-                  itemCount: detail.ingredients.length,
-                  separatorBuilder: (context, index) => Divider(),
-                  itemBuilder: (context, index) => Row(
-                    children: [
-                      SizedBox(
-                        width: 185,
-                        child: Text(detail.ingredients[index].name),
-                      ),
-                      Expanded(
-                        child: Text(
-                          _parseHtmlString(detail.ingredients[index].quantity +
-                              " " +
-                              detail.ingredients[index].unit),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+                    itemCount: detail.ingredients.length,
+                    separatorBuilder: (context, index) => Divider(),
+                    itemBuilder: (context, index) => ListTile(
+                          title: Row(
+                            children: [
+                              SizedBox(
+                                width: 185,
+                                child: Text(detail.ingredients[index].name),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  _parseHtmlString(
+                                      detail.ingredients[index].quantity +
+                                          " " +
+                                          detail.ingredients[index].unit),
+                                  textAlign: TextAlign.end,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))),
+            SizedBox(
+              height: 15,
+            ),
             ElevatedButton(
                 onPressed: () {},
                 child: Text(

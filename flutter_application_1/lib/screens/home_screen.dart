@@ -99,21 +99,31 @@ class HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 40,
               ),
-              RecipeSlider(
-                list: list,
-              ),
-              RecipeSlider(
-                list: list,
-                difficulty: "Dễ",
-              ),
-              RecipeSlider(
-                list: list,
-                difficulty: "Trung bình",
-              ),
-              RecipeSlider(
-                list: list,
-                difficulty: "Khó",
-              ),
+              SizedBox(
+                child: list == null
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Column(
+                        children: [
+                          RecipeSlider(
+                            list: list,
+                          ),
+                          RecipeSlider(
+                            list: list,
+                            difficulty: "Dễ",
+                          ),
+                          RecipeSlider(
+                            list: list,
+                            difficulty: "Trung bình",
+                          ),
+                          RecipeSlider(
+                            list: list,
+                            difficulty: "Khó",
+                          ),
+                        ],
+                      ),
+              )
             ],
           ),
         ),
