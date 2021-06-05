@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_application_2/screens/home_screen.dart';
 import 'package:flutter_application_2/screens/signup_screen.dart';
 
@@ -26,10 +28,10 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   bool isValidInput() {
-    if (!EmailValidator.validate(email)) {
-      message = "Invalid email!";
-      return false;
-    }
+    // if (!EmailValidator.validate(email)) {
+    //   message = "Invalid email!";
+    //   return false;
+    // }
     if (email.isEmpty || password.isEmpty) {
       message = "Email or password missing!";
       return false;
@@ -39,9 +41,12 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<bool> login() async {
-    Map<String, String> body = {"email": email, "password": password};
-    final response =
-        await http.post(Uri.http("127.0.0.1:4996", "/login"), body: body);
+    Map<String, String> body = {"UserName": email, "PassWord": password};
+    final response = await http.post(Uri.http("127.0.0.1:4996", "/login"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: json.encode(body));
     print("Request successfully");
     print(response.statusCode);
     if (response.statusCode == 200) {
@@ -90,7 +95,7 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
                 Container(
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: EmailInput(
+                    child: UsernameInput(
                       onEmailChanged: (value) {
                         email = value;
                       },

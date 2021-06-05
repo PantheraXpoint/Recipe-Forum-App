@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_application_2/screens/login_screen.dart';
 
 import '../components/constaints.dart';
@@ -13,25 +15,22 @@ class SignupScreen extends StatefulWidget {
 }
 
 class SignupScreenState extends State<SignupScreen> {
-  String email;
+  String username;
   String password;
+  String display;
   String message;
 
   @override
   void initState() {
     super.initState();
-    email = "";
+    username = "";
     password = "";
     message = "";
   }
 
   bool isValidInput() {
-    if (!EmailValidator.validate(email)) {
-      message = "Invalid email!";
-      return false;
-    }
-    if (email.isEmpty || password.isEmpty) {
-      message = "Email or password missing!";
+    if (username.isEmpty || password.isEmpty || display.isEmpty) {
+      message = "Please enter full information!";
       return false;
     }
     message = "";
@@ -39,16 +38,23 @@ class SignupScreenState extends State<SignupScreen> {
   }
 
   Future<bool> signup() async {
-    Map<String, String> body = {"email": email, "password": password};
-    final response =
-        await http.post(Uri.http("127.0.0.1:4996", "/register"), body: body);
+    Map<String, String> body = {
+      "UserName": username,
+      "PassWord": password,
+      "DisplayName": display
+    };
+    final response = await http.post(Uri.http("127.0.0.1:4996", "/register"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: json.encode(body));
     print("Request successfully");
     print(response.statusCode);
     if (response.statusCode == 200) {
       message = "Sign up successfully";
       return true;
     } else if (response.statusCode == 400) {
-      message = "Email already taken";
+      message = "Username already taken";
       return false;
     } else {
       message = "Sign up failed";
@@ -89,15 +95,15 @@ class SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
-                    child: EmailInput(
-                      onEmailChanged: (value) {
-                        email = value;
-                      },
-                      onPasswordChanged: (value) {
-                        password = value;
-                      },
-                    )),
+                  padding: EdgeInsets.fromLTRB(20, 5, 20, 0),
+                  child: UsernameInput(onEmailChanged: (value) {
+                    username = value;
+                  }, onPasswordChanged: (value) {
+                    password = value;
+                  }, onDisplayChanged: (value) {
+                    display = value;
+                  }),
+                ),
                 Padding(
                   padding: EdgeInsets.only(top: 15),
                   child: ElevatedButton(

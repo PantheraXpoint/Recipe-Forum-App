@@ -1,26 +1,25 @@
-import 'dart:convert';
-import 'dart:io';
-
 import '../components/constaints.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
-
-class EmailInput extends StatefulWidget {
+class UsernameInput extends StatefulWidget {
   //final String type;
   final ValueChanged<String> onEmailChanged;
   final ValueChanged<String> onPasswordChanged;
-  EmailInput({@required this.onEmailChanged, @required this.onPasswordChanged});
+  final ValueChanged<String> onDisplayChanged;
+  UsernameInput(
+      {@required this.onEmailChanged,
+      @required this.onPasswordChanged,
+      this.onDisplayChanged});
 
   @override
-  State<StatefulWidget> createState() => EmailInputState();
+  State<StatefulWidget> createState() => UsernameInputState();
 }
 
-class EmailInputState extends State<EmailInput> {
-  final emailController = TextEditingController();
+class UsernameInputState extends State<UsernameInput> {
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-
+  final displayNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -33,7 +32,7 @@ class EmailInputState extends State<EmailInput> {
             decoration: BoxDecoration(
                 color: kPrimaryColor, borderRadius: BorderRadius.circular(8)),
             child: TextFormField(
-              controller: emailController,
+              controller: usernameController,
               onChanged: (value) {
                 widget.onEmailChanged(value);
                 setState(() {});
@@ -47,7 +46,7 @@ class EmailInputState extends State<EmailInput> {
                   disabledBorder: InputBorder.none,
                   contentPadding:
                       EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                  hintText: "Email"),
+                  hintText: "Username"),
             ),
           ),
           SizedBox(
@@ -77,6 +76,37 @@ class EmailInputState extends State<EmailInput> {
                   hintText: "Password"),
             ),
           ),
+          SizedBox(
+            height: widget.onDisplayChanged == null ? 0 : 15,
+          ),
+          SizedBox(
+            child: widget.onDisplayChanged == null
+                ? null
+                : Container(
+                    padding: EdgeInsets.fromLTRB(10, 25, 10, 10),
+                    height: height / 15,
+                    decoration: BoxDecoration(
+                        color: kPrimaryColor,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: TextFormField(
+                      controller: displayNameController,
+                      onChanged: (value) {
+                        widget.onDisplayChanged(value);
+                        setState(() {});
+                      },
+                      cursorColor: Colors.black,
+                      decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.only(
+                              left: 15, bottom: 11, top: 11, right: 15),
+                          hintText: "Display name"),
+                    ),
+                  ),
+          )
         ],
       ),
     );

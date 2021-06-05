@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/model/RecipeDetail.dart';
@@ -48,163 +49,141 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           resizeToAvoidBottomInset: false,
           body: Column(children: [
             Container(
+              alignment: Alignment.centerLeft,
               padding: EdgeInsets.only(top: 40),
               color: kPrimaryColor,
-              child: Row(
+              width: double.infinity,
+              child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back)),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 280,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.recipe.imageUrl))),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 20),
+              child: Column(
                 children: [
-                  Container(
-                    width: 50,
-                    child: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.arrow_back)),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 160,
+                              child: Text(widget.recipe.title,
+                                  style: TextStyle(color: Color(0xFF2C2E2D))),
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Icon(Icons.bookmark_outline, color: Colors.yellow),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: Align(
+                        alignment: Alignment.center,
+                        child: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(detail.creator.avatarUrl),
+                        ),
+                      ))
+                    ],
                   ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Ingredients",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20),
-                          ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        child: Row(
+                          children: [
+                            SmoothStarRating(
+                                allowHalfRating: true,
+                                onRated: (v) {},
+                                starCount: 5,
+                                rating: detail.avgRating / 2,
+                                size: 25.0,
+                                isReadOnly: true,
+                                color: Colors.yellow,
+                                borderColor: Colors.yellow,
+                                spacing: 0.0),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(Icons.visibility),
+                            Text("123"),
+                          ],
                         ),
-                        SizedBox(
-                          width: 50,
+                      ),
+                      Expanded(
+                          child: SizedBox(
+                        width: 70,
+                        child: Text(
+                          detail.creator.name,
+                          style: TextStyle(color: Colors.black),
+                          textAlign: TextAlign.center,
                         ),
-                      ],
-                    ),
-                  )
+                      )),
+                    ],
+                  ),
                 ],
               ),
             ),
-            Container(
-                height: 300,
-                padding: EdgeInsets.fromLTRB(40, 200, 40, 10),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(widget.recipe.imageUrl))),
-                child: Container(
-                    padding: EdgeInsets.only(left: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF2C2E2D).withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              "https://image.cooky.vn/usr/g13/126457/avt/s140/cooky-avatar-636658845110260221.jpg"),
-                        ),
-                        SizedBox(
-                          width: 50,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Recipe by:",
-                                style: TextStyle(color: Color(0xFF7A7A7A))),
-                            Text("Tau Nhat Quang",
-                                style: TextStyle(color: Colors.white)),
-                          ],
-                        ),
-                      ],
-                    ))),
-            Column(
-              children: [
-                Padding(padding: EdgeInsets.only(top: 20)),
-                Row(
+            SizedBox(height: 15),
+            SizedBox(
+              height: 290,
+              width: 370,
+              child: ListView.separated(
+                itemCount: detail.ingredients.length,
+                separatorBuilder: (context, index) => Divider(),
+                itemBuilder: (context, index) => Row(
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
-                    Text("Bánh Crepe Kem Sầu Riêng",
-                        style: TextStyle(color: Color(0xFF2C2E2D))),
                     SizedBox(
-                      width: 20,
+                      width: 185,
+                      child: Text(
+                        detail.ingredients[index].name,
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                    Icon(Icons.bookmark_outline, color: Colors.green),
+                    Expanded(
+                      child: Text(
+                        _parseHtmlString(detail.ingredients[index].quantity) +
+                            " " +
+                            detail.ingredients[index].unit,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
-                    SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) {},
-                        starCount: 5,
-                        rating: 3.5,
-                        size: 25.0,
-                        isReadOnly: true,
-                        color: Colors.green,
-                        borderColor: Colors.green,
-                        spacing: 0.0),
-                    SizedBox(width: 40, child: Text("3.5")),
-                    Icon(Icons.visibility),
-                    Text("10"),
-                  ],
-                ),
-                Padding(padding: EdgeInsets.only(top: 10)),
-                Row(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                          minimumSize: MaterialStateProperty.all<Size>(Size(
-                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                          shape: MaterialStateProperty.all<
-                                  ContinuousRectangleBorder>(
-                              ContinuousRectangleBorder()),
-                        ),
-                        child: Text(
-                          "Ingredients",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                    SizedBox(
-                      width: 2,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                          minimumSize: MaterialStateProperty.all<Size>(Size(
-                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                          shape: MaterialStateProperty.all<
-                                  ContinuousRectangleBorder>(
-                              ContinuousRectangleBorder()),
-                        ),
-                        child: Text(
-                          "Instructions",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                    SizedBox(
-                      width: 2,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {},
-                        style: ButtonStyle(
-                          minimumSize: MaterialStateProperty.all<Size>(Size(
-                              (MediaQuery.of(context).size.width - 4) / 3, 50)),
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
-                          shape: MaterialStateProperty.all<
-                                  ContinuousRectangleBorder>(
-                              ContinuousRectangleBorder()),
-                        ),
-                        child: Text(
-                          "Reviews",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                  ],
-                )
-              ],
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text("Hướng dẫn"),
+              style: ElevatedButton.styleFrom(primary: kSecondaryColor),
             )
           ]));
     }
     return Scaffold(
-      body: CircularProgressIndicator(),
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
+  }
+
+  String _parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString = parse(document.body.text).documentElement.text;
+    return parsedString;
   }
 }
