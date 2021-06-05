@@ -18,17 +18,16 @@ def queryBrowse(lim):
     return RecipePreview.objects[:lim].only("Name","AvgRating","Img","Level","TotalTime","Id").to_json()
 
 def queryRecipe(id_num):
-    if id_num:
+    try:
         recipe = RecipeDetail.objects(id=id_num)
-        # print(recipe[0]["totalView"])
-        # recipe.update(totalView=recipe[0]['totalView']+1)
-        # try:
-        #     prev = RecipePreview.objects(Id=id_num)
-        #     prev.update(TotalView=prev[0]["TotalView"]+1)
-        # except:
-        #     print("preview of this recipe was not found")
+        recipe.update(totalView=recipe[0]['totalView']+1)
+        try:
+            preview = RecipePreview.objects(Id=id_num)
+            preview.update(TotalView=preview[0]["TotalView"]+1)
+        except:
+            print("preview of this recipe was not found")
         return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id").to_json()
-    else:
+    except:
         raise "id was not provided"
 
 def incrementViewCount(id_num):
@@ -42,6 +41,10 @@ def incrementViewCount(id_num):
     
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
+    try:
+        RecipePreview.objects(Id=id_num).delete()
+    except:
+        print('preview not found')
 
 #
 #   ACCOUNT FUNCTION

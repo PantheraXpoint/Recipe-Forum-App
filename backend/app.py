@@ -124,10 +124,8 @@ def list_recipe_preview():
 
 @app.route('/recipe-detail', methods=["GET"])
 def get_recipe_detail():
-    # if (request.method == "GET"):
     recipes = RecipeDetail.objects.to_json()
     return Response(recipes, mimetype="application/json", status=200)
-    # elif (request.method == "POST"):
 
 @app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
@@ -138,18 +136,22 @@ def post_recipe_detail():
     # print(recipe['name'])
     recipe.save()
     
-    # name = recipe['name']
-    # tempid = RecipeDetail.objects(name=name)[0].id
-    # prev = recipe.generatePreview()
-    # prev['Id'] = tempid
-    # prev.save()
+    templist = RecipeDetail.objects(name=recipe.name)
+    tempId = templist[templist.count()-1].getId()
+    preview = recipe.generatePreview()
+    preview['Id'] = tempId
+    preview.save()
+
     return jsonify(recipe), 200
 
 @app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
 def oneRecipe(id):
     if request.method == 'GET':
+        # try:
         recipes = queryRecipe(id)
         return Response(recipes, mimetype="application/json", status=200)
+        # except:
+        #     return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
     elif request.method == 'DELETE':
         try:
             deleteRecipe( int(id) )
