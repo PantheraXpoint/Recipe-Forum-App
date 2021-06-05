@@ -9,6 +9,8 @@ class Creator(db.EmbeddedDocument):
     username = db.StringField()
     id = db.IntField(required=True)
     photos = db.ListField(db.EmbeddedDocumentField(Photo))
+    totalFollower= db.IntField()
+    totalRecipe = db.IntField()
 
 class Profile(gj.Document):
     Id = db.SequenceField()
