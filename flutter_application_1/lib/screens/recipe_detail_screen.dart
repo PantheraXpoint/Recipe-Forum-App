@@ -185,7 +185,10 @@ class Introduction extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        Text(_parseHtmlString(detail.description))
+        Padding(
+          padding: EdgeInsets.only(right: 20),
+          child: Text(_parseHtmlString(detail.description)),
+        )
       ]),
     );
   }
