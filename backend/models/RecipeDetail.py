@@ -3,6 +3,7 @@ from flask_mongoengine import MongoEngine
 from models.Ingredient import Ingredient
 from models.Photo import Photo
 from models.Profile import Profile, Creator
+from models.RecipePreview import RecipePreview
 db = MongoEngine()
 
 class IngredientDetail(Ingredient):
@@ -14,16 +15,28 @@ class Step(gj.Document):
 
 class RecipeDetail(gj.Document):
     id = db.SequenceField()
+    _id = db.IntField()
     name = db.StringField(required=True)
     description = db.StringField(required=True)
     photos = db.ListField(db.ListField(db.EmbeddedDocumentField(Photo))) #list of list?
     ingredients = db.ListField(db.ReferenceField(IngredientDetail))
     steps = db.ListField(db.ReferenceField(Step))
+
     avgRating = db.DecimalField(required=True)
-    totalRating = db.IntField()
-    totalLike = db.IntField()
+    totalView = db.IntField(required=True,default=0)
+    totalRating = db.IntField(default=0)
+    totalLike = db.IntField(default=0)
     totalTime = db.IntField()
 
     creator = db.EmbeddedDocumentField(Creator)
 
     meta = {'collection': 'recipe_detail'}
+
+    def generatePreview(self):
+        return RecipePreview(Id=self.id, Name=self.name, AvgRating=0.0)
+
+    def getId(self):
+        return self.id
+
+    def getThumbnail(self):
+        return 0
