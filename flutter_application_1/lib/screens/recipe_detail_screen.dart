@@ -42,7 +42,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         detail: detail,
       ));
       listWidget.add(Ingredient(detail: detail));
-      listWidget.add(SizedBox());
+      listWidget.add(Steps(
+        detail: detail,
+      ));
     });
   }
 
@@ -71,9 +73,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
             Expanded(
                 child: PageView(
-              physics: NeverScrollableScrollPhysics(),
               children: listWidget,
               controller: pageController,
+              onPageChanged: (value) => setState(() => currentTab = value),
             ))
           ]),
           bottomNavigationBar: BottomNavigationBar(
@@ -92,7 +94,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             onTap: (index) => setState(() {
               currentTab = index;
               pageController.animateToPage(index,
-                  duration: Duration(milliseconds: 500), curve: Curves.ease);
+                  duration: Duration(milliseconds: 500), curve: Curves.easeIn);
               print(currentTab);
             }),
           ));
@@ -227,5 +229,49 @@ class Ingredient extends StatelessWidget {
                 ],
               ),
             ));
+  }
+}
+
+class Steps extends StatelessWidget {
+  final RecipeDetail detail;
+  Steps({@required this.detail});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: detail.steps.length,
+      separatorBuilder: (context, index) => SizedBox(
+        height: 15,
+      ),
+      itemBuilder: (context, index) => ListTile(
+          title: Column(
+        children: [
+          RichText(
+              text: TextSpan(
+                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  children: [
+                TextSpan(
+                    text: "Bước ${index + 1}: ",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: detail.steps[index].content)
+              ])),
+          SizedBox(
+            height: 5,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 250,
+            child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, i) => Image(
+                    image: NetworkImage(detail.steps[index].listImageUrl[i])),
+                separatorBuilder: (context, i) => SizedBox(
+                      width: 10,
+                    ),
+                itemCount: detail.steps[index].listImageUrl.length),
+          )
+        ],
+      )),
+    );
   }
 }
