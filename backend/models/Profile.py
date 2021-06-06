@@ -47,5 +47,24 @@ class Profile(gj.Document):
     def getPassword(self):
         return self.PassWord
 
+    # dont use these fields
+    Cooked = db.BooleanField()
+    Status = db.StringField()
+    TotalFriends = db.IntField()
+    PointLevelBases = db.FloatField()
+    TotalFollowers = db.IntField()
+    TotalPictures = db.StringField()
+    Level = db.StringField()
+    Avatar = db.StringField()
+    Verified = db.BooleanField()
+    ProfileUrl = db.StringField()
+    Cover = db.StringField()
+    TopRecipes = db.StringField()
+    LevelName = db.StringField()
+    TotalCollections = db.StringField()
+    Signature = db.StringField()
+    VerifyingPercent = db.StringField()
+    TotalViews = db.IntField()
+
 # if __name__ == '__main__':
 #     print(generate_password_hash('12345678'))
