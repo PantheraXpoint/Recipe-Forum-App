@@ -218,7 +218,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:4996/recipe-detail/33870",
+					"raw": "http://localhost:4996/recipe-detail/46",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -226,7 +226,7 @@
 					"port": "4996",
 					"path": [
 						"recipe-detail",
-						"33870"
+						"46"
 					]
 				}
 			},
@@ -253,11 +253,8 @@
 		},
 		{
 			"name": "Login",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
