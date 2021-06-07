@@ -170,32 +170,44 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 )),
           ),
           SizedBox(
-            height: 80,
+            height: 30,
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 50,
-            child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, i) => Image(
-                      image: NetworkImage(
-                          "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
+              width: MediaQuery.of(context).size.width,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) => CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg",
+                          ),
+                          radius: 25,
+                        ),
+                    separatorBuilder: (context, i) => SizedBox(
+                          width: 20,
+                        ),
+                    itemCount: 10),
+              )),
+          Expanded(
+              child: DefaultTabController(
+                  length: 2,
+                  child: Scaffold(
+                    appBar: TabBar(
+                      indicatorColor: kPrimaryColor,
+                      tabs: [
+                        Tab(
+                            icon: Icon(
+                          Icons.access_alarm_rounded,
+                          color: kSecondaryColor,
+                        )),
+                        Tab(
+                            icon: Icon(Icons.access_alarm_sharp,
+                                color: kSecondaryColor)),
+                      ],
                     ),
-                separatorBuilder: (context, i) => SizedBox(
-                      width: 10,
-                    ),
-                itemCount: 10),
-          ),
-          DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                appBar: TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.access_alarm_rounded)),
-                    Tab(icon: Icon(Icons.access_alarm_sharp)),
-                  ],
-                ),
-              ))
+                  )))
         ]),
       ),
     );
