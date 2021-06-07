@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/components/recipe-slider.dart';
+import 'package:flutter_application_2/model/Profile.dart';
+
 import 'package:flutter_application_2/model/Recipe.dart';
-import 'package:http/http.dart' as http;
 
 import '../apis.dart';
 import 'myprofile_screen.dart';
@@ -17,16 +16,19 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   List<Recipe> listRecipe = [];
+  Profile profile;
+
   final listWidget = <Widget>[];
   final pageController = PageController();
   int currentTab = 0;
 
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
-
+    profile = await APIs.getMyProfile();
     setState(() {
       listWidget.add(Home(
         list: listRecipe,
+        profile: profile,
       ));
 
       listWidget.add(MyProfileScreen());
@@ -76,7 +78,8 @@ class HomeScreenState extends State<HomeScreen> {
 
 class Home extends StatelessWidget {
   final List<Recipe> list;
-  Home({@required this.list});
+  final Profile profile;
+  Home({@required this.list, @required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +91,7 @@ class Home extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello user,",
+              "Hello ${profile.displayName},",
               style: TextStyle(
                 color: kText,
                 fontSize: 25,

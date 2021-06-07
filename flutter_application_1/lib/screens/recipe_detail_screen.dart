@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
-import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 import '../apis.dart';
@@ -168,7 +165,7 @@ class Introduction extends StatelessWidget {
               child: SizedBox(
                 width: 80,
                 child: Text(
-                  detail.creator.name,
+                  detail.creator.displayName,
                   style: TextStyle(color: Colors.black),
                   textAlign: TextAlign.center,
                 ),

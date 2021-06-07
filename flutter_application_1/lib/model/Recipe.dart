@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'Creator.dart';
+import 'Profile.dart';
 import 'Ingredient.dart';
 import 'Step.dart';
 
@@ -13,14 +13,14 @@ class Recipe {
 
   List<Ingredient> ingredients;
   List<Step> steps;
-  Creator creator;
+  Profile creator;
   double avgRating;
   int totalView;
   int likes;
   String description;
 
   Recipe(
-      {@required this.recipeId,
+      {this.recipeId,
       @required this.title,
       @required this.totalPrepTime,
       @required this.difficulty,
@@ -57,7 +57,7 @@ class Recipe {
             : List<Ingredient>.from(ing.map((e) => Ingredient.fromJson(e))),
         steps:
             st == null ? [] : List<Step>.from(st.map((e) => Step.fromJson(e))),
-        creator: Creator.fromJson(json['creator']),
+        creator: Profile.fromJsonCreator(json['creator']),
         avgRating: double.parse(json['avgRating'].toString()),
         totalView: json['totalView'],
         likes: json['likes'],

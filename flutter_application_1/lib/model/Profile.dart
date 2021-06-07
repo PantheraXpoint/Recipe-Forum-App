@@ -5,25 +5,34 @@ class Profile {
   String username;
   String displayName;
   String avatarUrl;
-  String password;
-  int totalRecipes;
+  int totalFollower = 0;
+  int totalRecipe;
 
   Profile(
       {@required this.id,
       @required this.username,
       @required this.displayName,
       @required this.avatarUrl,
-      @required this.password,
-      @required this.totalRecipes});
+      this.totalFollower,
+      @required this.totalRecipe});
 
-  factory Profile.fromJson(Map json) {
-    print("Profile fromJson");
+  factory Profile.fromJsonCreator(Map json) {
+    print("Creator fromJson");
+    return Profile(
+        id: json['id'],
+        username: json['username'],
+        displayName: json['name'],
+        avatarUrl: json['photos'][0]['url'],
+        totalFollower: json['totalFollower'],
+        totalRecipe: json['totalRecipe']);
+  }
+
+  factory Profile.fromJsonProfile(Map json) {
     return Profile(
         id: json['Id'],
         username: json['UserName'],
         displayName: json['DisplayName'],
         avatarUrl: json['AvatarUrl'],
-        password: json['PassWord'],
-        totalRecipes: json['TotalRecipes']);
+        totalRecipe: json['TotalRecipes']);
   }
 }
