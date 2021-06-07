@@ -186,16 +186,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     ),
                 itemCount: 10),
           ),
-          DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                appBar: TabBar(
-                  tabs: [
-                    Tab(icon: Icon(Icons.access_alarm_rounded)),
-                    Tab(icon: Icon(Icons.access_alarm_sharp)),
-                  ],
-                ),
-              ))
         ]),
       ),
     );
