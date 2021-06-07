@@ -170,7 +170,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 )),
           ),
           SizedBox(
-            height: 50,
+            height: 80,
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
