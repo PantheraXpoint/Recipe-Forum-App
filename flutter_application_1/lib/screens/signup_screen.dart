@@ -1,14 +1,8 @@
-import 'dart:convert';
-
-import 'package:flutter_application_2/screens/login_screen.dart';
-
 import '../apis.dart';
 import '../components/constaints.dart';
 import '../components/email_input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
   @override
