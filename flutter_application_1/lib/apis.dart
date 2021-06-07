@@ -4,8 +4,6 @@ import 'components/constaints.dart';
 import 'model/Recipe.dart';
 import 'package:http/http.dart' as http;
 
-import 'model/RecipeDetail.dart';
-
 class APIs {
   static Map<String, String> _headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8'
@@ -18,7 +16,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
       return list;
     }
     return null;
@@ -45,12 +43,13 @@ class APIs {
     return response.statusCode == 200;
   }
 
-  static Future<RecipeDetail> getRecipeDetail(int id) async {
-    final response = await http.get(Uri.http(BASE_URL, "recipe-detail/${id}"),
+  static Future<Recipe> getRecipeDetail(Recipe recipe) async {
+    final response = await http.get(
+        Uri.http(BASE_URL, "recipe-detail/${recipe.recipeId}"),
         headers: _headers);
     updateCookie(response);
     if (response.statusCode == 200)
-      return RecipeDetail.fromJson(json.decode(response.body)[0]);
+      return Recipe.fromJsonDetail(json.decode(response.body)[0], recipe);
     return null;
   }
 

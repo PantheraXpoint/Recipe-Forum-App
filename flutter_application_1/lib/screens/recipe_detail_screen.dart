@@ -8,6 +8,8 @@ import 'package:flutter_application_2/model/RecipeDetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
+import '../apis.dart';
+
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
   RecipeDetailScreen({@required this.recipe});
@@ -16,29 +18,16 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  Recipe detail;
   bool isBookmark = false;
   int currentTab = 0;
   final pageController = PageController();
   final listWidget = <Widget>[];
-  RecipeDetail detail;
-
-  Future<RecipeDetail> getDetail() async {
-    final response = await http
-        .get(Uri.http(BASE_URL, "recipe-detail/${widget.recipe.recipeId}"));
-    print("Done requesting");
-    if (response.statusCode == 200) {
-      print("Request successfully");
-      return RecipeDetail.fromJson(json.decode(response.body)[0]);
-    }
-
-    return null;
-  }
 
   Future<void> initDetail() async {
-    detail = await getDetail();
+    detail = await APIs.getRecipeDetail(widget.recipe);
     setState(() {
       listWidget.add(Introduction(
-        recipe: widget.recipe,
         detail: detail,
       ));
       listWidget.add(Ingredient(detail: detail));
@@ -114,9 +103,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 }
 
 class Introduction extends StatelessWidget {
-  final Recipe recipe;
-  final RecipeDetail detail;
-  Introduction({@required this.recipe, @required this.detail});
+  final Recipe detail;
+  Introduction({@required this.detail});
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -136,7 +124,7 @@ class Introduction extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 175,
-                      child: Text(recipe.title,
+                      child: Text(detail.title,
                           style: TextStyle(
                               color: Color(0xFF2C2E2D), fontSize: 15.8)),
                     ),
@@ -202,7 +190,7 @@ class Introduction extends StatelessWidget {
 }
 
 class Ingredient extends StatelessWidget {
-  final RecipeDetail detail;
+  final Recipe detail;
   Ingredient({@required this.detail});
 
   String _parseHtmlString(String htmlString) {
@@ -238,7 +226,7 @@ class Ingredient extends StatelessWidget {
 }
 
 class Steps extends StatelessWidget {
-  final RecipeDetail detail;
+  final Recipe detail;
   Steps({@required this.detail});
 
   @override
