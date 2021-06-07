@@ -7,6 +7,7 @@ import 'package:flutter_application_2/model/Profile.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 
 import '../apis.dart';
+import 'myprofile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class HomeScreenState extends State<HomeScreen> {
         profile: profile,
       ));
 
-      listWidget.add(Text("ok"));
+      listWidget.add(MyProfileScreen());
       print(listWidget.length);
     });
   }
