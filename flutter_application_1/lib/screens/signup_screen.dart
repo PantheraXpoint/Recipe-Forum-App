@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_application_2/screens/login_screen.dart';
 
+import '../apis.dart';
 import '../components/constaints.dart';
 import '../components/email_input.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,31 +36,6 @@ class SignupScreenState extends State<SignupScreen> {
     }
     message = "";
     return true;
-  }
-
-  Future<bool> signup() async {
-    Map<String, String> body = {
-      "UserName": username,
-      "PassWord": password,
-      "DisplayName": display
-    };
-    final response = await http.post(Uri.http("127.0.0.1:4996", "/register"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: json.encode(body));
-    print("Request successfully");
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      message = "Sign up successfully";
-      return true;
-    } else if (response.statusCode == 400) {
-      message = "Username already taken";
-      return false;
-    } else {
-      message = "Sign up failed";
-      return false;
-    }
   }
 
   @override
@@ -110,7 +86,8 @@ class SignupScreenState extends State<SignupScreen> {
                       onPressed: () {
                         setState(() {
                           if (isValidInput())
-                            signup().then((value) {
+                            APIs.signup(username, password, display)
+                                .then((value) {
                               if (value) Navigator.pop(context);
                             });
                         });

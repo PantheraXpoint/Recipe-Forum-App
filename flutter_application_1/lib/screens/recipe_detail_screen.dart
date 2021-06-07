@@ -55,6 +55,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (detail != null && detail.creator != null) {
       return Scaffold(
@@ -94,8 +100,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             onTap: (index) => setState(() {
               currentTab = index;
               pageController.animateToPage(index,
-                  duration: Duration(milliseconds: 500), curve: Curves.easeIn);
-              print(currentTab);
+                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
             }),
           ));
     }
@@ -259,16 +264,21 @@ class Steps extends StatelessWidget {
             height: 5,
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 250,
-            child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, i) => Image(
-                    image: NetworkImage(detail.steps[index].listImageUrl[i])),
-                separatorBuilder: (context, i) => SizedBox(
-                      width: 10,
-                    ),
-                itemCount: detail.steps[index].listImageUrl.length),
+            child: detail.steps[index].listImageUrl.length == 0
+                ? null
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 250,
+                    child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, i) => Image(
+                            image: NetworkImage(
+                                detail.steps[index].listImageUrl[i])),
+                        separatorBuilder: (context, i) => SizedBox(
+                              width: 10,
+                            ),
+                        itemCount: detail.steps[index].listImageUrl.length),
+                  ),
           )
         ],
       )),

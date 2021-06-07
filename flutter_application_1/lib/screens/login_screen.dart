@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_application_2/screens/home_screen.dart';
 import 'package:flutter_application_2/screens/signup_screen.dart';
 
+import '../apis.dart';
 import '../components/constaints.dart';
 import '../components/email_input.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,13 +17,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  String email;
+  String username;
   String password;
   String message;
   @override
   void initState() {
     super.initState();
-    email = "";
+    username = "";
     password = "";
     message = "";
   }
@@ -32,30 +33,12 @@ class LoginScreenState extends State<LoginScreen> {
     //   message = "Invalid email!";
     //   return false;
     // }
-    if (email.isEmpty || password.isEmpty) {
+    if (username.isEmpty || password.isEmpty) {
       message = "Email or password missing!";
       return false;
     }
     message = "";
     return true;
-  }
-
-  Future<bool> login() async {
-    Map<String, String> body = {"UserName": email, "PassWord": password};
-    final response = await http.post(Uri.http("127.0.0.1:4996", "/login"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: json.encode(body));
-    print("Request successfully");
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      message = "Login successfully";
-      return true;
-    } else {
-      message = "Login failed";
-      return false;
-    }
   }
 
   @override
@@ -97,7 +80,7 @@ class LoginScreenState extends State<LoginScreen> {
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: UsernameInput(
                       onEmailChanged: (value) {
-                        email = value;
+                        username = value;
                       },
                       onPasswordChanged: (value) {
                         password = value;
@@ -109,7 +92,7 @@ class LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         setState(() {
                           if (isValidInput())
-                            login().then((value) {
+                            APIs.login(username, password).then((value) {
                               if (value)
                                 Navigator.push(
                                     context,
