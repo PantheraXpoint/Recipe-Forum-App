@@ -8,6 +8,7 @@ import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:http/http.dart' as http;
 
 import '../apis.dart';
+import 'myprofile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -28,7 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
         list: listRecipe,
       ));
 
-      listWidget.add(Text("ok"));
+      listWidget.add(MyProfileScreen());
       print(listWidget.length);
     });
   }
