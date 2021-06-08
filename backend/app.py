@@ -48,6 +48,11 @@ def accountLookup(username):
     except:
         return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
 
+@app.route('/account/<username>/recipe', methods=["GET"])
+def creationLookup(username):
+    recipe = queryCreation(username)
+    return jsonify(recipe), 200
+
 @app.route('/register', methods=['POST'])
 def createAccount():
     body = request.get_json()
@@ -95,6 +100,11 @@ def logout():
 @flask_login.login_required
 def getMyProfile():
     return jsonify(flask_login.current_user)
+
+@app.route("/myprofile/recipe")
+@flask_login.login_required
+def getMyCreations():
+    return jsonify(queryCreation( flask_login.current_user["UserName"] )), 200
 
 #
 #       Recipe request handling

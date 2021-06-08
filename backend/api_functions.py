@@ -68,3 +68,7 @@ def checkinAccount(username,password):
         return 0
     except:
         return -1
+
+def queryCreation(username):
+    recipe = RecipeDetail.objects(creator__username=username)
+    return recipe

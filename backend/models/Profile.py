@@ -27,6 +27,9 @@ class Profile(gj.Document):
     def get_id(self):
         return str(self.Id)
 
+    def get_username(self):
+        return str(self.UserName)
+
     def generateCreator(self):
         phot = Photo(url=self.AvatarUrl)
         return Creator(name=self.DisplayName, username=self.UserName, id=self.Id, photos=[phot])
