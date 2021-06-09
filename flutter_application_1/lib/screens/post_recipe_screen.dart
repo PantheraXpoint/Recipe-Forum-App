@@ -76,6 +76,32 @@ class Introduction extends StatefulWidget {
 
 class _IntroductionState extends State<Introduction> {
   File _image;
+  String level = "";
+  String defaultFT = "Khai vị";
+  List<String> foodtype = [
+    "Khai vị",
+    "Tráng miệng",
+    "Món Chay",
+    "Món chính",
+    "Ăn sáng",
+    "Nhanh và dễ",
+    "Thức uống",
+    "Bánh",
+    "Món ăn cho trẻ",
+    "Món nhậu"
+  ];
+  void lv(String value) {
+    setState(() {
+      level = value;
+    });
+  }
+
+  void getFoodType(String value) {
+    setState(() {
+      defaultFT = value;
+    });
+  }
+
   Future _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
@@ -126,31 +152,140 @@ class _IntroductionState extends State<Introduction> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 280,
-          child: GestureDetector(
-            onTap: () => _showPicker(context),
-            child: DecoratedBox(
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    color: _image == null ? Colors.grey : Colors.white,
-                    image: _image == null
-                        ? null
-                        : DecorationImage(image: FileImage(_image))),
-                child: _image == null
-                    ? Center(
-                        child: Text(
-                          "Nhấn để thêm hình nền",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    : null),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 280,
+            child: GestureDetector(
+              onTap: () => _showPicker(context),
+              child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      color: _image == null ? Colors.grey : Colors.white,
+                      image: _image == null
+                          ? null
+                          : DecorationImage(image: FileImage(_image))),
+                  child: _image == null
+                      ? Center(
+                          child: Text(
+                            "Nhấn để thêm hình nền",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : null),
+            ),
           ),
-        )
-      ],
+          Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                        hintText: "Thịt bò xào",
+                        labelText: "Tên nguyên liệu",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 20)),
+                  Row(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text("Mức độ:")),
+                      SizedBox(
+                        width: 70,
+                        child: Row(
+                          children: [
+                            Radio(
+                                value: "Dễ",
+                                groupValue: level,
+                                activeColor: Colors.red,
+                                onChanged: (value) {
+                                  lv(value);
+                                }),
+                            Text("Dễ")
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 130,
+                        child: Row(
+                          children: [
+                            Radio(
+                                value: "Trung bình",
+                                groupValue: level,
+                                activeColor: Colors.red,
+                                onChanged: (value) {
+                                  lv(value);
+                                }),
+                            Text("Trung bình")
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            Radio(
+                                value: "Khó",
+                                groupValue: level,
+                                activeColor: Colors.red,
+                                onChanged: (value) {
+                                  lv(value);
+                                }),
+                            Text("Khó")
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 20)),
+                  Row(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text("Loại món ăn:")),
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        height: 40,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.red, width: 2),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: DropdownButton(
+                            onChanged: (value) {
+                              getFoodType(value);
+                            },
+                            iconDisabledColor: Colors.pink,
+                            value: defaultFT,
+                            items: foodtype.map((value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList()),
+                      ),
+                    ],
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 20)),
+                  TextField(
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                        focusColor: Colors.red,
+                        hintText: "Món ăn đậm chất truyền thống,.....",
+                        labelText: "Mô tả",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0))),
+                  ),
+                ],
+              ))
+        ],
+      ),
     );
   }
 }
