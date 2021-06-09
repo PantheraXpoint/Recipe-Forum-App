@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Ingredient.dart';
 import 'package:flutter_application_2/model/Step.dart' as Step;
+import 'package:http/http.dart' as http;
+
 import 'package:image_picker/image_picker.dart';
 
 class PostRecipeScreen extends StatefulWidget {
@@ -155,138 +157,151 @@ class _IntroductionState extends State<Introduction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 280,
-            child: GestureDetector(
-              onTap: () => _showPicker(context),
-              child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      color: _image == null ? Colors.grey : Colors.white,
-                      image: _image == null
-                          ? null
-                          : DecorationImage(image: FileImage(_image))),
-                  child: _image == null
-                      ? Center(
-                          child: Text(
-                            "Nhấn để thêm hình nền",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                      : null),
+      // resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 280,
+              child: GestureDetector(
+                onTap: () => _showPicker(context),
+                child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        color: _image == null ? Colors.grey : Colors.white,
+                        image: _image == null
+                            ? null
+                            : DecorationImage(image: FileImage(_image))),
+                    child: _image == null
+                        ? Center(
+                            child: Text(
+                              "Nhấn để thêm hình nền",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        : null),
+              ),
             ),
-          ),
-          Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                        hintText: "Thịt bò xào",
-                        labelText: "Tên nguyên liệu",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20)),
-                  Row(
-                    children: [
-                      Padding(
+            Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Theme(
+                      data: ThemeData(
+                        primaryColor: Colors.redAccent,
+                        primaryColorDark: Colors.red,
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Thịt bò xào",
+                            labelText: "Tên nguyên liệu",
+                            border: OutlineInputBorder(
+                                borderSide: BorderSide(color: kPrimaryColor),
+                                borderRadius: BorderRadius.circular(20.0))),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Row(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text("Mức độ:")),
+                        SizedBox(
+                          width: 70,
+                          child: Row(
+                            children: [
+                              Radio(
+                                  value: "Dễ",
+                                  groupValue: level,
+                                  activeColor: Colors.red,
+                                  onChanged: (value) {
+                                    lv(value);
+                                  }),
+                              Text("Dễ")
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 130,
+                          child: Row(
+                            children: [
+                              Radio(
+                                  value: "Trung bình",
+                                  groupValue: level,
+                                  activeColor: Colors.red,
+                                  onChanged: (value) {
+                                    lv(value);
+                                  }),
+                              Text("Trung bình")
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: Row(
+                            children: [
+                              Radio(
+                                  value: "Khó",
+                                  groupValue: level,
+                                  activeColor: Colors.red,
+                                  onChanged: (value) {
+                                    lv(value);
+                                  }),
+                              Text("Khó")
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Row(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text("Loại món ăn:")),
+                        SizedBox(
+                          width: 30,
+                        ),
+                        Container(
                           padding: EdgeInsets.only(left: 10),
-                          child: Text("Mức độ:")),
-                      SizedBox(
-                        width: 70,
-                        child: Row(
-                          children: [
-                            Radio(
-                                value: "Dễ",
-                                groupValue: level,
-                                activeColor: Colors.red,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: kPrimaryColor, width: 2),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton(
                                 onChanged: (value) {
-                                  lv(value);
-                                }),
-                            Text("Dễ")
-                          ],
+                                  getFoodType(value);
+                                },
+                                iconDisabledColor: Colors.pink,
+                                value: defaultFT,
+                                items: foodtype.map((value) {
+                                  return DropdownMenuItem(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList()),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 130,
-                        child: Row(
-                          children: [
-                            Radio(
-                                value: "Trung bình",
-                                groupValue: level,
-                                activeColor: Colors.red,
-                                onChanged: (value) {
-                                  lv(value);
-                                }),
-                            Text("Trung bình")
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: Row(
-                          children: [
-                            Radio(
-                                value: "Khó",
-                                groupValue: level,
-                                activeColor: Colors.red,
-                                onChanged: (value) {
-                                  lv(value);
-                                }),
-                            Text("Khó")
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20)),
-                  Row(
-                    children: [
-                      Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text("Loại món ăn:")),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        height: 40,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: DropdownButton(
-                            onChanged: (value) {
-                              getFoodType(value);
-                            },
-                            iconDisabledColor: Colors.pink,
-                            value: defaultFT,
-                            items: foodtype.map((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList()),
-                      ),
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20)),
-                  TextField(
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                        focusColor: Colors.red,
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
+                    TextField(
+                      maxLines: 5,
+                      decoration: InputDecoration(
                         hintText: "Món ăn đậm chất truyền thống,.....",
                         labelText: "Mô tả",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0))),
-                  ),
-                ],
-              ))
-        ],
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
+          ],
+        ),
       ),
     );
   }
@@ -354,59 +369,63 @@ class _StepsState extends State<Steps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: ListView.separated(
-          separatorBuilder: (context, index) => SizedBox(
-            height: 15,
-          ),
-          itemCount: steps.length + 1,
-          itemBuilder: (context, index) => index == steps.length
-              ? _StepInput(
-                  onStepAdded: (value) => setState(() => steps.add(value)),
-                  stepIndex: index + 1)
-              : ListTile(
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => setState(() => steps.removeAt(index)),
-                  ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                          text: TextSpan(
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18),
-                              children: [
-                            TextSpan(
-                                text: "Bước ${index + 1}: ",
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: steps[index].content)
-                          ])),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 250,
-                          child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, i) =>
-                                  Image.file(steps[index].listImageFile[i]),
-                              separatorBuilder: (context, i) => SizedBox(
-                                    width: 10,
-                                  ),
-                              itemCount: steps[index].listImageFile.length),
+      body: Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: GestureDetector(
+          onTap: () {
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: ListView.separated(
+            separatorBuilder: (context, index) => SizedBox(
+              height: 15,
+            ),
+            itemCount: steps.length + 1,
+            itemBuilder: (context, index) => index == steps.length
+                ? _StepInput(
+                    onStepAdded: (value) => setState(() => steps.add(value)),
+                    stepIndex: index + 1)
+                : ListTile(
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () => setState(() => steps.removeAt(index)),
+                    ),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18),
+                                children: [
+                              TextSpan(
+                                  text: "Bước ${index + 1}: ",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: steps[index].content)
+                            ])),
+                        SizedBox(
+                          height: 5,
                         ),
-                      )
-                    ],
-                  )),
+                        SizedBox(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: 250,
+                            child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, i) =>
+                                    Image.file(steps[index].listImageFile[i]),
+                                separatorBuilder: (context, i) => SizedBox(
+                                      width: 10,
+                                    ),
+                                itemCount: steps[index].listImageFile.length),
+                          ),
+                        )
+                      ],
+                    )),
+          ),
         ),
       ),
     );
@@ -480,7 +499,7 @@ class __StepInputState extends State<_StepInput> {
       leading: Text("Bước ${widget.stepIndex}"),
       trailing: IconButton(
           icon: Icon(Icons.add),
-          onPressed: () {
+          onPressed: () async {
             if (content.isEmpty || images.isEmpty)
               showDialog(
                   context: context,
@@ -495,17 +514,35 @@ class __StepInputState extends State<_StepInput> {
             else {
               widget.onStepAdded(
                   Step.Step(content: content, listImageFile: images));
+
+              var request = http.MultipartRequest(
+                  "POST", Uri.parse("http://" + BASE_URL + "/image"));
+              Map<String, String> headers = {
+                "Content-type": "multipart/form-data"
+              };
+              request.files.add(http.MultipartFile.fromBytes(
+                  "image", await images[0].readAsBytes()));
+              request.headers.addAll(headers);
+              request.send().then((response) {
+                print(response.statusCode);
+                print(response.contentLength);
+                print(response.reasonPhrase);
+              });
             }
           }),
       title: Column(
         children: [
-          TextFormField(
-              onChanged: (value) => content = value,
-              cursorColor: Colors.black,
-              decoration: new InputDecoration(
-                hintText: "Miêu tả",
-                hintStyle: TextStyle(fontSize: 14),
-              )),
+          TextField(
+            onChanged: (value) => content = value,
+            maxLines: null,
+            decoration: InputDecoration(
+              hintText: "Món ăn đậm chất truyền thống,.....",
+              labelText: "Mô tả",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+            ),
+          ),
           SizedBox(
             height: 5,
           ),
