@@ -59,9 +59,17 @@ class APIs {
     final response =
         await http.get(Uri.http(BASE_URL, "/myprofile"), headers: _headers);
     updateCookie(response);
-    print(json.decode(response.body));
     if (response.statusCode == 200)
       return Profile.fromJsonProfile(json.decode(response.body));
+    return null;
+  }
+
+  static Future<Profile> getProfile(String username) async {
+    final response = await http.get(Uri.http(BASE_URL, "/account/$username"),
+        headers: _headers);
+    updateCookie(response);
+    if (response.statusCode == 200)
+      return Profile.fromJsonProfile(json.decode(response.body)[0]);
     return null;
   }
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
+import 'package:flutter_application_2/components/recipe-card.dart';
 import 'package:flutter_application_2/model/Profile.dart';
+import 'package:flutter_application_2/model/Recipe.dart';
+
+import 'edit_profile_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   // final Profile myprofile;
-  // MyProfileScreen({@required this.myprofile});
   @override
   _MyProfileScreenState createState() => _MyProfileScreenState();
 }
@@ -12,6 +15,7 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   // final Profile myprofile;
   // _MyProfileScreenState({@required this.myprofile});
+  int _index = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,7 +159,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           Padding(
             padding: EdgeInsets.only(top: 5),
             child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfileScreen()));
+                },
                 style: ButtonStyle(
                     minimumSize: MaterialStateProperty.all<Size>(Size(400, 40)),
                     backgroundColor:
@@ -170,22 +179,119 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 )),
           ),
           SizedBox(
-            height: 80,
+            height: 20,
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+              ),
+              Text("Following", textAlign: TextAlign.left),
+            ],
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 50,
-            child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, i) => Image(
-                      image: NetworkImage(
-                          "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
-                    ),
-                separatorBuilder: (context, i) => SizedBox(
-                      width: 10,
-                    ),
-                itemCount: 10),
-          ),
+              width: MediaQuery.of(context).size.width,
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, i) => CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg",
+                          ),
+                          radius: 25,
+                        ),
+                    separatorBuilder: (context, i) => SizedBox(
+                          width: 20,
+                        ),
+                    itemCount: 10),
+              )),
+          Expanded(
+              child: DefaultTabController(
+                  length: 2,
+                  child: Scaffold(
+                      appBar: TabBar(
+                        indicatorColor: kPrimaryColor,
+                        tabs: [
+                          Tab(
+                              icon: Icon(
+                            Icons.access_alarm_rounded,
+                            color: kSecondaryColor,
+                          )),
+                          Tab(
+                              icon: Icon(Icons.access_alarm_sharp,
+                                  color: kSecondaryColor)),
+                        ],
+                      ),
+                      body: TabBarView(
+                        children: [
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 50, left: 10),
+                                  ),
+                                  Text("Your recipes",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20)),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 150,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 10,
+                                  itemBuilder: (context, i) => Image(
+                                    height: 80,
+                                    width: 80,
+                                    image: NetworkImage(
+                                        "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
+                                  ),
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 50, left: 10),
+                                  ),
+                                  Text("Your collection",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20)),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 150,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 10,
+                                  itemBuilder: (context, i) => Image(
+                                    height: 80,
+                                    width: 80,
+                                    image: NetworkImage(
+                                        "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
+                                  ),
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ))))
         ]),
       ),
     );
