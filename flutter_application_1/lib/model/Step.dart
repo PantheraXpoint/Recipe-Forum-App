@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Step {
   String content;
   List<String> listImageUrl;
+  List<File> listImageFile;
 
-  Step({@required this.content, @required this.listImageUrl});
+  Step({@required this.content, this.listImageUrl, this.listImageFile});
 
   factory Step.fromJson(Map json) {
     print("Step fromJson");
