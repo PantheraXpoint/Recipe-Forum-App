@@ -15,6 +15,7 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Recipe detail;
+  bool isBookmark = false;
   int currentTab = 0;
   final pageController = PageController();
   final listWidget = <Widget>[];
@@ -49,7 +50,27 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     if (detail != null && detail.creator != null) {
       return Scaffold(
           appBar: AppBar(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 1,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: kText,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            actions: [
+              GestureDetector(
+                onTap: () => () {
+                  isBookmark = !isBookmark;
+                },
+                child: Icon(
+                    isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                    color: Colors.yellow),
+              ),
+            ],
           ),
           resizeToAvoidBottomInset: false,
           body: Column(children: [
@@ -98,7 +119,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 }
 
 class Introduction extends StatelessWidget {
-  bool isBookmark = false;
   final Recipe detail;
   Introduction({@required this.detail});
   String _parseHtmlString(String htmlString) {
@@ -126,14 +146,6 @@ class Introduction extends StatelessWidget {
                     ),
                     SizedBox(
                       width: 4,
-                    ),
-                    GestureDetector(
-                      onTap: () => () {
-                        isBookmark = !isBookmark;
-                      },
-                      child: Icon(
-                          isBookmark ? Icons.bookmark : Icons.bookmark_outline,
-                          color: Colors.yellow),
                     ),
                   ],
                 )),

@@ -132,23 +132,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           width: 140,
                           height: 140,
                           decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 4,
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor),
-                              boxShadow: [
-                                BoxShadow(
-                                  spreadRadius: 5,
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.1),
-                                  offset: Offset(0, 10),
-                                ),
-                              ],
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                      "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"))),
+                            color:
+                                _image == null ? kPrimaryColor : Colors.white,
+                            image: _image == null
+                                ? null
+                                : DecorationImage(image: FileImage(_image)),
+                            border: Border.all(
+                                width: 4,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor),
+                            boxShadow: [
+                              BoxShadow(
+                                spreadRadius: 5,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1),
+                                offset: Offset(0, 10),
+                              ),
+                            ],
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ),
                       Positioned(
