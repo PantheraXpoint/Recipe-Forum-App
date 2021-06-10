@@ -3,6 +3,7 @@ import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/components/recipe-card.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
 import 'edit_profile_screen.dart';
 
@@ -293,6 +294,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         ],
                       ))))
         ]),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        backgroundColor: kSecondaryColor,
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PostRecipeScreen()));
+        },
       ),
     );
   }
