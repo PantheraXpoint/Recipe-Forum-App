@@ -10,7 +10,7 @@ import pymongo
 
 from api_functions import *
 from models.RecipeDetail import RecipeDetail
-from models.RecipePreview import RecipePreview
+# from models.RecipePreview import RecipePreview
 
 app = Flask(__name__)
 app.secret_key = b'supasecretstring'
@@ -114,7 +114,8 @@ def list_recipe_preview():
     try:
         lim = request.get_json()['limit']
         recipes = queryBrowse(lim)
-        return Response(recipes, mimetype="application/json", status=200)
+        return jsonify(recipes)
+        # return Response(recipes, mimetype="application/json", status=200)
     except:
         try:
             if request.form.get('limit'):
@@ -123,9 +124,18 @@ def list_recipe_preview():
                 lim = 100
             recipes = queryBrowse(lim)
             
-            return Response(recipes, mimetype="application/json", status=200)
+            return jsonify(recipes)
         except:
             return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+@app.route('/recipe/<int:limitt>', methods=["GET"])
+def list_recipe_preview_arg(limitt):
+    try:
+        recipes = queryBrowse(limitt)
+        return jsonify(recipes)
+        # return Response(recipes, mimetype="application/json", status=200)
+    except:
+        return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
 # @app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
 # def browse_recipe(lim):
@@ -143,25 +153,24 @@ def post_recipe_detail():
     body = request.get_json()
     recipe = RecipeDetail(**body)
     recipe['creator'] = flask_login.current_user.generateCreator()
-    # print(recipe['name'])
     recipe.save()
     
-    templist = RecipeDetail.objects(name=recipe.name)
-    tempId = templist[templist.count()-1].getId()
-    preview = recipe.generatePreview()
-    preview['Id'] = tempId
-    preview.save()
+    # templist = RecipeDetail.objects(name=recipe.name)
+    # tempId = templist[templist.count()-1].getId()
+    # preview = recipe.generatePreview()
+    # preview['Id'] = tempId
+    # preview.save()
 
     return jsonify(recipe), 200
 
 @app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
 def oneRecipe(id):
     if request.method == 'GET':
-        # try:
-        recipes = queryRecipe(id)
-        return Response(recipes, mimetype="application/json", status=200)
-        # except:
-        #     return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
+        try:
+            recipes = queryRecipe(id)
+            return Response(recipes, mimetype="application/json", status=200)
+        except:
+            return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
     elif request.method == 'DELETE':
         try:
             deleteRecipe( int(id) )

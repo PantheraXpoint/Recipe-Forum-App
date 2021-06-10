@@ -27,8 +27,20 @@ class RecipeDetail(gj.Document):
     totalRating = db.IntField(default=0)
     totalLike = db.IntField(default=0)
     totalTime = db.IntField()
+    level = db.StringField()
+    TypeID = db.IntField(default=0)
 
     creator = db.EmbeddedDocumentField(Creator)
+
+    meta = {
+        'collection': 'recipe_detail_withTypeID'
+        # 'indexes': [
+        #     {'fields': ['$name'],
+        #     'default_language': 'english',
+        #     'weights': {'title': 10}
+        #     }
+        # ]
+    }
 
     #unused fields
     servings = db.IntField()
@@ -41,10 +53,9 @@ class RecipeDetail(gj.Document):
     totalCook = db.IntField()
     urlRewrite = db.StringField()
 
-    meta = {'collection': 'recipe_detail'}
 
     def generatePreview(self):
-        return RecipePreview( Id=self.id, Name=self.name, AvgRating=0.0, Img= self.getThumbnail() )
+        return RecipePreview( Id=self.id, Name=self.name, AvgRating=self.avgRating, Img= self.getThumbnail(), Level= self.level )
 
     def getId(self):
         return self.id
