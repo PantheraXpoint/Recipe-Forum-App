@@ -15,7 +15,6 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Recipe detail;
-  bool isBookmark = false;
   int currentTab = 0;
   final pageController = PageController();
   final listWidget = <Widget>[];
@@ -99,6 +98,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 }
 
 class Introduction extends StatelessWidget {
+  bool isBookmark = false;
   final Recipe detail;
   Introduction({@required this.detail});
   String _parseHtmlString(String htmlString) {
@@ -127,7 +127,14 @@ class Introduction extends StatelessWidget {
                     SizedBox(
                       width: 4,
                     ),
-                    Icon(Icons.bookmark_outline, color: Colors.yellow),
+                    GestureDetector(
+                      onTap: () => () {
+                        isBookmark = !isBookmark;
+                      },
+                      child: Icon(
+                          isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                          color: Colors.yellow),
+                    ),
                   ],
                 )),
             Expanded(

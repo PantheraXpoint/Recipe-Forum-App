@@ -31,13 +31,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           child: Column(children: [
             Container(
               padding: EdgeInsets.only(top: 40, left: 20, bottom: 10),
-              color: Colors.pink.shade200,
+              color: kPrimaryColor,
               width: MediaQuery.of(context).size.width,
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Text("Tau Nhat Quang",
-                      style:
-                          TextStyle(color: Color(0xFF2C2E2D), fontSize: 15.8))),
+                      style: TextStyle(
+                          color: kSecondaryColor,
+                          fontSize: 15.8,
+                          fontWeight: FontWeight.bold))),
             ),
             SizedBox(
               height: 20,
@@ -67,8 +69,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       children: [
                         SizedBox(
                           width: 100,
-                          child:
-                              Text("Nhat Quang", textAlign: TextAlign.center),
+                          child: Text(
+                            "Nhat Quang",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: kSecondaryColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),
@@ -89,6 +97,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 child: Text(
                                   "2",
                                   textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ))
                           ],
                         ),
@@ -96,8 +107,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           children: [
                             SizedBox(
                                 width: 90,
-                                child: Text("Công thức cá nhân",
-                                    textAlign: TextAlign.center))
+                                child: Text(
+                                  "Công thức cá nhân",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: kText),
+                                ))
                           ],
                         ),
                       ],
@@ -114,6 +128,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 child: Text(
                                   "89",
                                   textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ))
                           ],
                         ),
@@ -124,6 +141,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 child: Text(
                                   "Công thức sưu tầm",
                                   textAlign: TextAlign.center,
+                                  style: TextStyle(color: kText),
                                 ))
                           ],
                         ),
@@ -152,14 +170,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       minimumSize:
                           MaterialStateProperty.all<Size>(Size(400, 40)),
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(kSecondaryColor),
+                          MaterialStateProperty.all<Color>(kPrimaryColor),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ))),
                   child: Text(
                     "Chỉnh sửa trang cá nhân",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black),
                   )),
             ),
             SizedBox(
@@ -194,6 +212,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                     Text("Công thức của bạn",
                                         style: TextStyle(
+                                            color: kSecondaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20)),
                                     SizedBox(width: 60),
@@ -255,6 +274,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                     ),
                                     Text("Bộ sưu tập",
                                         style: TextStyle(
+                                            color: kSecondaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20)),
                                   ],
