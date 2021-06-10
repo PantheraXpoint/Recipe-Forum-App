@@ -27,25 +27,35 @@ class RecipeDetail(gj.Document):
     totalRating = db.IntField(default=0)
     totalLike = db.IntField(default=0)
     totalTime = db.IntField()
+    level = db.StringField()
+    TypeID = db.IntField(default=0)
 
     creator = db.EmbeddedDocumentField(Creator)
 
-    # 'servings', 'hasVideo', 'url', 'videoUrl', '_id', 'hasCooked', 'hasLiked', 'createdOn', 'totalCook', 'urlRewrite'
-    # servings: db.IntField()
-    # hasVideo: db.BooleanField()
-    # url: db.StringField()
-    # videoUrl : db.StringField()
-    # _id: db.IntField()
-    # hasCooked: db.BooleanField()
-    # hasLiked: db.BooleanField()
-    # createdOn: db.IntField()
-    # totalCook: db.IntField()
-    # urlRewrite: db.StringField()
+    meta = {
+        'collection': 'complete_recipe_detail',
+        'indexes': [
+            {'fields': ['$name'],
+            'default_language': 'english',
+            'weights': {'name': 10}
+            }
+        ]
+    }
 
-    meta = {'collection': 'recipe_detail'}
+    #unused fields
+    servings = db.IntField()
+    hasVideo = db.BooleanField()
+    url = db.StringField()
+    videoUrl = db.StringField()
+    hasCooked = db.BooleanField()
+    hasLiked = db.BooleanField()
+    createdOn = db.IntField()
+    totalCook = db.IntField()
+    urlRewrite = db.StringField()
+
 
     def generatePreview(self):
-        return RecipePreview( Id=self.id, Name=self.name, AvgRating=0.0, Img= self.getThumbnail() )
+        return RecipePreview( Id=self.id, Name=self.name, AvgRating=self.avgRating, Img= self.getThumbnail(), Level= self.level )
 
     def getId(self):
         return self.id

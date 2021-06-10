@@ -10,7 +10,7 @@ import pymongo
 
 from api_functions import *
 from models.RecipeDetail import RecipeDetail
-from models.RecipePreview import RecipePreview
+# from models.RecipePreview import RecipePreview
 
 app = Flask(__name__)
 app.secret_key = b'supasecretstring'
@@ -47,6 +47,11 @@ def accountLookup(username):
         return jsonify(acc) ,200
     except:
         return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
+
+@app.route('/account/<username>/recipe', methods=["GET"])
+def creationLookup(username):
+    recipe = queryCreation(username)
+    return jsonify(recipe), 200
 
 @app.route('/register', methods=['POST'])
 def createAccount():
@@ -96,6 +101,11 @@ def logout():
 def getMyProfile():
     return jsonify(flask_login.current_user)
 
+@app.route("/myprofile/recipe")
+@flask_login.login_required
+def getMyCreations():
+    return jsonify(queryCreation( flask_login.current_user["UserName"] )), 200
+
 #
 #       Recipe request handling
 #
@@ -104,7 +114,8 @@ def list_recipe_preview():
     try:
         lim = request.get_json()['limit']
         recipes = queryBrowse(lim)
-        return Response(recipes, mimetype="application/json", status=200)
+        return jsonify(recipes)
+        # return Response(recipes, mimetype="application/json", status=200)
     except:
         try:
             if request.form.get('limit'):
@@ -113,9 +124,28 @@ def list_recipe_preview():
                 lim = 100
             recipes = queryBrowse(lim)
             
-            return Response(recipes, mimetype="application/json", status=200)
+            return jsonify(recipes)
         except:
             return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+@app.route('/recipe/<int:limitt>', methods=["GET"])
+def list_recipe_preview_arg(limitt):
+    try:
+        recipes = queryBrowse(limitt)
+        return jsonify(recipes)
+        # return Response(recipes, mimetype="application/json", status=200)
+    except:
+        return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+@app.route('/recipe/search', methods=["GET"])
+def name_search():
+    recipe_name = request.args.get('name')
+    typee = request.args.get('TypeID',None)
+    if typee:
+        recipes = textSearchPreview(recipe_name, typee)
+    else:
+        recipes = textSearchPreview(recipe_name)
+    return jsonify( recipes ), 200
 
 # @app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
 # def browse_recipe(lim):
@@ -124,10 +154,8 @@ def list_recipe_preview():
 
 @app.route('/recipe-detail', methods=["GET"])
 def get_recipe_detail():
-    # if (request.method == "GET"):
     recipes = RecipeDetail.objects.to_json()
     return Response(recipes, mimetype="application/json", status=200)
-    # elif (request.method == "POST"):
 
 @app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
@@ -135,21 +163,24 @@ def post_recipe_detail():
     body = request.get_json()
     recipe = RecipeDetail(**body)
     recipe['creator'] = flask_login.current_user.generateCreator()
-    # print(recipe['name'])
     recipe.save()
     
-    # name = recipe['name']
-    # tempid = RecipeDetail.objects(name=name)[0].id
-    # prev = recipe.generatePreview()
-    # prev['Id'] = tempid
-    # prev.save()
+    # templist = RecipeDetail.objects(name=recipe.name)
+    # tempId = templist[templist.count()-1].getId()
+    # preview = recipe.generatePreview()
+    # preview['Id'] = tempId
+    # preview.save()
+
     return jsonify(recipe), 200
 
 @app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
 def oneRecipe(id):
     if request.method == 'GET':
-        recipes = queryRecipe(id)
-        return Response(recipes, mimetype="application/json", status=200)
+        try:
+            recipes = queryRecipe(id)
+            return Response(recipes, mimetype="application/json", status=200)
+        except:
+            return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
     elif request.method == 'DELETE':
         try:
             deleteRecipe( int(id) )
