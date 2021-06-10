@@ -7,7 +7,7 @@ class RecipePreview(gj.Document):
     Id = db.IntField(required=True)
     Name = db.StringField(required=True)
     Img = db.StringField()
-    Level = db.StringField(default="Dễ")
+    Level = db.StringField(default="")
     AvgRating = db.DecimalField(required=True)
     TotalView = db.IntField(default=0)
     TotalLiked = db.IntField(defaul=0)

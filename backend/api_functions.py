@@ -35,7 +35,9 @@ def incrementViewCount(id_num):
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
 
-def textSearchPreview(recipe_name):
+def textSearchPreview(recipe_name, typeid = None):
+    if typeid:
+        return RecipeDetail.objects(TypeID = typeid).search_text(recipe_name)
     return RecipeDetail.objects.search_text(recipe_name)
 
 #

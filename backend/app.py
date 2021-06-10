@@ -137,6 +137,16 @@ def list_recipe_preview_arg(limitt):
     except:
         return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
+@app.route('/recipe/search', methods=["GET"])
+def name_search():
+    recipe_name = request.args.get('name')
+    typee = request.args.get('TypeID',None)
+    if typee:
+        recipes = textSearchPreview(recipe_name, typee)
+    else:
+        recipes = textSearchPreview(recipe_name)
+    return jsonify( recipes ), 200
+
 # @app.route('/recipe-list/<int:frm>-<int:too>', methods=["GET"])
 # def browse_recipe(lim):
 #     recipes = RecipePreview.objects[frm:too].only("Name","AvgRating","Img","Level","TotalTime").to_json()

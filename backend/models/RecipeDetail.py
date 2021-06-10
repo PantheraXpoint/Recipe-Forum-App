@@ -33,13 +33,13 @@ class RecipeDetail(gj.Document):
     creator = db.EmbeddedDocumentField(Creator)
 
     meta = {
-        'collection': 'recipe_detail_withTypeID'
-        # 'indexes': [
-        #     {'fields': ['$name'],
-        #     'default_language': 'english',
-        #     'weights': {'title': 10}
-        #     }
-        # ]
+        'collection': 'complete_recipe_detail',
+        'indexes': [
+            {'fields': ['$name'],
+            'default_language': 'english',
+            'weights': {'name': 10}
+            }
+        ]
     }
 
     #unused fields
