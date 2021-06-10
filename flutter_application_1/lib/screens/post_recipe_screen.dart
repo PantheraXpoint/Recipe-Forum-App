@@ -126,20 +126,24 @@ class _IntroductionState extends State<Introduction> {
   }
 
   Future _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.camera, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 
   Future _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 
@@ -469,20 +473,24 @@ class __StepInputState extends State<_StepInput> {
   String content = "";
 
   Future _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.camera, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      images.add(image);
+      images.add(File(image.path));
     });
   }
 
   Future _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      images.add(image);
+      images.add(File(image.path));
     });
   }
 
