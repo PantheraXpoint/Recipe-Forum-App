@@ -16,4 +16,12 @@ class Ingredient {
         name: json['name'] == null ? ' ' : json['name'],
         quantity: json['quantity'] == null ? ' ' : json['quantity']);
   }
+
+  Map toJson() {
+    return {
+      'unit': {'unit': unit, 'value': '0'},
+      'name': name,
+      'quantity': quantity.toString()
+    };
+  }
 }

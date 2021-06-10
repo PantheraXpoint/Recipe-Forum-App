@@ -5,7 +5,7 @@ import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Ingredient.dart';
 import 'package:flutter_application_2/model/Step.dart' as Step;
 import 'package:http/http.dart' as http;
-
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostRecipeScreen extends StatefulWidget {
@@ -17,27 +17,34 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
   bool isBookmark = false;
 
   int currentTab = 0;
-  final pageController = PageController();
-  final listWidget = <Widget>[];
 
-  Future<void> initDetail() async {
-    setState(() {
-      listWidget.add(Introduction());
-      listWidget.add(Ingredients());
-      listWidget.add(Steps());
-    });
-  }
+  String name;
+  String description;
+  File image;
+  List<Ingredient> ingredients;
+  List<Step.Step> steps;
+  //final pageController = PageController();
+  final listWidget = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    initDetail();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    pageController.dispose();
+    name = "";
+    description = "";
+    image;
+    ingredients = [];
+    steps = [];
+    listWidget.add(Introduction(
+      onNameChanged: (value) => name = value,
+      onDecriptionChanged: (value) => description = value,
+      onImageChanged: (value) => image = value,
+    ));
+    listWidget.add(Ingredients(
+      onListIngredientsChanged: (value) => ingredients = value,
+    ));
+    listWidget.add(Steps(
+      onListStepsChanged: (value) => steps = value,
+    ));
   }
 
   @override
@@ -45,12 +52,39 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: kPrimaryColor,
+          actions: [
+            Container(
+                padding: EdgeInsets.only(right: 5),
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  child: Text("Lưu công thức"),
+                  // todo: image null, mức độ khó, loại món ăn
+                  onPressed: () {
+                    if (name.isEmpty ||
+                        description.isEmpty ||
+                        ingredients.isEmpty ||
+                        steps.isEmpty)
+                      print("nope");
+                    else {
+                      print(name);
+                      print(description);
+                      ingredients.forEach((element) {
+                        print(element.toJson());
+                      });
+                      print(steps);
+                      steps.forEach((element) async {
+                        print(await element.toJson());
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(primary: kSecondaryColor),
+                ))
+          ],
         ),
         resizeToAvoidBottomInset: false,
-        body: PageView(
+        body: IndexedStack(
           children: listWidget,
-          controller: pageController,
-          onPageChanged: (value) => setState(() => currentTab = value),
+          index: currentTab,
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: [
@@ -66,14 +100,20 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
           selectedItemColor: kSecondaryColor,
           onTap: (index) => setState(() {
             currentTab = index;
-            pageController.animateToPage(index,
-                duration: Duration(milliseconds: 200), curve: Curves.easeIn);
           }),
         ));
   }
 }
 
 class Introduction extends StatefulWidget {
+  final ValueChanged<String> onNameChanged;
+  final ValueChanged<String> onDecriptionChanged;
+  final ValueChanged<File> onImageChanged;
+
+  const Introduction(
+      {@required this.onNameChanged,
+      @required this.onDecriptionChanged,
+      @required this.onImageChanged});
   @override
   _IntroductionState createState() => _IntroductionState();
 }
@@ -165,7 +205,10 @@ class _IntroductionState extends State<Introduction> {
               width: double.infinity,
               height: 280,
               child: GestureDetector(
-                onTap: () => _showPicker(context),
+                onTap: () {
+                  _showPicker(context);
+                  widget.onImageChanged(_image);
+                },
                 child: DecoratedBox(
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey),
@@ -193,9 +236,10 @@ class _IntroductionState extends State<Introduction> {
                         primaryColorDark: Colors.red,
                       ),
                       child: TextField(
+                        onChanged: (value) => widget.onNameChanged(value),
                         decoration: InputDecoration(
-                            hintText: "Thịt bò xào",
-                            labelText: "Tên nguyên liệu",
+                            hintText: "Cơm chiên cá mặn",
+                            labelText: "Tên món ăn",
                             border: OutlineInputBorder(
                                 borderSide: BorderSide(color: kPrimaryColor),
                                 borderRadius: BorderRadius.circular(20.0))),
@@ -289,9 +333,10 @@ class _IntroductionState extends State<Introduction> {
                     ),
                     Padding(padding: EdgeInsets.only(top: 20)),
                     TextField(
+                      onChanged: (value) => widget.onDecriptionChanged(value),
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: "Món ăn đậm chất truyền thống,.....",
+                        hintText: "Món ăn đậm chất truyền thống,...",
                         labelText: "Mô tả",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
@@ -308,6 +353,10 @@ class _IntroductionState extends State<Introduction> {
 }
 
 class Ingredients extends StatefulWidget {
+  final ValueChanged<List<Ingredient>> onListIngredientsChanged;
+
+  const Ingredients({@required this.onListIngredientsChanged});
+
   @override
   _IngredientsState createState() => _IngredientsState();
 }
@@ -329,14 +378,18 @@ class _IngredientsState extends State<Ingredients> {
             itemCount: ingredients.length + 1,
             itemBuilder: (context, index) => index == ingredients.length
                 ? _IngredientInput(
-                    onIngredientAdded: (value) =>
-                        setState(() => ingredients.add(value)),
+                    onIngredientAdded: (value) => setState(() {
+                      ingredients.add(value);
+                      widget.onListIngredientsChanged(ingredients);
+                    }),
                   )
                 : ListTile(
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () =>
-                          setState(() => ingredients.removeAt(index)),
+                      onPressed: () => setState(() {
+                        ingredients.removeAt(index);
+                        widget.onListIngredientsChanged(ingredients);
+                      }),
                     ),
                     title: Row(
                       children: [
@@ -360,12 +413,16 @@ class _IngredientsState extends State<Ingredients> {
 }
 
 class Steps extends StatefulWidget {
+  final ValueChanged<List<Step.Step>> onListStepsChanged;
+
+  const Steps({@required this.onListStepsChanged});
   @override
   _StepsState createState() => _StepsState();
 }
 
 class _StepsState extends State<Steps> {
   List<Step.Step> steps = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -385,12 +442,18 @@ class _StepsState extends State<Steps> {
             itemCount: steps.length + 1,
             itemBuilder: (context, index) => index == steps.length
                 ? _StepInput(
-                    onStepAdded: (value) => setState(() => steps.add(value)),
+                    onStepAdded: (value) => setState(() {
+                          steps.add(value);
+                          widget.onListStepsChanged(steps);
+                        }),
                     stepIndex: index + 1)
                 : ListTile(
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () => setState(() => steps.removeAt(index)),
+                      onPressed: () => setState(() {
+                        steps.removeAt(index);
+                        widget.onListStepsChanged(steps);
+                      }),
                     ),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -512,22 +575,10 @@ class __StepInputState extends State<_StepInput> {
                         ),
                       )));
             else {
-              widget.onStepAdded(
-                  Step.Step(content: content, listImageFile: images));
-
-              var request = http.MultipartRequest(
-                  "POST", Uri.parse("http://" + BASE_URL + "/image"));
-              Map<String, String> headers = {
-                "Content-type": "multipart/form-data"
-              };
-              request.files.add(http.MultipartFile.fromBytes(
-                  "image", await images[0].readAsBytes()));
-              request.headers.addAll(headers);
-              request.send().then((response) {
-                print(response.statusCode);
-                print(response.contentLength);
-                print(response.reasonPhrase);
-              });
+              Step.Step step =
+                  Step.Step(content: content, listImageFile: images);
+              widget.onStepAdded(step);
+              step.toJson().then((value) => print(value));
             }
           }),
       title: Column(
@@ -583,16 +634,22 @@ class __StepInputState extends State<_StepInput> {
   }
 }
 
-class _IngredientInput extends StatelessWidget {
+class _IngredientInput extends StatefulWidget {
   final ValueChanged<Ingredient> onIngredientAdded;
 
   _IngredientInput({@required this.onIngredientAdded});
 
   @override
+  __IngredientInputState createState() => __IngredientInputState();
+}
+
+class __IngredientInputState extends State<_IngredientInput> {
+  String unit = "";
+  String name = "";
+  String quantity = "";
+
+  @override
   Widget build(BuildContext context) {
-    String unit = "";
-    String name = "";
-    String quantity = "";
     return ListTile(
       trailing: IconButton(
           icon: Icon(Icons.add),
@@ -609,7 +666,7 @@ class _IngredientInput extends StatelessWidget {
                         ),
                       )));
             else
-              onIngredientAdded(
+              widget.onIngredientAdded(
                   Ingredient(unit: unit, name: name, quantity: quantity));
           }),
       title: Row(

@@ -63,4 +63,25 @@ class Recipe {
         likes: json['likes'],
         description: json['description']);
   }
+
+  Map toJson() {
+    List<Map> listIngredientToMap = [];
+    List<Map> listStepsToMap = [];
+    ingredients.forEach((element) => listIngredientToMap.add(element.toJson()));
+    steps
+        .forEach((element) async => listStepsToMap.add(await element.toJson()));
+
+    return {
+      'name': title,
+      'photos': [
+        [
+          {'url': imageUrl, 'height': '0', 'width': '0'}
+        ]
+      ],
+      'description': description,
+      'avgRating': '0',
+      'ingredients': listIngredientToMap,
+      'steps': listStepsToMap
+    };
+  }
 }
