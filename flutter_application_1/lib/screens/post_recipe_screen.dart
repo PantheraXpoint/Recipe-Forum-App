@@ -147,20 +147,24 @@ class _IntroductionState extends State<Introduction> {
   }
 
   Future _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.camera, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 
   Future _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 
@@ -197,8 +201,15 @@ class _IntroductionState extends State<Introduction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
+        body: SingleChildScrollView(
+      reverse: true,
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
         child: Column(
           children: [
             SizedBox(
@@ -311,23 +322,20 @@ class _IntroductionState extends State<Introduction> {
                           padding: EdgeInsets.only(left: 10),
                           height: 40,
                           decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: kPrimaryColor, width: 2),
+                              border: Border.all(color: Colors.red, width: 2),
                               borderRadius: BorderRadius.circular(15)),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton(
-                                onChanged: (value) {
-                                  getFoodType(value);
-                                },
-                                iconDisabledColor: Colors.pink,
-                                value: defaultFT,
-                                items: foodtype.map((value) {
-                                  return DropdownMenuItem(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList()),
-                          ),
+                          child: DropdownButton(
+                              onChanged: (value) {
+                                getFoodType(value);
+                              },
+                              iconDisabledColor: Colors.pink,
+                              value: defaultFT,
+                              items: foodtype.map((value) {
+                                return DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList()),
                         ),
                       ],
                     ),
@@ -348,7 +356,7 @@ class _IntroductionState extends State<Introduction> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -509,20 +517,24 @@ class __StepInputState extends State<_StepInput> {
   String content = "";
 
   Future _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.camera, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      images.add(image);
+      images.add(File(image.path));
     });
   }
 
   Future _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50);
-
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
     setState(() {
-      images.add(image);
+      images.add(File(image.path));
     });
   }
 

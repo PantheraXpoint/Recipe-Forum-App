@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 import 'package:flutter_application_2/screens/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../apis.dart';
 
@@ -11,6 +14,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  File _image;
   Profile profile;
   Future<void> initProfile() async {
     profile = await APIs.getMyProfile();
@@ -23,6 +27,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     initProfile();
   }
 
+  Future _imgFromCamera() async {
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.camera, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  Future _imgFromGallery() async {
+    // File image = await ImagePicker.pickImage(
+    //     source: ImageSource.gallery, imageQuality: 50);
+    PickedFile image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      _image = File(image.path);
+    });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                      leading: new Icon(Icons.photo_library),
+                      title: new Text('Photo Library'),
+                      onTap: () {
+                        _imgFromGallery();
+                        Navigator.of(context).pop();
+                      }),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (profile != null) {
@@ -33,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,
-              color: Colors.pink,
+              color: kText,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -43,7 +99,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             IconButton(
               icon: Icon(
                 Icons.edit,
-                color: Colors.pink,
+                color: kText,
               ),
               onPressed: () {},
             ),
@@ -59,7 +115,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Text(
                   "Edit Profile",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.w500, color: kText),
                 ),
                 SizedBox(
                   height: 15,
@@ -67,10 +124,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Center(
                   child: Stack(
                     children: [
-                      Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
+                      MaterialButton(
+                        onPressed: () {
+                          _showPicker(context);
+                        },
+                        child: Container(
+                          width: 140,
+                          height: 140,
+                          decoration: BoxDecoration(
+                            color:
+                                _image == null ? kPrimaryColor : Colors.white,
+                            image: _image == null
+                                ? null
+                                : DecorationImage(image: FileImage(_image)),
                             border: Border.all(
                                 width: 4,
                                 color:
@@ -84,17 +150,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ),
                             ],
                             shape: BoxShape.circle,
-                            image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"))),
+                          ),
+                        ),
                       ),
                       Positioned(
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            height: 40,
-                            width: 40,
+                            height: 50,
+                            width: 50,
                             decoration: BoxDecoration(
                               color: Colors.pink,
                               shape: BoxShape.circle,
@@ -116,7 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 buildTextField("Avatar Link", profile.avatarUrl),
                 buildTextField("Total Recipe", profile.totalRecipe.toString()),
                 Padding(
-                  padding: EdgeInsets.only(top: 15),
+                  padding: EdgeInsets.only(top: 15, left: 50, right: 50),
                   child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -126,7 +190,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                       style: ButtonStyle(
                           minimumSize:
-                              MaterialStateProperty.all<Size>(Size(200, 50)),
+                              MaterialStateProperty.all<Size>(Size(50, 50)),
                           backgroundColor:
                               MaterialStateProperty.all<Color>(kSecondaryColor),
                           shape:
@@ -136,7 +200,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ))),
                       child: Text(
                         "Sign out",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 15),
                       )),
                 ),
               ],

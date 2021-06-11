@@ -50,7 +50,27 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     if (detail != null && detail.creator != null) {
       return Scaffold(
           appBar: AppBar(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            elevation: 1,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: kText,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            actions: [
+              GestureDetector(
+                onTap: () => () {
+                  isBookmark = !isBookmark;
+                },
+                child: Icon(
+                    isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                    color: Colors.yellow),
+              ),
+            ],
           ),
           resizeToAvoidBottomInset: false,
           body: Column(children: [
@@ -127,7 +147,6 @@ class Introduction extends StatelessWidget {
                     SizedBox(
                       width: 4,
                     ),
-                    Icon(Icons.bookmark_outline, color: Colors.yellow),
                   ],
                 )),
             Expanded(
