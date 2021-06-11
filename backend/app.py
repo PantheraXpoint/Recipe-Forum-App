@@ -65,6 +65,14 @@ def createAccount():
     acc.save()
     return jsonify(acc), 200
 
+# @app.route('/recipe-detail/<int:ide>/rate/<int:star>', methods=['PUT'])
+# @flask_login.login_required
+# def rateePost(ide, star):
+#     user = flask_login.current_user
+#     if user.rated(id):
+#         return make_response( {"status": "Bad request", "message": "User already rated this post"}, 400)
+#     ratePost( user.get_id(), ide, star )
+#     return make_response( {"status": "OK", "message": "Request good"}, 200)
 #
 #       Login handling
 #
@@ -178,7 +186,7 @@ def oneRecipe(id):
     if request.method == 'GET':
         try:
             recipes = queryRecipe(id)
-            return Response(recipes, mimetype="application/json", status=200)
+            return jsonify(recipes)
         except:
             return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
     elif request.method == 'DELETE':
@@ -207,13 +215,26 @@ def handle_image(filename):
     except:
         return make_response({'status':'Bad request', 'message' : 'File not found, or the requested file has the wrong extension'},400)
 
-@ app.route('/image', methods=['POST'])
+@app.route('/image', methods=['POST'])
 def send_image():
     saved_image = request.files["image"]
-    print(what(saved_image))
+    # print(what(saved_image))
     img_name = str(time())+'.jpg'
     saved_image.save(os.path.join(uploads_dir, img_name))
     return make_response({'status':'OK', 'filename':img_name},200)
+
+@app.route('/images', methods=['POST'])
+def send_images():
+    lst = {}
+    try:
+        for key in request.files:
+            imag = request.files[key]
+            img_name = str(time())+'.jpg'
+            imag.save(os.path.join(uploads_dir, img_name))
+            lst.update( {key:img_name} )
+        return jsonify(lst),200
+    except:
+        return make_response({'status':'Something went wrong', 'message':"Internal server error"},400)
 
 if __name__ == '__main__':
     app.run(debug=True, port='4996')
