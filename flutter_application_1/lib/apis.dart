@@ -19,8 +19,6 @@ class APIs {
     updateCookie(response);
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
-      print(json.decode(response.body));
-      print("Into from json");
       List<Recipe> list =
           List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
       return list;
@@ -64,6 +62,21 @@ class APIs {
     updateCookie(response);
     if (response.statusCode == 200)
       return Profile.fromJsonProfile(json.decode(response.body)[0]);
+    return null;
+  }
+
+  static Future<List<Recipe>> getProfileRecipe(String username) async {
+    final response = await http.get(
+        Uri.http(BASE_URL, "/account/$username/recipe"),
+        headers: _headers);
+    updateCookie(response);
+    if (response.statusCode == 200) {
+      print(response.body);
+      Iterable i = json.decode(response.body);
+      List<Recipe> list =
+          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+      return list;
+    }
     return null;
   }
 

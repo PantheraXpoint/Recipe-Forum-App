@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/components/constaints.dart';
+import 'package:flutter_application_2/components/recipe-card-list-horizontal.dart';
 import 'package:flutter_application_2/model/Profile.dart';
+import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
 import 'drive_integration/ggDrive.dart';
@@ -19,9 +22,20 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   final drive = GoogleDrive();
-  // Profile myprofile;
-  // _MyProfileScreenState({@required this.myprofile});
-  // int _index = 0;
+
+  List<Recipe> list = [];
+
+  Future<void> initMyProfileRecipeList() async {
+    list = await APIs.getProfileRecipe(widget.myprofile.username);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initMyProfileRecipeList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,57 +218,51 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           children: [
                             Column(
                               children: [
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 50, left: 10),
-                                    ),
-                                    Text("Công thức của bạn",
-                                        style: TextStyle(
-                                            color: kSecondaryColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20)),
-                                    SizedBox(width: 60),
-                                    IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PostRecipeScreen()));
-                                      },
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Thêm bài đăng",
-                                      icon: Icon(Icons.add, size: 30),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Xóa bài đăng",
-                                      icon: Icon(
-                                        Icons.remove,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Chỉnh sửa bài đăng",
-                                      icon: Icon(Icons.edit, size: 30),
-                                    )
-                                  ],
-                                ),
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                                    child: Row(
+                                      children: [
+                                        Text("Công thức của bạn",
+                                            style: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20)),
+                                        Expanded(
+                                            child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: IconButton(
+                                                  onPressed: () async {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PostRecipeScreen()));
+                                                    list = await APIs
+                                                        .getProfileRecipe(widget
+                                                            .myprofile
+                                                            .username);
+                                                    setState(() {});
+                                                  },
+                                                  splashColor: kPrimaryColor,
+                                                  tooltip: "Thêm bài đăng",
+                                                  icon:
+                                                      Icon(Icons.add, size: 30),
+                                                )))
+                                      ],
+                                    )),
+                                list == null || list.length == 0
+                                    ? Text("not yet")
+                                    : RecipeCardListHorizontal(
+                                        recipeList: list,
+                                        scale: 0.8,
+                                      )
                               ],
                             ),
                             Column(
                               children: [
                                 Row(
                                   children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 50, left: 10),
-                                    ),
                                     Text("Bộ sưu tập",
                                         style: TextStyle(
                                             color: kSecondaryColor,
