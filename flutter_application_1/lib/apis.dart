@@ -104,6 +104,7 @@ class APIs {
     final response =
         await http.delete(Uri.http(BASE_URL, "/recipe-detail/$id"));
     updateCookie(response);
+    print(response.body);
     return response.statusCode;
   }
 

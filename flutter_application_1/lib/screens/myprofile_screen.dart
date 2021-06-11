@@ -265,7 +265,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                       element.id == value)),
                                           canDelete: true,
                                           recipeList: list,
-                                          scale: 0.9,
+                                          scale: 0.85,
                                         ),
                                 )
                               ],

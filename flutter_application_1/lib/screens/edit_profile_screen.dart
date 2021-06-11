@@ -203,6 +203,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         style: TextStyle(color: Colors.white, fontSize: 15),
                       )),
                 ),
+                SizedBox(height: 30),
+                MaterialButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Delete your account",
+                    style: TextStyle(color: kText, fontSize: 14),
+                  ),
+                )
               ],
             ),
           ),
