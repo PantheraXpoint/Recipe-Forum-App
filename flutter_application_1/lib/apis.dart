@@ -96,8 +96,15 @@ class APIs {
     final body = json.encode(await recipe.toJson());
     final response = await http.post(Uri.http(BASE_URL, "/recipe-detail"),
         body: body, headers: _headers);
-    print(response.statusCode);
+    updateCookie(response);
     return response.body;
+  }
+
+  static Future<int> deleteRecipe(int id) async {
+    final response =
+        await http.delete(Uri.http(BASE_URL, "/recipe-detail/$id"));
+    updateCookie(response);
+    return response.statusCode;
   }
 
   static void updateCookie(http.Response response) {

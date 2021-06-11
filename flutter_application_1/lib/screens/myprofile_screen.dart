@@ -259,6 +259,10 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   child: list == null || list.length == 0
                                       ? CircularProgressIndicator()
                                       : RecipeCardListHorizontal(
+                                          onRecipeDeleted: (value) => setState(
+                                              () => list.removeWhere(
+                                                  (element) =>
+                                                      element.id == value)),
                                           canDelete: true,
                                           recipeList: list,
                                           scale: 0.9,

@@ -2,14 +2,20 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
+  final ValueChanged<int> onRecipeDeleted;
   final Recipe recipe;
   final double scale;
   final canDelete;
-  RecipeCard({@required this.recipe, this.scale, @required this.canDelete});
+  RecipeCard(
+      {@required this.recipe,
+      this.scale,
+      @required this.canDelete,
+      this.onRecipeDeleted});
   @override
   State<StatefulWidget> createState() => RecipeCardState();
 }
@@ -66,7 +72,25 @@ class RecipeCardState extends State<RecipeCard> {
             ),
             SizedBox(
                 child: widget.canDelete
-                    ? IconButton(onPressed: () {}, icon: Icon(Icons.delete))
+                    ? IconButton(
+                        onPressed: () async {
+                          int response =
+                              await APIs.deleteRecipe(widget.recipe.id);
+                          if (response == 200) {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      content: Text("Xóa thành công"),
+                                    ));
+                            widget.onRecipeDeleted(widget.recipe.id);
+                          } else
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      content: Text("Xóa thất bại"),
+                                    ));
+                        },
+                        icon: Icon(Icons.delete))
                     : null),
             Padding(
               padding: EdgeInsets.all(10),

@@ -5,6 +5,7 @@ import 'Ingredient.dart';
 import 'Step.dart';
 
 class Recipe {
+  final int id;
   final String title;
   final String imageUrl;
   final int totalPrepTime;
@@ -19,7 +20,8 @@ class Recipe {
   final String description;
 
   Recipe(
-      {@required this.title,
+      {@required this.id,
+      @required this.title,
       @required this.totalPrepTime,
       @required this.difficulty,
       @required this.typeID,
@@ -36,6 +38,7 @@ class Recipe {
     Iterable ing = json['ingredients'];
     Iterable st = json['steps'];
     return Recipe(
+        id: json['id'],
         title: json['name'],
         imageUrl: json['photos'][0][0]['url'],
         difficulty: json['level'],
