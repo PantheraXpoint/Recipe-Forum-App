@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -24,6 +23,9 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
   File image;
   List<Ingredient> ingredients;
   List<Step.Step> steps;
+  int typeID;
+  String difficulty;
+  String time;
   //final pageController = PageController();
   final listWidget = <Widget>[];
 
@@ -35,10 +37,14 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
     image;
     ingredients = [];
     steps = [];
+
     listWidget.add(Introduction(
       onNameChanged: (value) => name = value,
       onDecriptionChanged: (value) => description = value,
       onImageChanged: (value) => image = value,
+      onTypeChanged: (value) => typeID = typesToInt[value],
+      onDifficultyChanged: (value) => difficulty = value,
+      onTimeChanged: (value) => time = value,
     ));
     listWidget.add(Ingredients(
       onListIngredientsChanged: (value) => ingredients = value,
@@ -59,22 +65,47 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
                   child: Text("Lưu công thức"),
-                  // todo: image null, mức độ khó, loại món ăn
                   onPressed: () async {
+                    print(name);
+                    print(description);
+                    print(ingredients.length);
+                    print(steps.length);
                     if (name.isEmpty ||
                         description.isEmpty ||
                         ingredients.isEmpty ||
                         steps.isEmpty)
-                      print("nope");
-                    else {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Lỗi"),
+                                content:
+                                    Text("Vui lòng nhập đầy đủ thông tin main"),
+                              ));
+                    else if (image == null)
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Lỗi"),
+                                content:
+                                    Text("Vui lòng chụp ảnh nền cho món ăn"),
+                              ));
+                    else if (int.parse(time) == null) {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Lỗi"),
+                                content: Text("Phút là 1 số"),
+                              ));
+                    } else {
                       final recipe = Recipe(
                           title: name,
                           description: description,
-                          totalPrepTime: 1,
-                          difficulty: "1",
-                          imageUrl: "test.com",
+                          totalPrepTime: int.parse(time),
+                          difficulty: difficulty,
+                          imageUrl: await APIs.getImageUrl(image),
                           ingredients: ingredients,
-                          steps: steps);
+                          steps: steps,
+                          typeID: typeID);
                       String response = await APIs.postRecipeDetail(recipe);
                       print(response);
                     }
@@ -112,13 +143,15 @@ class Introduction extends StatefulWidget {
   final ValueChanged<String> onDecriptionChanged;
   final ValueChanged<File> onImageChanged;
   final ValueChanged<String> onDifficultyChanged;
-  final ValueChanged<String> onTypeChanged;
+  final ValueChanged<String> onTimeChanged;
+  final ValueChanged<int> onTypeChanged;
   const Introduction(
       {@required this.onNameChanged,
       @required this.onDecriptionChanged,
       @required this.onImageChanged,
-      this.onDifficultyChanged,
-      this.onTypeChanged});
+      @required this.onDifficultyChanged,
+      @required this.onTypeChanged,
+      @required this.onTimeChanged});
   @override
   _IntroductionState createState() => _IntroductionState();
 }
@@ -128,6 +161,7 @@ class _IntroductionState extends State<Introduction> {
   String level = "";
   String defaultFT = "Khai vị";
   void lv(String value) {
+    widget.onDifficultyChanged(value);
     setState(() {
       level = value;
     });
@@ -145,6 +179,7 @@ class _IntroductionState extends State<Introduction> {
     );
     setState(() {
       _image = File(image.path);
+      widget.onImageChanged(_image);
     });
   }
 
@@ -154,6 +189,7 @@ class _IntroductionState extends State<Introduction> {
     );
     setState(() {
       _image = File(image.path);
+      widget.onImageChanged(_image);
     });
   }
 
@@ -343,6 +379,9 @@ class _IntroductionState extends State<Introduction> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: TextField(
+                              onChanged: (value) {
+                                widget.onTimeChanged(value);
+                              },
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               decoration: InputDecoration(
@@ -602,7 +641,6 @@ class __StepInputState extends State<_StepInput> {
               Step.Step step =
                   Step.Step(content: content, listImageFile: images);
               widget.onStepAdded(step);
-              step.toJson().then((value) => print(value));
             }
           }),
       title: Column(

@@ -26,10 +26,10 @@ class Recipe {
       @required this.imageUrl,
       @required this.ingredients,
       @required this.steps,
-      @required this.creator,
-      @required this.avgRating,
-      @required this.totalView,
-      @required this.likes,
+      this.creator,
+      this.avgRating,
+      this.totalView,
+      this.likes,
       @required this.description});
 
   factory Recipe.fromJson(Map json) {
@@ -73,7 +73,8 @@ class Recipe {
       'description': description,
       'avgRating': '0',
       'ingredients': listIngredientToMap,
-      'steps': listStepsToMap
+      'steps': listStepsToMap,
+      'TypeID': typeID
     };
   }
 }
