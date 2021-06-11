@@ -23,8 +23,13 @@ def queryBrowse(lim):
 def queryRecipe(id_num):
     try:
         recipe = RecipeDetail.objects(id=id_num)
+        if len(recipe) > 1:
+            print('more than one recipe was found with this id')
+            raise ''
         recipe.update(totalView=recipe[0]['totalView']+1)
-        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","TypeID","level").to_json()
+        # return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","_id","TypeID","level").to_json()
+        # print(recipe.exclude("_id")[0].getId() )
+        return recipe.exclude("_id","url","urlRewrite","hasVideo","hasCooked","hasLiked","servings","totalCook","createdOn")
     except:
         raise "id was not provided"
 
@@ -39,6 +44,24 @@ def textSearchPreview(recipe_name, typeid = None):
     if typeid:
         return RecipeDetail.objects(TypeID = typeid).search_text(recipe_name)
     return RecipeDetail.objects.search_text(recipe_name)
+
+def ratePost(user_id, recipe_id, star):
+    user = Profile.objects(Id=user_id)
+    recipe = RecipeDetail.objects(id=recipe_id)
+    if len(recipe) > 1:
+        print('more than one recipe was found with this id')
+        raise ''
+    currentLikeCount = recipe[0]['totalRating']
+    recipe.update(
+        avgRating= (recipe[0]['avgRating']*currentLikeCount + star) / (currentLikeCount+1),
+        totalRating= currentLikeCount+1
+        )
+    templist = user[0]['HasLikedList']
+    templist.append(recipe_id)
+    print(templist)
+    user.update(
+        HasLikedList= templist.append(recipe_id)
+    )
 
 #
 #   ACCOUNT FUNCTION

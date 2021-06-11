@@ -21,8 +21,14 @@ class Profile(gj.Document):
     DisplayName = db.StringField(required=True)
     AvatarUrl = db.StringField(default="https://files.catbox.moe/vfbv2r.jpg")
     TotalRecipes = db.IntField(default=0)
+    HasLikedList = db.ListField(db.IntField(),default=[])
 
     meta = {'collection': 'account_detail'}
+
+    def rated(self, id):
+        if id in self.HasLikedList:
+            return 1
+        return 0
 
     def get_id(self):
         return str(self.Id)

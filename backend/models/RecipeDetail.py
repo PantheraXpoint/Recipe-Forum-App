@@ -22,7 +22,7 @@ class RecipeDetail(gj.Document):
     ingredients = db.ListField(db.ReferenceField(IngredientDetail))
     steps = db.ListField(db.ReferenceField(Step))
 
-    avgRating = db.DecimalField(required=True)
+    avgRating = db.FloatField(required=True)
     totalView = db.IntField(required=True,default=0)
     totalRating = db.IntField(default=0)
     totalLike = db.IntField(default=0)
