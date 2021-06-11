@@ -64,7 +64,8 @@ class Profile(gj.Document):
         return self.Collection
 
     def add_recipe_count(self, num):
-        self.TotalRecipes += 1
+        self.TotalRecipes += num
+        self.save()
 
     @property
     def is_active(self):

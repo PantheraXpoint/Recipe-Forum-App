@@ -53,6 +53,10 @@ class RecipeDetail(gj.Document):
     totalCook = db.IntField()
     urlRewrite = db.StringField()
 
+    def checkCreator(self,username):
+        if self.creator.username == username:
+            return 1
+        return 0
 
     def generatePreview(self):
         return RecipePreview( 

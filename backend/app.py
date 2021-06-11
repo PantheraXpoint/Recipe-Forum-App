@@ -171,11 +171,17 @@ def get_recipe_detail():
 @app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
 def post_recipe_detail():
+
+    user = flask_login.current_user
+
     body = request.get_json()
     recipe = RecipeDetail(**body)
-    recipe['creator'] = flask_login.current_user.generateCreator()
+    recipe['creator'] = user.generateCreator()
     recipe.save()
     
+    user.add_recipe_count(1)
+    # user.save()
+
     # templist = RecipeDetail.objects(name=recipe.name)
     # tempId = templist[templist.count()-1].getId()
     # preview = recipe.generatePreview()
@@ -184,20 +190,25 @@ def post_recipe_detail():
 
     return jsonify(recipe), 200
 
-@app.route('/recipe-detail/<id>', methods=['DELETE','GET'])
+@app.route('/recipe-detail/<id>', methods=['GET'])
 def oneRecipe(id):
-    if request.method == 'GET':
-        try:
-            recipes = queryRecipe(id)
-            return jsonify(recipes)
-        except:
-            return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
-    elif request.method == 'DELETE':
-        try:
+    try:
+        recipes = queryRecipe(id)
+        return jsonify(recipes)
+    except:
+        return make_response({'status':'Not found', 'message' : 'Recipe not found'},404)
+
+@app.route('/recipe-detail/<id>', methods=['DELETE'])
+@flask_login.login_required
+def delRecipe(id):
+    recipe = RecipeDetail.objects(id=id).first()
+    if recipe:
+        if recipe.checkCreator( flask_login.current_user.get_username() ):
             deleteRecipe( int(id) )
+            flask_login.current_user.add_recipe_count(-1)
             return make_response({'status':'OK', 'message' : 'Recipe deleted'},200)
-        except:
-            return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+        return make_response({'status':'Forbidden', 'message' : 'You do not own this recipe'},403)
+    return make_response({'status':'Not Found', 'message' : 'Recipe was not found'},404)
 
 @app.route('/recipe-detail/<id>/view', methods = ['PUT'])
 def increaseView(id):
