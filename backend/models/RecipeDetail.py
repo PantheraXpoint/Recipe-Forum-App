@@ -55,7 +55,16 @@ class RecipeDetail(gj.Document):
 
 
     def generatePreview(self):
-        return RecipePreview( Id=self.id, Name=self.name, AvgRating=self.avgRating, Img= self.getThumbnail(), Level= self.level )
+        return RecipePreview( 
+            Id=self.id,
+            Name=self.name,
+            AvgRating=self.avgRating,
+            Img= self.getThumbnail(),
+            Level= self.level,
+            TotalTime = self.totalTime,
+            TotalView = self.totalView,
+            TotalLiked = self.totalLike
+        )
 
     def getId(self):
         return self.id
