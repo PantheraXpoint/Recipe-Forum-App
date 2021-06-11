@@ -65,6 +65,23 @@ class APIs {
     return null;
   }
 
+  static Future<int> editProfile(
+      String display, String newPwd, String url, String confirm) async {
+    Map<String, String> body = {"PassWord": confirm};
+    if (display.length != 0) body.addAll({"DisplayName": display});
+    if (newPwd.length != 0) body.addAll({"NewPassWord": newPwd});
+    if (url.length != 0) body.addAll({"AvatarUrl": url});
+    print('-------------------------------------------------');
+    print(body);
+    if (body.length > 1) {
+      final response = await http.put(Uri.http(BASE_URL, "/myprofile/edit"),
+          headers: _headers, body: json.encode(body));
+      updateCookie(response);
+      return response.statusCode;
+    }
+    return -1;
+  }
+
   static Future<List<Recipe>> getProfileRecipe(String username) async {
     final response = await http.get(
         Uri.http(BASE_URL, "/account/$username/recipe"),
@@ -101,8 +118,22 @@ class APIs {
   }
 
   static Future<int> deleteRecipe(int id) async {
+    final response = await http.delete(Uri.http(BASE_URL, "/recipe-detail/$id"),
+        headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
+  }
+
+  static Future<int> deleteAccount(String confirm) async {
+    final response = await http.delete(Uri.http(BASE_URL, "/myprofile/delete"),
+        headers: _headers, body: json.encode({'PassWord': confirm}));
+    updateCookie(response);
+    return response.statusCode;
+  }
+
+  static Future<int> logout() async {
     final response =
-        await http.delete(Uri.http(BASE_URL, "/recipe-detail/$id"));
+        await http.get(Uri.http(BASE_URL, "/logout"), headers: _headers);
     updateCookie(response);
     return response.statusCode;
   }
