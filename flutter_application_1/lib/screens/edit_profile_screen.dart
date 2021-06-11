@@ -42,7 +42,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // File image = await ImagePicker.pickImage(
     //     source: ImageSource.gallery, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
     setState(() {
       _image = File(image.path);

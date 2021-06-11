@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/screens/profile.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
@@ -63,12 +64,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
             actions: [
               GestureDetector(
-                onTap: () => () {
+                onTap: () => setState(() {
                   isBookmark = !isBookmark;
-                },
+                }),
                 child: Icon(
-                    isBookmark ? Icons.bookmark : Icons.bookmark_outline,
-                    color: Colors.yellow),
+                  isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                  color: Colors.yellow.shade700,
+                  size: 40,
+                ),
               ),
             ],
           ),
@@ -150,10 +153,19 @@ class Introduction extends StatelessWidget {
                   ],
                 )),
             Expanded(
-                child: Align(
-              alignment: Alignment.center,
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(detail.creator.avatarUrl),
+                child: MaterialButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileScreen(profile: detail.creator)));
+              },
+              child: Align(
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(detail.creator.avatarUrl),
+                ),
               ),
             ))
           ],

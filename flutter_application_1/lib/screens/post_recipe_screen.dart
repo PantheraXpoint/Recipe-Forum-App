@@ -329,6 +329,31 @@ class _IntroductionState extends State<Introduction> {
                       ],
                     ),
                     Padding(padding: EdgeInsets.only(top: 20)),
+                    Row(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text("Thời gian thực hiện:")),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 80,
+                          height: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                hintText: "phút",
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
                     TextField(
                       onChanged: (value) => widget.onDecriptionChanged(value),
                       maxLines: 5,
