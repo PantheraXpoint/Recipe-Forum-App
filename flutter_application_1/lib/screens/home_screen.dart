@@ -83,6 +83,14 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sliders = List.generate(
+      10,
+      (index) => RecipeSlider(
+        list: list,
+        type: index,
+      ),
+    );
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Container(
@@ -144,21 +152,26 @@ class Home extends StatelessWidget {
                     )
                   : Column(
                       children: [
-                        RecipeSlider(
-                          list: list,
+                        Column(
+                          children: [
+                            RecipeSlider(
+                              list: list,
+                            ),
+                            RecipeSlider(
+                              list: list,
+                              difficulty: "Dễ",
+                            ),
+                            RecipeSlider(
+                              list: list,
+                              difficulty: "Trung bình",
+                            ),
+                            RecipeSlider(
+                              list: list,
+                              difficulty: "Khó",
+                            ),
+                          ],
                         ),
-                        RecipeSlider(
-                          list: list,
-                          difficulty: "Dễ",
-                        ),
-                        RecipeSlider(
-                          list: list,
-                          difficulty: "Trung bình",
-                        ),
-                        RecipeSlider(
-                          list: list,
-                          difficulty: "Khó",
-                        ),
+                        Column(children: sliders),
                       ],
                     ),
             )

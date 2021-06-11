@@ -18,7 +18,6 @@ class RecipeCardState extends State<RecipeCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print(widget.recipe.recipeId);
         Navigator.push(
             context,
             MaterialPageRoute(

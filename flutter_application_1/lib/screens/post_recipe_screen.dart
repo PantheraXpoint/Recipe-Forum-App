@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Ingredient.dart';
+import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/model/Step.dart' as Step;
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostRecipeScreen extends StatefulWidget {
@@ -59,22 +60,23 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                 child: ElevatedButton(
                   child: Text("Lưu công thức"),
                   // todo: image null, mức độ khó, loại món ăn
-                  onPressed: () {
+                  onPressed: () async {
                     if (name.isEmpty ||
                         description.isEmpty ||
                         ingredients.isEmpty ||
                         steps.isEmpty)
                       print("nope");
                     else {
-                      print(name);
-                      print(description);
-                      ingredients.forEach((element) {
-                        print(element.toJson());
-                      });
-                      print(steps);
-                      steps.forEach((element) async {
-                        print(await element.toJson());
-                      });
+                      final recipe = Recipe(
+                          title: name,
+                          description: description,
+                          totalPrepTime: 1,
+                          difficulty: "1",
+                          imageUrl: "test.com",
+                          ingredients: ingredients,
+                          steps: steps);
+                      String response = await APIs.postRecipeDetail(recipe);
+                      print(response);
                     }
                   },
                   style: ElevatedButton.styleFrom(primary: kSecondaryColor),
@@ -109,11 +111,14 @@ class Introduction extends StatefulWidget {
   final ValueChanged<String> onNameChanged;
   final ValueChanged<String> onDecriptionChanged;
   final ValueChanged<File> onImageChanged;
-
+  final ValueChanged<String> onDifficultyChanged;
+  final ValueChanged<String> onTypeChanged;
   const Introduction(
       {@required this.onNameChanged,
       @required this.onDecriptionChanged,
-      @required this.onImageChanged});
+      @required this.onImageChanged,
+      this.onDifficultyChanged,
+      this.onTypeChanged});
   @override
   _IntroductionState createState() => _IntroductionState();
 }
@@ -122,18 +127,6 @@ class _IntroductionState extends State<Introduction> {
   File _image;
   String level = "";
   String defaultFT = "Khai vị";
-  List<String> foodtype = [
-    "Khai vị",
-    "Tráng miệng",
-    "Món Chay",
-    "Món chính",
-    "Ăn sáng",
-    "Nhanh và dễ",
-    "Thức uống",
-    "Bánh",
-    "Món ăn cho trẻ",
-    "Món nhậu"
-  ];
   void lv(String value) {
     setState(() {
       level = value;
@@ -147,8 +140,6 @@ class _IntroductionState extends State<Introduction> {
   }
 
   Future _imgFromCamera() async {
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.camera, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
@@ -158,10 +149,8 @@ class _IntroductionState extends State<Introduction> {
   }
 
   Future _imgFromGallery() async {
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.gallery, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
     setState(() {
       _image = File(image.path);
@@ -330,7 +319,7 @@ class _IntroductionState extends State<Introduction> {
                               },
                               iconDisabledColor: Colors.pink,
                               value: defaultFT,
-                              items: foodtype.map((value) {
+                              items: types.map((value) {
                                 return DropdownMenuItem(
                                   value: value,
                                   child: Text(value),
@@ -528,10 +517,8 @@ class __StepInputState extends State<_StepInput> {
   }
 
   Future _imgFromGallery() async {
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.gallery, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
     setState(() {
       images.add(File(image.path));

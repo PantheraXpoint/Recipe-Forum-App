@@ -5,53 +5,42 @@ import 'Ingredient.dart';
 import 'Step.dart';
 
 class Recipe {
-  final int recipeId;
   final String title;
   final String imageUrl;
   final int totalPrepTime;
   final String difficulty;
-
-  List<Ingredient> ingredients;
-  List<Step> steps;
-  Profile creator;
-  double avgRating;
-  int totalView;
-  int likes;
-  String description;
+  final int typeID;
+  final List<Ingredient> ingredients;
+  final List<Step> steps;
+  final Profile creator;
+  final double avgRating;
+  final int totalView;
+  final int likes;
+  final String description;
 
   Recipe(
-      {this.recipeId,
-      @required this.title,
+      {@required this.title,
       @required this.totalPrepTime,
       @required this.difficulty,
+      @required this.typeID,
       @required this.imageUrl,
-      this.ingredients,
-      this.steps,
-      this.creator,
-      this.avgRating,
-      this.totalView,
-      this.likes,
-      this.description});
+      @required this.ingredients,
+      @required this.steps,
+      @required this.creator,
+      @required this.avgRating,
+      @required this.totalView,
+      @required this.likes,
+      @required this.description});
 
-  factory Recipe.fromJsonPreview(Map json) {
-    return Recipe(
-        recipeId: json['Id'],
-        title: json['Name'],
-        imageUrl: json['Img'],
-        difficulty: json['Level'],
-        totalPrepTime: json['TotalTime']);
-  }
-
-  factory Recipe.fromJsonDetail(Map json, Recipe recipe) {
-    print("RecipeDetail fromJson");
+  factory Recipe.fromJson(Map json) {
     Iterable ing = json['ingredients'];
     Iterable st = json['steps'];
     return Recipe(
-        recipeId: recipe.recipeId,
-        title: recipe.title,
-        imageUrl: recipe.imageUrl,
-        difficulty: recipe.difficulty,
-        totalPrepTime: recipe.totalPrepTime,
+        title: json['name'],
+        imageUrl: json['photos'][0][0]['url'],
+        difficulty: json['level'],
+        typeID: json['TypeID'] - 1,
+        totalPrepTime: json['totalTime'],
         ingredients: ing == null
             ? []
             : List<Ingredient>.from(ing.map((e) => Ingredient.fromJson(e))),
@@ -64,12 +53,15 @@ class Recipe {
         description: json['description']);
   }
 
-  Map toJson() {
+  Future<Map> toJson() async {
     List<Map> listIngredientToMap = [];
     List<Map> listStepsToMap = [];
     ingredients.forEach((element) => listIngredientToMap.add(element.toJson()));
-    steps
-        .forEach((element) async => listStepsToMap.add(await element.toJson()));
+
+    for (Step step in steps) {
+      Map json = await step.toJson();
+      listStepsToMap.add(json);
+    }
 
     return {
       'name': title,

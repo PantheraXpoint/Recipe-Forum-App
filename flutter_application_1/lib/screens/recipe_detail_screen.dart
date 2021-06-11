@@ -21,7 +21,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final listWidget = <Widget>[];
 
   Future<void> initDetail() async {
-    detail = await APIs.getRecipeDetail(widget.recipe);
+    detail = widget.recipe;
     setState(() {
       listWidget.add(Introduction(
         detail: detail,

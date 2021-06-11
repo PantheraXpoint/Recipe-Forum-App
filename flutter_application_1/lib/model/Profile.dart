@@ -17,7 +17,6 @@ class Profile {
       @required this.totalRecipe});
 
   factory Profile.fromJsonCreator(Map json) {
-    print("Creator fromJson");
     return Profile(
         id: json['id'],
         username: json['username'],

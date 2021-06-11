@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'components/constaints.dart';
 import 'model/Recipe.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class APIs {
   static Map<String, String> _headers = <String, String>{
@@ -13,12 +15,14 @@ class APIs {
 
   static Future<List<Recipe>> getListRecipes() async {
     final response =
-        await http.get(Uri.http(BASE_URL, "/recipe"), headers: _headers);
+        await http.get(Uri.http(BASE_URL, "/recipe-detail"), headers: _headers);
     updateCookie(response);
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
+      print(json.decode(response.body));
+      print("Into from json");
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
       return list;
     }
     return null;
@@ -45,16 +49,6 @@ class APIs {
     return response.statusCode == 200;
   }
 
-  static Future<Recipe> getRecipeDetail(Recipe recipe) async {
-    final response = await http.get(
-        Uri.http(BASE_URL, "recipe-detail/${recipe.recipeId}"),
-        headers: _headers);
-    updateCookie(response);
-    if (response.statusCode == 200)
-      return Recipe.fromJsonDetail(json.decode(response.body)[0], recipe);
-    return null;
-  }
-
   static Future<Profile> getMyProfile() async {
     final response =
         await http.get(Uri.http(BASE_URL, "/myprofile"), headers: _headers);
@@ -71,6 +65,27 @@ class APIs {
     if (response.statusCode == 200)
       return Profile.fromJsonProfile(json.decode(response.body)[0]);
     return null;
+  }
+
+  static Future<String> getImageUrl(File image) async {
+    var request = http.MultipartRequest(
+        "POST", Uri.parse("http://" + BASE_URL + "/image"));
+    Map<String, String> headers = {"Content-type": "multipart/form-data"};
+    request.files.add(http.MultipartFile(
+        'image', image.readAsBytes().asStream(), image.lengthSync(),
+        filename: "ok", contentType: MediaType('image', 'jpeg')));
+    request.headers.addAll(headers);
+    final response = await request.send();
+    final String body = await response.stream.bytesToString();
+    return "http://" + BASE_URL + "/image/" + json.decode(body)['filename'];
+  }
+
+  static Future<String> postRecipeDetail(Recipe recipe) async {
+    final body = json.encode(await recipe.toJson());
+    final response = await http.post(Uri.http(BASE_URL, "/recipe-detail"),
+        body: body, headers: _headers);
+    print(response.statusCode);
+    return response.body;
   }
 
   static void updateCookie(http.Response response) {
