@@ -24,7 +24,7 @@ def queryRecipe(id_num):
     try:
         recipe = RecipeDetail.objects(id=id_num)
         recipe.update(totalView=recipe[0]['totalView']+1)
-        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id").to_json()
+        return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","TypeID","level").to_json()
     except:
         raise "id was not provided"
 
