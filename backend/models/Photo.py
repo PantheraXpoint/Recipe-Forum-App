@@ -9,4 +9,4 @@ class Photo(db.EmbeddedDocument):
     height = db.IntField()
     width = db.IntField()
     
-    meta = {'collection': 'recipe_detail', 'allow_inheritance': True}
+    meta = {'collection': 'test', 'allow_inheritance': True}

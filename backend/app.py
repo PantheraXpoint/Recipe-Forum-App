@@ -65,14 +65,17 @@ def createAccount():
     acc.save()
     return jsonify(acc), 200
 
-# @app.route('/recipe-detail/<int:ide>/rate/<int:star>', methods=['PUT'])
-# @flask_login.login_required
-# def rateePost(ide, star):
-#     user = flask_login.current_user
-#     if user.rated(id):
-#         return make_response( {"status": "Bad request", "message": "User already rated this post"}, 400)
-#     ratePost( user.get_id(), ide, star )
-#     return make_response( {"status": "OK", "message": "Request good"}, 200)
+@app.route('/mycollection', methods=['GET'])
+@flask_login.login_required
+def getMyCollection():
+    user = flask_login.current_user
+    lst = user.get_collection()
+    result = []
+    for id in lst:
+        result.append(getRecipeObject(id).generatePreview())
+    
+    return jsonify(result),200
+
 #
 #       Login handling
 #
@@ -203,6 +206,50 @@ def increaseView(id):
         return make_response({'status':'OK', 'message' : 'View incremented'},200)
     except:
         return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
+
+@app.route('/recipe-detail/<int:ide>/rate/<int:star>', methods=['PUT'])
+@flask_login.login_required
+def rateePost(ide, star):
+    if len(RecipeDetail.objects(id=ide)) == 0 :
+        return make_response( {"status": "Not found", "message": "Recipe was not found"}, 404)
+    
+    user = flask_login.current_user
+    user_id = user.get_id()
+    if user.rated(ide):
+        updateRating(user_id, ide, star)
+        return make_response( {"status": "OK", "message": "Previous rating changed"}, 200)
+
+    ratePost( user_id, ide, star )
+    return make_response( {"status": "OK", "message": "New rating submited"}, 200)
+
+@app.route('/recipe-detail/<int:ide>/save', methods=['PUT'])
+@flask_login.login_required
+def saveIntoCollection(ide):
+    user = flask_login.current_user
+    if len(RecipeDetail.objects(id=ide)) == 0:
+        return make_response( {"status": "Not Found", "message": "Recipe not found"}, 404)
+
+    if user.check_collection(ide):
+        user.save_to_collection(ide)
+        user.save()
+        return make_response( {"status": "OK", "message": "Recipe added to collection"}, 200)
+    else:
+        # user.remove_from_collection(ide)
+        return make_response( {"status": "Bad request", "message": "Recipe already in collection"}, 400)
+
+@app.route('/recipe-detail/<int:ide>/unsave', methods=['PUT'])
+@flask_login.login_required
+def removeFromCollection(ide):
+    user = flask_login.current_user
+    if len(RecipeDetail.objects(id=ide)) == 0:
+        return make_response( {"status": "Not Found", "message": "Recipe not found"}, 404)
+
+    if user.check_collection(ide):
+        return make_response( {"status": "Bad request", "message": "Recipe not in collection"}, 400)
+    else:
+        user.remove_from_collection(ide)
+        user.save()
+        return make_response( {"status": "OK", "message": "Recipe removed from collection"}, 200)
 
 #
 #   Image handling
