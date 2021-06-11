@@ -49,7 +49,7 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new,
-              color: Colors.pink,
+              color: kSecondaryColor,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -59,7 +59,7 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
             IconButton(
               icon: Icon(
                 Icons.save,
-                color: Colors.pink,
+                color: kSecondaryColor,
               ),
               onPressed: () {},
             ),
@@ -140,7 +140,7 @@ class _IntroductionState extends State<Introduction> {
     // File image = await ImagePicker.pickImage(
     //     source: ImageSource.gallery, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
-      source: ImageSource.camera,
+      source: ImageSource.gallery,
     );
     setState(() {
       _image = File(image.path);
@@ -311,6 +311,31 @@ class _IntroductionState extends State<Introduction> {
                                   child: Text(value),
                                 );
                               }).toList()),
+                        ),
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 20)),
+                    Row(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text("Thời gian thực hiện:")),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        SizedBox(
+                          width: 80,
+                          height: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                hintText: "phút",
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

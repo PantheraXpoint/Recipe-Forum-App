@@ -4,20 +4,17 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Profile.dart';
-import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
 import 'drive_integration/ggDrive.dart';
-import 'edit_profile_screen.dart';
 
-class MyProfileScreen extends StatefulWidget {
-  // final Profile myprofile;
-  final Profile myprofile;
-  MyProfileScreen({@required this.myprofile});
+class ProfileScreen extends StatefulWidget {
+  final Profile profile;
+  ProfileScreen({@required this.profile});
   @override
-  _MyProfileScreenState createState() => _MyProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _MyProfileScreenState extends State<MyProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final drive = GoogleDrive();
   // Profile myprofile;
   // _MyProfileScreenState({@required this.myprofile});
@@ -35,7 +32,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               width: MediaQuery.of(context).size.width,
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: Text(widget.myprofile.username,
+                  child: Text(widget.profile.username,
                       style: TextStyle(
                           color: kSecondaryColor,
                           fontSize: 15.8,
@@ -70,7 +67,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         SizedBox(
                           width: 100,
                           child: Text(
-                            widget.myprofile.displayName,
+                            widget.profile.displayName,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: kSecondaryColor,
@@ -95,7 +92,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             SizedBox(
                                 width: 90,
                                 child: Text(
-                                  widget.myprofile.totalRecipe.toString(),
+                                  widget.profile.totalRecipe.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
@@ -126,7 +123,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             SizedBox(
                                 width: 90,
                                 child: Text(
-                                  widget.myprofile.totalRecipe.toString(),
+                                  widget.profile.totalRecipe.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
@@ -155,33 +152,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ],
             ),
             SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditProfileScreen()));
-                  },
-                  style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(Size(400, 40)),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(kPrimaryColor),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ))),
-                  child: Text(
-                    "Chỉnh sửa trang cá nhân",
-                    style: TextStyle(color: Colors.black),
-                  )),
-            ),
-            SizedBox(
-              height: 10,
+              height: 30,
             ),
             Expanded(
                 child: DefaultTabController(
@@ -210,39 +181,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                       padding:
                                           EdgeInsets.only(top: 50, left: 10),
                                     ),
-                                    Text("Công thức của bạn",
+                                    Text("Công thức sở hữu",
                                         style: TextStyle(
                                             color: kSecondaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20)),
                                     SizedBox(width: 60),
-                                    IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PostRecipeScreen()));
-                                      },
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Thêm bài đăng",
-                                      icon: Icon(Icons.add, size: 30),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Xóa bài đăng",
-                                      icon: Icon(
-                                        Icons.remove,
-                                        size: 30,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Chỉnh sửa bài đăng",
-                                      icon: Icon(Icons.edit, size: 30),
-                                    )
                                   ],
                                 ),
                               ],
@@ -260,18 +204,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                             color: kSecondaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20)),
-                                    SizedBox(
-                                      width: 240,
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      splashColor: kPrimaryColor,
-                                      tooltip: "Xóa bài đăng",
-                                      icon: Icon(
-                                        Icons.delete,
-                                        size: 30,
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ],
