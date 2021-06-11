@@ -38,6 +38,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("-------------------------------------------------------");
+    print(widget.myprofile.totalRecipe);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
@@ -69,8 +71,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             child: Align(
                           alignment: Alignment.center,
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
+                            backgroundImage:
+                                NetworkImage(widget.myprofile.avatarUrl),
                             radius: 50,
                           ),
                         )),
@@ -233,16 +235,17 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                     Alignment.centerRight,
                                                 child: IconButton(
                                                   onPressed: () async {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                PostRecipeScreen()));
-                                                    list = await APIs
-                                                        .getProfileRecipe(widget
-                                                            .myprofile
-                                                            .username);
-                                                    setState(() {});
+                                                    Recipe newRecipe =
+                                                        await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        PostRecipeScreen()));
+
+                                                    setState(() {
+                                                      list.add(newRecipe);
+                                                    });
                                                   },
                                                   splashColor: kPrimaryColor,
                                                   tooltip: "Thêm bài đăng",
@@ -251,12 +254,16 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                 )))
                                       ],
                                     )),
-                                list == null || list.length == 0
-                                    ? Text("not yet")
-                                    : RecipeCardListHorizontal(
-                                        recipeList: list,
-                                        scale: 0.8,
-                                      )
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: list == null || list.length == 0
+                                      ? CircularProgressIndicator()
+                                      : RecipeCardListHorizontal(
+                                          canDelete: true,
+                                          recipeList: list,
+                                          scale: 0.9,
+                                        ),
+                                )
                               ],
                             ),
                             Column(

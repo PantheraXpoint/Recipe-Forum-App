@@ -5,10 +5,11 @@ from flask import Flask, request, Response, jsonify, make_response, send_file
 from flask_mongoengine import MongoEngine
 from models.RecipeDetail import RecipeDetail
 from models.RecipePreview import RecipePreview
-from models.Profile import Profile
+from models.Profile import Profile, Rating
 from bson import ObjectId
 from imghdr import what
 from werkzeug.security import generate_password_hash, check_password_hash
+from copy import copy
 
 db = MongoEngine()
 #
@@ -19,6 +20,9 @@ def queryBrowse(lim):
     for repc in RecipeDetail.objects[:lim]:
         lst.append( repc.generatePreview() )
     return lst
+
+def getRecipeObject(recipe_id):
+    return RecipeDetail.objects(id=recipe_id).first()
 
 def queryRecipe(id_num):
     try:
@@ -56,12 +60,29 @@ def ratePost(user_id, recipe_id, star):
         avgRating= (recipe[0]['avgRating']*currentLikeCount + star) / (currentLikeCount+1),
         totalRating= currentLikeCount+1
         )
-    templist = user[0]['HasLikedList']
-    templist.append(recipe_id)
-    print(templist)
+    templist = copy(user[0]['HasLikedList'])
+    templist.append( Rating(recipe_id = recipe_id, rating = star) )
     user.update(
-        HasLikedList= templist.append(recipe_id)
+        HasLikedList= templist
     )
+
+def updateRating(user_id, recipe_id, star):
+    user = Profile.objects(Id=user_id).first()
+    recipe = RecipeDetail.objects(id=recipe_id)
+    if len(recipe) > 1:
+        print('more than one recipe was found with this id?')
+        raise ''
+    currentLikeCount = recipe[0]['totalRating']
+    
+    for entry in user.HasLikedList:
+        if entry.recipe_id == recipe_id:
+            previousrating = entry.rating
+            entry.rating = star
+
+    recipe.update(
+        avgRating= (recipe[0]['avgRating']*currentLikeCount - previousrating + star) / (currentLikeCount)
+    )
+    user.save()
 
 #
 #   ACCOUNT FUNCTION

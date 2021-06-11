@@ -12,6 +12,10 @@ class Creator(db.EmbeddedDocument):
     totalFollower= db.IntField()
     totalRecipe = db.IntField()
 
+class Rating(db.EmbeddedDocument):
+    recipe_id = db.IntField()
+    rating = db.FloatField()
+
 class Profile(gj.Document):
     Id = db.SequenceField()
     UserName = db.StringField(required=True)
@@ -21,14 +25,30 @@ class Profile(gj.Document):
     DisplayName = db.StringField(required=True)
     AvatarUrl = db.StringField(default="https://files.catbox.moe/vfbv2r.jpg")
     TotalRecipes = db.IntField(default=0)
-    HasLikedList = db.ListField(db.IntField(),default=[])
+
+    #my fields
+    HasLikedList = db.ListField(db.EmbeddedDocumentField(Rating),default=[])
+    Collection = db.ListField(db.IntField(),default=[])
 
     meta = {'collection': 'account_detail'}
 
-    def rated(self, id):
-        if id in self.HasLikedList:
-            return 1
+    def rated(self, ide):
+        for i in self.HasLikedList:
+            if i["recipe_id"] == ide:
+                return i["rating"]
         return 0
+
+    def check_collection(self, ide):
+        for recipe in self.Collection:
+            if recipe == ide:
+                return 0
+        return 1
+
+    def save_to_collection(self, ide):
+        self.Collection.append(ide)
+
+    def remove_from_collection(self,ide):
+        self.Collection.remove(ide)
 
     def get_id(self):
         return str(self.Id)
@@ -39,6 +59,9 @@ class Profile(gj.Document):
     def generateCreator(self):
         phot = Photo(url=self.AvatarUrl)
         return Creator(name=self.DisplayName, username=self.UserName, id=self.Id, photos=[phot])
+
+    def get_collection(self):
+        return self.Collection
 
     @property
     def is_active(self):
@@ -74,6 +97,3 @@ class Profile(gj.Document):
     Signature = db.StringField()
     VerifyingPercent = db.StringField()
     TotalViews = db.IntField()
-
-# if __name__ == '__main__':
-#     print(generate_password_hash('12345678'))

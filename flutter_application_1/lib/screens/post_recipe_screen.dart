@@ -108,7 +108,7 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                           typeID: typeID);
                       String response = await APIs.postRecipeDetail(recipe);
                       print(response);
-                      Navigator.pop(context);
+                      Navigator.pop(context, recipe);
                     }
                   },
                   style: ElevatedButton.styleFrom(primary: kSecondaryColor),

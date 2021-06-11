@@ -71,7 +71,6 @@ class APIs {
         headers: _headers);
     updateCookie(response);
     if (response.statusCode == 200) {
-      print(response.body);
       Iterable i = json.decode(response.body);
       List<Recipe> list =
           List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());

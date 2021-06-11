@@ -119,6 +119,9 @@ class Home extends StatelessWidget {
               height: 30,
             ),
             TextFormField(
+              enabled: false,
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Scaffold())),
               style: TextStyle(fontSize: 15),
               decoration: InputDecoration(
                 prefixIcon: Icon(

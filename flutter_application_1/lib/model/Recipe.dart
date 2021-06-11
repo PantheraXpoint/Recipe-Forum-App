@@ -70,6 +70,8 @@ class Recipe {
           {'url': imageUrl, 'height': '0', 'width': '0'}
         ]
       ],
+      'level': difficulty,
+      'totalTime': totalPrepTime,
       'description': description,
       'avgRating': '0',
       'ingredients': listIngredientToMap,

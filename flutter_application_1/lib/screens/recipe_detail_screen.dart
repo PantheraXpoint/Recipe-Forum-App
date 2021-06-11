@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/model/Profile.dart';
 import 'package:flutter_application_2/screens/profile.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
@@ -134,7 +135,7 @@ class Introduction extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 20, top: 20),
-      child: Column(children: [
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(
           children: [
             SizedBox(
@@ -163,8 +164,27 @@ class Introduction extends StatelessWidget {
               },
               child: Align(
                 alignment: Alignment.center,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(detail.creator.avatarUrl),
+                child: GestureDetector(
+                  child: CircleAvatar(
+                      backgroundImage: NetworkImage(detail.creator.avatarUrl)),
+                  onTap: () async {
+                    final profile =
+                        await APIs.getProfile(detail.creator.username);
+                    if (profile == null)
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: Text("Lỗi"),
+                                content: Text("Không tìm thấy người dùng"),
+                              ));
+                    else
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                    profile: profile,
+                                  )));
+                  },
                 ),
               ),
             ))
@@ -265,6 +285,7 @@ class Steps extends StatelessWidget {
       ),
       itemBuilder: (context, index) => ListTile(
           title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
               text: TextSpan(
