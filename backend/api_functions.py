@@ -33,7 +33,7 @@ def queryRecipe(id_num):
         recipe.update(totalView=recipe[0]['totalView']+1)
         # return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","_id","TypeID","level").to_json()
         # print(recipe.exclude("_id")[0].getId() )
-        return recipe.exclude("_id","url","urlRewrite","hasVideo","hasCooked","hasLiked","servings","totalCook","createdOn")
+        return recipe.exclude("url","urlRewrite","hasVideo","hasCooked","hasLiked","servings","totalCook","createdOn")
     except:
         raise "id was not provided"
 

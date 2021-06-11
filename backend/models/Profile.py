@@ -63,6 +63,9 @@ class Profile(gj.Document):
     def get_collection(self):
         return self.Collection
 
+    def add_recipe_count(self, num):
+        self.TotalRecipes += 1
+
     @property
     def is_active(self):
         return True
