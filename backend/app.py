@@ -165,8 +165,8 @@ def name_search():
 
 @app.route('/recipe-detail', methods=["GET"])
 def get_recipe_detail():
-    recipes = RecipeDetail.objects.to_json()
-    return Response(recipes, mimetype="application/json", status=200)
+    recipes = RecipeDetail.objects
+    return jsonify(recipes),200
 
 @app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
