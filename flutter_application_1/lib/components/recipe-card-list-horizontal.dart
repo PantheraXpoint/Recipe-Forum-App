@@ -7,12 +7,14 @@ class RecipeCardListHorizontal extends StatefulWidget {
   final ValueChanged<int> onRecipeDeleted;
   final bool canDelete;
   final List<Recipe> recipeList;
+  final List<bool> isSaveds;
   final double scale;
   RecipeCardListHorizontal(
       {@required this.recipeList,
       this.scale,
       @required this.canDelete,
-      this.onRecipeDeleted});
+      this.onRecipeDeleted,
+      @required this.isSaveds});
   @override
   State<StatefulWidget> createState() => RecipeCardListHorizontalState();
 }
@@ -27,6 +29,7 @@ class RecipeCardListHorizontalState extends State<RecipeCardListHorizontal> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.recipeList.length,
         itemBuilder: (context, i) => RecipeCard(
+            initialBookmark: widget.isSaveds[i],
             onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
             recipe: widget.recipeList[i],
             canDelete: widget.canDelete),

@@ -5,6 +5,7 @@ import 'package:flutter_application_2/components/recipe-slider.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/search_screen.dart';
 
 import '../apis.dart';
 import 'myprofile_screen.dart';
@@ -24,8 +25,21 @@ class HomeScreenState extends State<HomeScreen> {
 
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
+
+    // FILTER DUPLICATES & SORT
+    Map<int, Recipe> mp = {};
+    for (Recipe r in listRecipe) {
+      mp[r.id] = r;
+    }
+    listRecipe = mp.values.toList();
+    listRecipe.sort((a, b) => b.id.compareTo(a.id));
+
+    //  SORT
     profile = await APIs.getMyProfile();
+    profile.savedIDs.sort((a, b) => a.compareTo(b));
+
     setState(() {
+      for (Recipe r in listRecipe) print(r.id);
       listWidget.add(Home(
         list: listRecipe,
         profile: profile,
@@ -87,6 +101,7 @@ class Home extends StatelessWidget {
       10,
       (index) => RecipeSlider(
         list: list,
+        savedIDs: profile.savedIDs,
         type: index,
       ),
     );
@@ -118,30 +133,34 @@ class Home extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            TextFormField(
-              enabled: false,
-              onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Scaffold())),
-              style: TextStyle(fontSize: 15),
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: kSecondaryText,
-                ),
-                contentPadding: EdgeInsets.all(10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                filled: true,
-                fillColor: Colors.grey[60],
-                hintText: "Find your favorite recipe here",
-                hintStyle: TextStyle(
-                  color: kUnhighlightedColor,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()));
+              },
+              child: TextFormField(
+                enabled: false,
+                style: TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: kSecondaryText,
+                  ),
+                  contentPadding: EdgeInsets.all(10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[60],
+                  hintText: "Find your favorite recipe here",
+                  hintStyle: TextStyle(
+                    color: kUnhighlightedColor,
+                  ),
                 ),
               ),
             ),
@@ -159,17 +178,21 @@ class Home extends StatelessWidget {
                           children: [
                             RecipeSlider(
                               list: list,
+                              savedIDs: profile.savedIDs,
                             ),
                             RecipeSlider(
                               list: list,
+                              savedIDs: profile.savedIDs,
                               difficulty: "Dễ",
                             ),
                             RecipeSlider(
                               list: list,
+                              savedIDs: profile.savedIDs,
                               difficulty: "Trung bình",
                             ),
                             RecipeSlider(
                               list: list,
+                              savedIDs: profile.savedIDs,
                               difficulty: "Khó",
                             ),
                           ],

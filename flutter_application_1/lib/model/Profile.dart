@@ -7,6 +7,7 @@ class Profile {
   String avatarUrl;
   int totalFollower = 0;
   int totalRecipe;
+  List<int> savedIDs;
 
   Profile(
       {@required this.id,
@@ -14,7 +15,8 @@ class Profile {
       @required this.displayName,
       @required this.avatarUrl,
       this.totalFollower,
-      @required this.totalRecipe});
+      @required this.totalRecipe,
+      this.savedIDs});
 
   factory Profile.fromJsonCreator(Map json) {
     return Profile(
@@ -32,6 +34,8 @@ class Profile {
         username: json['UserName'],
         displayName: json['DisplayName'],
         avatarUrl: json['AvatarUrl'],
-        totalRecipe: json['TotalRecipes']);
+        totalRecipe: json['TotalRecipes'],
+        savedIDs:
+            json['Collection'] == null ? [] : json['Collection'].cast<int>());
   }
 }

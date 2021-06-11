@@ -26,6 +26,30 @@ class APIs {
     return null;
   }
 
+  static Future<Recipe> getRecipe(int id) async {
+    final response = await http.get(Uri.http(BASE_URL, "/recipe-detail/$id"),
+        headers: _headers);
+    updateCookie(response);
+    if (response.statusCode == 200)
+      return Recipe.fromJson(json.decode(response.body)[0]);
+    return null;
+  }
+
+  static Future<int> saveRecipe(int id) async {
+    final response = await http
+        .put(Uri.http(BASE_URL, "/recipe-detail/$id/save"), headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
+  }
+
+  static Future<int> unsaveRecipe(int id) async {
+    final response = await http.put(
+        Uri.http(BASE_URL, "/recipe-detail/$id/unsave"),
+        headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
+  }
+
   static Future<bool> login(String email, String password) async {
     Map<String, String> body = {"UserName": email, "PassWord": password};
     final response = await http.post(Uri.http(BASE_URL, "/login"),
@@ -71,8 +95,7 @@ class APIs {
     if (display.length != 0) body.addAll({"DisplayName": display});
     if (newPwd.length != 0) body.addAll({"NewPassWord": newPwd});
     if (url.length != 0) body.addAll({"AvatarUrl": url});
-    print('-------------------------------------------------');
-    print(body);
+
     if (body.length > 1) {
       final response = await http.put(Uri.http(BASE_URL, "/myprofile/edit"),
           headers: _headers, body: json.encode(body));
@@ -115,6 +138,19 @@ class APIs {
         body: body, headers: _headers);
     updateCookie(response);
     return response.body;
+  }
+
+  static Future<List<Recipe>> searchRecipe(String query) async {
+    final response = await http.get(
+        Uri.http(BASE_URL, "/recipe/search", {'name': query}),
+        headers: _headers);
+    if (response.statusCode == 200) {
+      Iterable i = json.decode(response.body);
+      List<Recipe> list =
+          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+      return list;
+    }
+    return null;
   }
 
   static Future<int> deleteRecipe(int id) async {
