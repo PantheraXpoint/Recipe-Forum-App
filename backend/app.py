@@ -30,51 +30,10 @@ login_manager.init_app(app)
 # path to image saving
 uploads_dir = os.path.join(app.instance_path, 'images')
 
-#   Cookie loader
+#   Cookie login loader
 @login_manager.user_loader
 def load_user(user_id):
     return queryId(user_id)
-
-#
-#   Account handling
-#
-@app.route('/account/<username>', methods=["GET"])
-def accountLookup(username):
-    try :
-        acc = queryUsername(username)
-        if len(acc) == 0:
-            return make_response( {"status": "Not found", "message": "Account not found"}, 404)
-        return jsonify(acc) ,200
-    except:
-        return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
-
-@app.route('/account/<username>/recipe', methods=["GET"])
-def creationLookup(username):
-    recipe = queryCreation(username)
-    return jsonify(recipe), 200
-
-@app.route('/register', methods=['POST'])
-def createAccount():
-    body = request.get_json()
-    if len(queryUsername(body["UserName"])) != 0:
-        return make_response( {"status": "Conflict", "message": "Account with this username already existed"}, 400)
-    if body == None:
-        return make_response( {"status": "Missing paramter", "message": "Put the account credential in the request body please"}, 400)
-    acc = Profile(**body)
-    acc['PassWord'] = generate_password_hash( body["PassWord"] )
-    acc.save()
-    return jsonify(acc), 200
-
-@app.route('/mycollection', methods=['GET'])
-@flask_login.login_required
-def getMyCollection():
-    user = flask_login.current_user
-    lst = user.get_collection()
-    result = []
-    for id in lst:
-        result.append(getRecipeObject(id).generatePreview())
-    
-    return jsonify(result),200
 
 #
 #       Login handling
@@ -106,6 +65,99 @@ def logout():
         return make_response( {"status": "OK", "message": "Logout successful"}, 200)
     except:
         return make_response( {"status": "uh oh", "message": "something went wrong"}, 400)
+
+#
+#   Account handling
+#
+@app.route('/account/<username>', methods=["GET"])
+def accountLookup(username):
+    try :
+        acc = queryUsername(username)
+        if len(acc) == 0:
+            return make_response( {"status": "Not found", "message": "Account not found"}, 404)
+        return jsonify(acc) ,200
+    except:
+        return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
+
+@app.route('/account/<username>/recipe', methods=["GET"])
+def creationLookup(username):
+    recipe = queryCreation(username)
+    return jsonify(recipe), 200
+
+@app.route('/register', methods=['POST'])
+def createAccount():
+    body = request.get_json()
+    if len(queryUsername(body["UserName"])) != 0:
+        return make_response( {"status": "Conflict", "message": "Account with this username already existed"}, 400)
+    if body == None:
+        return make_response( {"status": "Missing paramter", "message": "Put the account credential in the request body please"}, 400)
+    acc = Profile(**body)
+    acc['PassWord'] = generate_password_hash( body["PassWord"] )
+    acc.save()
+    return jsonify(acc), 200
+
+@app.route('/myprofile/edit', methods=['PUT'])
+@flask_login.login_required
+def editAccount():
+    user = flask_login.current_user
+    body = request.get_json()
+    if body == None:
+        return make_response( {"status": "OK", "message": "nothing changed"}, 200)
+    
+    password = body["PassWord"]
+    if checkinAccount(user.get_username(), password) == 0:
+        return make_response( {"status": "Forbidden", "message": "Old password is incorrect"}, 403)
+    
+    try:
+        newpassword = body["NewPassWord"]
+        
+        user.update(
+            PassWord = generate_password_hash(newpassword),
+            FirstName = body.get("FirstName", user["FirstName"]),
+            LastName = body.get("LastName", user["LastName"]),
+            DisplayName = body.get("DisplayName", user["DisplayName"]),
+            AvatarUrl = body.get("AvatarUrl", user["AvatarUrl"])
+        )
+        user.save()
+        updateduser = Profile.objects(Id=user.get_id())
+        return jsonify(updateduser), 200
+
+    except:
+        user.update(
+            FirstName = body.get("FirstName", user["FirstName"]),
+            LastName = body.get("LastName", user["LastName"]),
+            DisplayName = body.get("DisplayName", user["DisplayName"]),
+            AvatarUrl = body.get("AvatarUrl", user["AvatarUrl"])
+        )
+        user.save()
+        updateduser = Profile.objects(Id=user.get_id())
+        return jsonify(updateduser), 200
+
+@app.route('/myprofile/delete', methods=['DELETE'])
+@flask_login.login_required
+def deleteCurrentAccount():
+    user = flask_login.current_user
+    body = request.get_json()
+
+    password = body["PassWord"]
+    if checkinAccount(user.get_username(), password) == 0:
+        return make_response( {"status": "Forbidden", "message": "Password is incorrect"}, 403)
+    
+    username = user.get_username()
+    flask_login.logout_user()
+    Profile.objects(UserName=username).delete()
+    return make_response( {"status": "OK", "message": "Account successfully deleted"}, 200)
+
+@app.route('/mycollection', methods=['GET'])
+@flask_login.login_required
+def getMyCollection():
+    user = flask_login.current_user
+    lst = user.get_collection()
+    result = []
+    for id in lst:
+        result.append(getRecipeObject(id).generatePreview())
+    
+    return jsonify(result),200
 
 @app.route("/myprofile")
 @flask_login.login_required

@@ -94,7 +94,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/5",
+							"raw": "http://localhost:4996/recipe-detail/24",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -102,7 +102,7 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"5"
+								"24"
 							]
 						}
 					},
@@ -115,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Recipe number ONE\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ],\r\n    \"TypeID\":2\r\n}",
+							"raw": "{\r\n    \"name\": \"Recipe number ONE\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ],\r\n    \"TypeID\":2,\r\n    \"level\":\"Dễ đéo\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -310,7 +310,7 @@
 			"name": "Account related",
 			"item": [
 				{
-					"name": "GET myprofile/recipe",
+					"name": "GET my recipes",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -400,7 +400,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserName\": \"test3\",\r\n    \"PassWord\": \"123456789\"\r\n}",
+							"raw": "{\r\n    \"UserName\": \"test1\",\r\n    \"PassWord\": \"123456789\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -445,14 +445,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:4996/account/test1/recipe",
+							"raw": "localhost:4996/account/test3/recipe",
 							"host": [
 								"localhost"
 							],
 							"port": "4996",
 							"path": [
 								"account",
-								"test1",
+								"test3",
 								"recipe"
 							]
 						}
@@ -476,11 +476,95 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "PUT edit profile and change password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PassWord\": \"put old password in here\",\r\n    \"NewPassWord\": \"put new password in here\",\r\n    \"DisplayName\": \"my new name\",\r\n    \"FirstName\":\"Long\",\r\n    \"LastName\":\"lole\",\r\n    \"AvatarUrl\":\"localhost:4996/image/default_avatar.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4996/myprofile/edit",
+							"host": [
+								"localhost"
+							],
+							"port": "4996",
+							"path": [
+								"myprofile",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT edit profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PassWord\": \"put old password in here\",\r\n    \"DisplayName\": \"my new name\",\r\n    \"FirstName\":\"Long\",\r\n    \"LastName\":\"lole\",\r\n    \"AvatarUrl\":\"localhost:4996/image/default_avatar.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4996/myprofile/edit",
+							"host": [
+								"localhost"
+							],
+							"port": "4996",
+							"path": [
+								"myprofile",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE account",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PassWord\":123456789\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4996/myprofile/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "4996",
+							"path": [
+								"myprofile",
+								"delete"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "POST image",
+			"name": "POST one image",
 			"request": {
 				"method": "POST",
 				"header": [],
