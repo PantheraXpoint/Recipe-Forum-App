@@ -34,7 +34,7 @@ class RecipeSlider extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        RecipeCardListHorizontal(recipeList: finalList),
+        RecipeCardListHorizontal(recipeList: finalList, canDelete: false),
         SizedBox(
           height: 40,
         ),

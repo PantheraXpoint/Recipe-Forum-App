@@ -19,8 +19,6 @@ class APIs {
     updateCookie(response);
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
-      print(json.decode(response.body));
-      print("Into from json");
       List<Recipe> list =
           List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
       return list;
@@ -67,6 +65,20 @@ class APIs {
     return null;
   }
 
+  static Future<List<Recipe>> getProfileRecipe(String username) async {
+    final response = await http.get(
+        Uri.http(BASE_URL, "/account/$username/recipe"),
+        headers: _headers);
+    updateCookie(response);
+    if (response.statusCode == 200) {
+      Iterable i = json.decode(response.body);
+      List<Recipe> list =
+          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+      return list;
+    }
+    return null;
+  }
+
   static Future<String> getImageUrl(File image) async {
     var request = http.MultipartRequest(
         "POST", Uri.parse("http://" + BASE_URL + "/image"));
@@ -84,8 +96,15 @@ class APIs {
     final body = json.encode(await recipe.toJson());
     final response = await http.post(Uri.http(BASE_URL, "/recipe-detail"),
         body: body, headers: _headers);
-    print(response.statusCode);
+    updateCookie(response);
     return response.body;
+  }
+
+  static Future<int> deleteRecipe(int id) async {
+    final response =
+        await http.delete(Uri.http(BASE_URL, "/recipe-detail/$id"));
+    updateCookie(response);
+    return response.statusCode;
   }
 
   static void updateCookie(http.Response response) {

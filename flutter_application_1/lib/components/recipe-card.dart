@@ -2,12 +2,20 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
+  final ValueChanged<int> onRecipeDeleted;
   final Recipe recipe;
-  RecipeCard({@required this.recipe});
+  final double scale;
+  final canDelete;
+  RecipeCard(
+      {@required this.recipe,
+      this.scale,
+      @required this.canDelete,
+      this.onRecipeDeleted});
   @override
   State<StatefulWidget> createState() => RecipeCardState();
 }
@@ -62,6 +70,28 @@ class RecipeCardState extends State<RecipeCard> {
                 ),
               ),
             ),
+            SizedBox(
+                child: widget.canDelete
+                    ? IconButton(
+                        onPressed: () async {
+                          int response =
+                              await APIs.deleteRecipe(widget.recipe.id);
+                          if (response == 200) {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      content: Text("Xóa thành công"),
+                                    ));
+                            widget.onRecipeDeleted(widget.recipe.id);
+                          } else
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      content: Text("Xóa thất bại"),
+                                    ));
+                        },
+                        icon: Icon(Icons.delete))
+                    : null),
             Padding(
               padding: EdgeInsets.all(10),
               child: Align(
@@ -110,7 +140,6 @@ class RecipeCardState extends State<RecipeCard> {
                             children: [
                               Text("${widget.recipe.totalPrepTime} phút | ",
                                   style: TextStyle(color: Color(0xFF7A7A7A))),
-                              //VerticalDivider(),
                               Text(
                                 widget.recipe.difficulty,
                                 style: TextStyle(color: Color(0xFF7A7A7A)),

@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/components/constaints.dart';
+import 'package:flutter_application_2/components/recipe-card-list-horizontal.dart';
 import 'package:flutter_application_2/model/Profile.dart';
+import 'package:flutter_application_2/model/Recipe.dart';
 
 import 'drive_integration/ggDrive.dart';
 
@@ -16,9 +19,23 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final drive = GoogleDrive();
+  List<Recipe> list = [];
   // Profile myprofile;
   // _MyProfileScreenState({@required this.myprofile});
   // int _index = 0;
+  Future<void> initProfileRecipeList() async {
+    list = await APIs.getProfileRecipe(widget.profile.username);
+    setState(() {
+      print(list.length);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initProfileRecipeList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,8 +69,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Align(
                           alignment: Alignment.center,
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                "https://media.cooky.vn/usr/g43/420151/avt/c60x60/cooky-avatar-637113450729148354.jpg"),
+                            backgroundImage:
+                                NetworkImage(widget.profile.avatarUrl),
                             radius: 50,
                           ),
                         )),
@@ -189,6 +206,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     SizedBox(width: 60),
                                   ],
                                 ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: list == null || list.length == 0
+                                      ? CircularProgressIndicator()
+                                      : RecipeCardListHorizontal(
+                                          recipeList: list,
+                                          scale: 0.9,
+                                          canDelete: false,
+                                        ),
+                                )
                               ],
                             ),
                             Column(
