@@ -15,33 +15,30 @@ db = MongoEngine()
 #   RECIPE FUNCTION
 #
 def queryBrowse(lim):
-    return RecipePreview.objects[:lim].only("Name","AvgRating","Img","Level","TotalTime","Id").to_json()
+    lst = []
+    for repc in RecipeDetail.objects[:lim]:
+        lst.append( repc.generatePreview() )
+    return lst
 
 def queryRecipe(id_num):
-    if id_num:
+    try:
         recipe = RecipeDetail.objects(id=id_num)
-        # print(recipe[0]["totalView"])
-        # recipe.update(totalView=recipe[0]['totalView']+1)
-        # try:
-        #     prev = RecipePreview.objects(Id=id_num)
-        #     prev.update(TotalView=prev[0]["TotalView"]+1)
-        # except:
-        #     print("preview of this recipe was not found")
+        recipe.update(totalView=recipe[0]['totalView']+1)
         return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id").to_json()
-    else:
+    except:
         raise "id was not provided"
 
 def incrementViewCount(id_num):
     recipe = RecipeDetail.objects(id=id_num)
     recipe.update(totalView=recipe[0]['totalView']+1)
-    try:
-            prev = RecipePreview.objects(Id=id_num)
-            prev.update(TotalView=prev[0]["TotalView"]+1)
-    except:
-        print("preview of this recipe was not found")
     
 def deleteRecipe(id_num):
     RecipeDetail.objects(id=id_num).delete()
+
+def textSearchPreview(recipe_name, typeid = None):
+    if typeid:
+        return RecipeDetail.objects(TypeID = typeid).search_text(recipe_name)
+    return RecipeDetail.objects.search_text(recipe_name)
 
 #
 #   ACCOUNT FUNCTION
@@ -65,3 +62,7 @@ def checkinAccount(username,password):
         return 0
     except:
         return -1
+
+def queryCreation(username):
+    recipe = RecipeDetail.objects(creator__username=username)
+    return recipe

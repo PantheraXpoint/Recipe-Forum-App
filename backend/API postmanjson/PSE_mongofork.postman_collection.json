@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"food test 1\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"name\": \"Recipe number ONE\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ],\r\n    \"TypeID\":2\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -45,7 +45,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:4996/recipe-detail/8",
+					"raw": "http://localhost:4996/recipe-detail/5",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -53,7 +53,7 @@
 					"port": "4996",
 					"path": [
 						"recipe-detail",
-						"8"
+						"5"
 					]
 				}
 			},
@@ -66,7 +66,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"UserName\":\"test1\",\r\n    \"DisplayName\": \"firstaccount\",\r\n    \"FirstName\": \"Bob\",\r\n    \"LastName\": \"McTester\",\r\n    \"PassWord\":\"123456789\"\r\n}",
+					"raw": "{\r\n    \"UserName\":\"test5\",\r\n    \"DisplayName\": \"thirdaccount\",\r\n    \"PassWord\":\"123456789\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -161,7 +161,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"limit\": 2\r\n}",
+					"raw": "{\r\n    \"limit\": 100\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -218,7 +218,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:4996/recipe-detail/33870",
+					"raw": "http://localhost:4996/recipe-detail/46",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -226,7 +226,7 @@
 					"port": "4996",
 					"path": [
 						"recipe-detail",
-						"33870"
+						"46"
 					]
 				}
 			},
@@ -253,11 +253,8 @@
 		},
 		{
 			"name": "Login",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -284,21 +281,9 @@
 		},
 		{
 			"name": "Logout",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"UserName\":\"test1\",\r\n    \"PassWord\":\"123456789\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "localhost:4996/logout",
 					"host": [
@@ -325,6 +310,46 @@
 					"port": "4996",
 					"path": [
 						"myprofile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET username's recipe",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4996/account/test1/recipe",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"account",
+						"test1",
+						"recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET myprofile/recipe",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4996/myprofile/recipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4996",
+					"path": [
+						"myprofile",
+						"recipe"
 					]
 				}
 			},
