@@ -135,6 +135,7 @@ class APIs {
     final response =
         await http.get(Uri.http(BASE_URL, "/logout"), headers: _headers);
     updateCookie(response);
+    print(response.body);
     return response.statusCode;
   }
 

@@ -20,7 +20,7 @@ class Recipe {
   final String description;
 
   Recipe(
-      {@required this.id,
+      {this.id,
       @required this.title,
       @required this.totalPrepTime,
       @required this.difficulty,
