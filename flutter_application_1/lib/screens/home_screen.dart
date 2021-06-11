@@ -31,7 +31,9 @@ class HomeScreenState extends State<HomeScreen> {
         profile: profile,
       ));
 
-      listWidget.add(MyProfileScreen());
+      listWidget.add(MyProfileScreen(
+        myprofile: profile,
+      ));
       print(listWidget.length);
     });
   }

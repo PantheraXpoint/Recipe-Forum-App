@@ -3,25 +3,26 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
-import 'package:flutter_application_2/components/recipe-card.dart';
 import 'package:flutter_application_2/model/Profile.dart';
-import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
+import '../apis.dart';
 import 'drive_integration/ggDrive.dart';
 import 'edit_profile_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
   // final Profile myprofile;
+  final Profile myprofile;
+  MyProfileScreen({@required this.myprofile});
   @override
   _MyProfileScreenState createState() => _MyProfileScreenState();
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  // final Profile myprofile;
-  // _MyProfileScreenState({@required this.myprofile});
   final drive = GoogleDrive();
-  int _index = 0;
+  // Profile myprofile;
+  // _MyProfileScreenState({@required this.myprofile});
+  // int _index = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +36,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               width: MediaQuery.of(context).size.width,
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: Text("Tau Nhat Quang",
+                  child: Text(widget.myprofile.username,
                       style: TextStyle(
                           color: kSecondaryColor,
                           fontSize: 15.8,
@@ -70,7 +71,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         SizedBox(
                           width: 100,
                           child: Text(
-                            "Nhat Quang",
+                            widget.myprofile.displayName,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: kSecondaryColor,
@@ -95,7 +96,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             SizedBox(
                                 width: 90,
                                 child: Text(
-                                  "2",
+                                  widget.myprofile.totalRecipe.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
@@ -126,7 +127,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             SizedBox(
                                 width: 90,
                                 child: Text(
-                                  "89",
+                                  widget.myprofile.totalRecipe.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,

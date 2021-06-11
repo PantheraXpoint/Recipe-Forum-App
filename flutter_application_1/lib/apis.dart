@@ -50,8 +50,10 @@ class APIs {
         Uri.http(BASE_URL, "recipe-detail/${recipe.recipeId}"),
         headers: _headers);
     updateCookie(response);
-    if (response.statusCode == 200)
+    if (response.statusCode == 200) {
+      print(response.body);
       return Recipe.fromJsonDetail(json.decode(response.body)[0], recipe);
+    }
     return null;
   }
 
