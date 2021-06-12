@@ -89,12 +89,12 @@
 					"response": []
 				},
 				{
-					"name": "DELETE post : http://localhost:4996/recipe/60b0fa0d2d0ca1332111ba64",
+					"name": "DELETE recipe",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/24",
+							"raw": "http://localhost:4996/recipe-detail/40",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -102,7 +102,7 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"24"
+								"40"
 							]
 						}
 					},
@@ -115,7 +115,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Recipe number ONE\",\r\n    \"photos\":[\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\":[\r\n        {\r\n        \"unit\":{\"value\":\"3\", \"unit\": \"kg\"},\r\n        \"name\":\"Salt\",\r\n        \"quantity\":\"3\"\r\n        },\r\n        {\r\n        \"unit\":{\"value\":\"5\", \"unit\": \"kg\"},\r\n        \"name\":\"SuGAR\",\r\n        \"quantity\":\"5\"\r\n        }\r\n    ],\r\n    \"steps\":[\r\n        {\r\n            \"content\":\"Chops the cheese into thin slices\",\r\n            \"photo\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\":\"Seasons the cheese with whipcream1\",\r\n            \"photos\":[\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\":0,\r\n                        \"width\":0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ],\r\n    \"TypeID\":2,\r\n    \"level\":\"Dễ đéo\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Recipe number ONE\",\r\n    \"photos\": [\r\n        [\r\n            {\r\n                \"url\": \"https://image.cooky.vn/recipe/g4/35360/s/cooky-recipe-cover-r35360.jpg\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"description\": \"recipe id?\",\r\n    \"avgRating\": 0,\r\n    \"ingredients\": [\r\n        {\r\n            \"unit\": {\r\n                \"value\": \"3\",\r\n                \"unit\": \"kg\"\r\n            },\r\n            \"name\": \"Salt\",\r\n            \"quantity\": \"3\"\r\n        },\r\n        {\r\n            \"unit\": {\r\n                \"value\": \"5\",\r\n                \"unit\": \"kg\"\r\n            },\r\n            \"name\": \"SuGAR\",\r\n            \"quantity\": \"5\"\r\n        }\r\n    ],\r\n    \"steps\": [\r\n        {\r\n            \"content\": \"Chops the cheese into thin slices\",\r\n            \"photos\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\": \"Seasons the cheese with whipcream1\",\r\n            \"photos\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ],\r\n    \"TypeID\": 2,\r\n    \"level\": \"Dễ1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -196,7 +196,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/2",
+							"raw": "http://localhost:4996/recipe-detail/41",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -204,7 +204,7 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"2"
+								"41"
 							]
 						}
 					},
@@ -299,6 +299,36 @@
 								"recipe-detail",
 								"1",
 								"unsave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT edit recipe",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"level\": \"Easy1\",\r\n    \"name\": \"helloooooo\",\r\n    \"photos\": [\r\n        [\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            },\r\n            {\r\n                \"url\": \"localhost:4996/image/default_avatar\",\r\n                \"height\": 0,\r\n                \"width\": 0\r\n            }\r\n        ]\r\n    ],\r\n    \"ingredients\": [\r\n        {\r\n            \"name\": \"chemical X\",\r\n            \"quantity\": \"3\",\r\n            \"unit\": {\r\n                \"unit\": \"kg\",\r\n                \"value\": \"3\"\r\n            }\r\n        },\r\n        {\r\n            \"name\": \"zzzzzzz\",\r\n            \"quantity\": \"5\",\r\n            \"unit\": {\r\n                \"unit\": \"kg\",\r\n                \"value\": \"5\"\r\n            }\r\n        }\r\n    ],\r\n    \"steps\": [\r\n        {\r\n            \"content\": \"Edit test GAGAGAGA\",\r\n            \"photos\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    }\r\n                ]\r\n            ]\r\n        },\r\n        {\r\n            \"content\": \"TEsting the EDITTTT\",\r\n            \"photos\": [\r\n                [\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    },\r\n                    {\r\n                        \"url\": \"https://files.catbox.moe/vfbv2r.jpg\",\r\n                        \"height\": 0,\r\n                        \"width\": 0\r\n                    }\r\n                ]\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:4996/recipe-detail/41/edit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "4996",
+							"path": [
+								"recipe-detail",
+								"41",
+								"edit"
 							]
 						}
 					},
@@ -400,7 +430,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserName\": \"test1\",\r\n    \"PassWord\": \"123456789\"\r\n}",
+							"raw": "{\r\n    \"UserName\": \"test3\",\r\n    \"PassWord\": \"123456789\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
