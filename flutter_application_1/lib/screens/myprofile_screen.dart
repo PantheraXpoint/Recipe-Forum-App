@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/components/recipe-card-list-horizontal.dart';
-import 'package:flutter_application_2/model/Profile.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
@@ -21,24 +20,10 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   final drive = GoogleDrive();
   int changes = 0;
-  Profile myprofile;
-  List<Recipe> list = [];
-
-  Future<void> initMyProfileRecipeList() async {
-    myprofile = await APIs.getMyProfile();
-    list = await APIs.getProfileRecipe(myprofile.username);
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initMyProfileRecipeList();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (myprofile != null)
+    if (Session.profile != null)
       return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
@@ -50,7 +35,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 width: MediaQuery.of(context).size.width,
                 child: SizedBox(
                     width: MediaQuery.of(context).size.width,
-                    child: Text(myprofile.username,
+                    child: Text(Session.profile.username,
                         style: TextStyle(
                             color: kSecondaryColor,
                             fontSize: 15.8,
@@ -71,7 +56,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             alignment: Alignment.center,
                             child: CircleAvatar(
                               backgroundImage:
-                                  NetworkImage(myprofile.avatarUrl),
+                                  NetworkImage(Session.profile.avatarUrl),
                               radius: 50,
                             ),
                           )),
@@ -85,7 +70,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           SizedBox(
                             width: 100,
                             child: Text(
-                              myprofile.displayName,
+                              Session.profile.displayName,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: kSecondaryColor,
@@ -110,8 +95,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               SizedBox(
                                   width: 90,
                                   child: Text(
-                                    (myprofile.totalRecipe + changes)
-                                        .toString(),
+                                    //(myprofile.totalRecipe + changes)
+                                    1.toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 15,
@@ -142,8 +127,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               SizedBox(
                                   width: 90,
                                   child: Text(
-                                    (myprofile.totalRecipe + changes)
-                                        .toString(),
+                                    Session.profile.savedIDs.length.toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 15,
@@ -182,9 +166,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => EditProfileScreen(
-                                    avatarUrl: myprofile.avatarUrl,
+                                    avatarUrl: Session.profile.avatarUrl,
                                   ))).then((value) async {
-                        myprofile = await APIs.getMyProfile();
+                        Session.profile = await APIs.getMyProfile();
                         setState(() {});
                       });
                     },
@@ -253,7 +237,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                                                           PostRecipeScreen()));
                                                       if (newRecipe != null)
                                                         setState(() {
-                                                          list.add(newRecipe);
+                                                          Session.myRecipes
+                                                              .add(newRecipe);
                                                           changes++;
                                                         });
                                                     },
@@ -266,25 +251,27 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                       )),
                                   Padding(
                                     padding: EdgeInsets.only(left: 20),
-                                    child: list == null
-                                        ? CircularProgressIndicator()
-                                        : (list.length == 0
-                                            ? Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 40),
-                                                child: Text(
-                                                    "Hãy cùng chia sẻ công thức nấu ăn!"))
-                                            : RecipeCardListHorizontal(
-                                                onRecipeDeleted: (value) =>
-                                                    setState(() {
-                                                  list.removeWhere((element) =>
+                                    child: Session.myRecipes.length == 0
+                                        ? Padding(
+                                            padding: EdgeInsets.only(top: 40),
+                                            child: Text(
+                                                "Hãy cùng chia sẻ công thức nấu ăn!"))
+                                        : RecipeCardListHorizontal(
+                                            canBookmark: false,
+                                            onBookmarkChanged: (value) {
+                                              print("profile");
+                                            },
+                                            onRecipeDeleted: (value) =>
+                                                setState(() {
+                                              Session.myRecipes.removeWhere(
+                                                  (element) =>
                                                       element.id == value);
-                                                  changes--;
-                                                }),
-                                                canDelete: true,
-                                                recipeList: list,
-                                                scale: 0.8,
-                                              )),
+                                              changes--;
+                                            }),
+                                            canDelete: true,
+                                            recipeList: Session.myRecipes,
+                                            scale: 0.8,
+                                          ),
                                   )
                                 ],
                               ),

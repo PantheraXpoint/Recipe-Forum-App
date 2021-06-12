@@ -211,6 +211,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: list == null || list.length == 0
                                       ? CircularProgressIndicator()
                                       : RecipeCardListHorizontal(
+                                          canBookmark: false,
+                                          onBookmarkChanged: (value) {},
                                           recipeList: list,
                                           scale: 0.9,
                                           canDelete: false,

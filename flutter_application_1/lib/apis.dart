@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'components/constaints.dart';
 import 'model/Recipe.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+
+class Session extends ChangeNotifier {
+  static Profile profile;
+  static List<Recipe> myRecipes;
+}
 
 class APIs {
   static Map<String, String> _headers = <String, String>{
