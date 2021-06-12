@@ -27,7 +27,6 @@ class HomeScreenState extends State<HomeScreen> {
     Session.profile = await APIs.getMyProfile();
     Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
     setState(() {
-      for (Recipe r in listRecipe) print(r.id);
       listWidget.add(Home(
         list: listRecipe,
         profile: Session.profile,
@@ -132,15 +131,12 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchScreen(
-                              onBookmarkChanged: (value) {
-                                print("home");
-                                setState(() {});
-                              },
-                            )));
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchScreen()))
+                    .then((value) {
+                  print("home");
+                  setState(() {});
+                });
               },
               child: TextFormField(
                 enabled: false,

@@ -5,9 +5,6 @@ import 'package:flutter_application_2/components/recipe-card.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 
 class SearchScreen extends StatefulWidget {
-  final ValueChanged<bool> onBookmarkChanged;
-
-  const SearchScreen({@required this.onBookmarkChanged});
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
@@ -71,10 +68,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (context, i) => SizedBox(
                       height: 400,
                       child: RecipeCard(
-                        onBookmarkChanged: (value) {
-                          print("search");
-                          widget.onBookmarkChanged(value);
-                        },
+                        canBookmark: false,
+                        onBookmarkChanged: (value) {},
                         recipe: list[i],
                         canDelete: false,
                       ),
