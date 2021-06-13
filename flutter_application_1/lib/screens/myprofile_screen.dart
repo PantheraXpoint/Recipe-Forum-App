@@ -277,26 +277,29 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               ),
                               Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text("Bộ sưu tập",
-                                          style: TextStyle(
-                                              color: kSecondaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20)),
-                                      SizedBox(
-                                        width: 240,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {},
-                                        splashColor: kPrimaryColor,
-                                        tooltip: "Xóa bài đăng",
-                                        icon: Icon(
-                                          Icons.delete,
-                                          size: 30,
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                                    child: Row(
+                                      children: [
+                                        Text("Bộ sưu tập",
+                                            style: TextStyle(
+                                                color: kSecondaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20)),
+                                        SizedBox(
+                                          width: 210,
                                         ),
-                                      ),
-                                    ],
+                                        IconButton(
+                                          onPressed: () {},
+                                          splashColor: kPrimaryColor,
+                                          tooltip: "Xóa bài đăng",
+                                          icon: Icon(
+                                            Icons.delete,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

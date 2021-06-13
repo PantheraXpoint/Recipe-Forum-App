@@ -12,11 +12,13 @@ class RecipeCard extends StatefulWidget {
   final Recipe recipe;
   final double scale;
   final bool canDelete;
+  // final bool canEdit;
   final bool canBookmark;
   RecipeCard(
       {@required this.recipe,
       this.scale,
       @required this.canDelete,
+      // this.canEdit,
       this.onRecipeDeleted,
       @required this.onBookmarkChanged,
       @required this.canBookmark});
@@ -110,6 +112,27 @@ class RecipeCardState extends State<RecipeCard> {
                         },
                         icon: Icon(Icons.delete))
                     : null),
+            // SizedBox(
+            //     child: widget.canEdit
+            //         ? IconButton(
+            //             onPressed: () async {
+            //               // int response = await APIs.editRecipe();
+            //               // if (response == 200) {
+            //               //   showDialog(
+            //               //       context: context,
+            //               //       builder: (context) => AlertDialog(
+            //               //             content: Text("Sửa thành công"),
+            //               //           ));
+            //               //   widget.onRecipeDeleted(widget.recipe.id);
+            //               // } else
+            //               //   showDialog(
+            //               //       context: context,
+            //               //       builder: (context) => AlertDialog(
+            //               //             content: Text("Sửa thất bại"),
+            //               //           ));
+            //             },
+            //             icon: Icon(Icons.edit))
+            //         : null),
             Padding(
               padding: EdgeInsets.all(10),
               child: Align(

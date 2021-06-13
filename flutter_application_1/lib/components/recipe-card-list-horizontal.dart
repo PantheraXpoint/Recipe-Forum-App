@@ -8,12 +8,14 @@ class RecipeCardListHorizontal extends StatefulWidget {
   final ValueChanged<int> onRecipeDeleted;
   final ValueChanged<bool> onBookmarkChanged;
   final bool canDelete;
+  final bool canEdit;
   final List<Recipe> recipeList;
   final double scale;
   RecipeCardListHorizontal(
       {@required this.recipeList,
       this.scale,
       @required this.canDelete,
+      this.canEdit,
       this.onRecipeDeleted,
       @required this.onBookmarkChanged,
       @required this.canBookmark});
@@ -31,14 +33,16 @@ class RecipeCardListHorizontalState extends State<RecipeCardListHorizontal> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.recipeList.length,
         itemBuilder: (context, i) => RecipeCard(
-            canBookmark: widget.canBookmark,
-            onBookmarkChanged: (value) {
-              print("horizontal");
-              widget.onBookmarkChanged(value);
-            },
-            onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
-            recipe: widget.recipeList[i],
-            canDelete: widget.canDelete),
+          canBookmark: widget.canBookmark,
+          onBookmarkChanged: (value) {
+            print("horizontal");
+            widget.onBookmarkChanged(value);
+          },
+          onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
+          recipe: widget.recipeList[i],
+          canDelete: widget.canDelete,
+          // canEdit: widget.canEdit,
+        ),
         separatorBuilder: (context, index) => SizedBox(
           width: 20,
         ),
