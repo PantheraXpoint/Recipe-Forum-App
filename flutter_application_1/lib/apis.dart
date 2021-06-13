@@ -175,6 +175,16 @@ class APIs {
     return null;
   }
 
+  static Future<int> rateRecipe(Recipe recipe, double value) async {
+    Map<String, double> body = {"rating": value};
+    final response = await http.put(
+        Uri.http(BASE_URL, "/recipe-detail/" + recipe.id.toString() + "/rate"),
+        body: json.encode(body),
+        headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
+  }
+
   static Future<int> editRecipe(Recipe recipe) async {
     final body = json.encode(await recipe.toJson());
     final response = await http.put(

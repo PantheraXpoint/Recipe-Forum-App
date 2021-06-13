@@ -54,6 +54,35 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     pageController.dispose();
   }
 
+  void _showRating(context, Recipe detail) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  Center(
+                    child: SmoothStarRating(
+                        allowHalfRating: true,
+                        onRated: (v) async {
+                          int response = await APIs.rateRecipe(detail, v);
+                          print(response);
+                          Navigator.pop(context);
+                        },
+                        starCount: 5,
+                        size: 40.0,
+                        color: kSecondaryColor,
+                        borderColor: kSecondaryColor,
+                        spacing: 0.0),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     print(detail == null);
@@ -61,85 +90,91 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     print(detail.id);
     if (detail != null && detail.creator != null) {
       return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 1,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: kText,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 1,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new,
+              color: kText,
             ),
-            actions: [
-              SizedBox(
-                child: detail.creator.username == Session.profile.username
-                    ? null
-                    : GestureDetector(
-                        onTap: () async {
-                          int response;
-                          if (isBookmark) {
-                            response =
-                                await APIs.unsaveRecipe(widget.recipe.id);
-                            Session.profile.savedIDs.removeWhere(
-                                (element) => element == widget.recipe.id);
-                          } else {
-                            response = await APIs.saveRecipe(widget.recipe.id);
-                            Session.profile.savedIDs.add(widget.recipe.id);
-                          }
-                          print(response);
-                          setState(() {
-                            isBookmark = Session.profile.savedIDs
-                                .contains(widget.recipe.id);
-                          });
-                        },
-                        child: Icon(
-                          isBookmark ? Icons.bookmark : Icons.bookmark_outline,
-                          color: Colors.yellow.shade700,
-                          size: 40,
-                        ),
-                      ),
-              ),
-            ],
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          resizeToAvoidBottomInset: false,
-          body: Column(children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 280,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(widget.recipe.imageUrl))),
+          actions: [
+            SizedBox(
+              child: detail.creator.username == Session.profile.username
+                  ? null
+                  : GestureDetector(
+                      onTap: () async {
+                        int response;
+                        if (isBookmark) {
+                          response = await APIs.unsaveRecipe(widget.recipe.id);
+                          Session.profile.savedIDs.removeWhere(
+                              (element) => element == widget.recipe.id);
+                        } else {
+                          response = await APIs.saveRecipe(widget.recipe.id);
+                          Session.profile.savedIDs.add(widget.recipe.id);
+                        }
+                        print(response);
+                        setState(() {
+                          isBookmark = Session.profile.savedIDs
+                              .contains(widget.recipe.id);
+                        });
+                      },
+                      child: Icon(
+                        isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                        color: Colors.yellow.shade700,
+                        size: 40,
+                      ),
+                    ),
             ),
-            Expanded(
-                child: PageView(
-              children: listWidget,
-              controller: pageController,
-              onPageChanged: (value) => setState(() => currentTab = value),
-            ))
-          ]),
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.new_label), label: "Giới thiệu"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.emoji_food_beverage), label: "Nguyên liệu"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.integration_instructions),
-                  label: "Hướng dẫn"),
-            ],
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentTab,
-            selectedItemColor: kSecondaryColor,
-            onTap: (index) => setState(() {
-              currentTab = index;
-              pageController.animateToPage(index,
-                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-            }),
-          ));
+          ],
+        ),
+        resizeToAvoidBottomInset: false,
+        body: Column(children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 280,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(widget.recipe.imageUrl))),
+          ),
+          Expanded(
+              child: PageView(
+            children: listWidget,
+            controller: pageController,
+            onPageChanged: (value) => setState(() => currentTab = value),
+          ))
+        ]),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.new_label), label: "Giới thiệu"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.emoji_food_beverage), label: "Nguyên liệu"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.integration_instructions), label: "Hướng dẫn"),
+          ],
+          type: BottomNavigationBarType.fixed,
+          currentIndex: currentTab,
+          selectedItemColor: kSecondaryColor,
+          onTap: (index) => setState(() {
+            currentTab = index;
+            pageController.animateToPage(index,
+                duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+          }),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          icon: Icon(Icons.reviews),
+          label: Text("Rate"),
+          onPressed: () {
+            _showRating(context, detail);
+          },
+        ),
+      );
     }
 
     return Scaffold(
@@ -237,8 +272,8 @@ class _IntroductionState extends State<Introduction> {
                         rating: widget.detail.avgRating / 2,
                         size: 25.0,
                         isReadOnly: true,
-                        color: Colors.yellow,
-                        borderColor: Colors.yellow,
+                        color: kText,
+                        borderColor: kText,
                         spacing: 0.0),
                     Icon(Icons.visibility),
                     Text(widget.detail.totalView.toString()),
@@ -264,7 +299,7 @@ class _IntroductionState extends State<Introduction> {
         Padding(
           padding: EdgeInsets.only(right: 20),
           child: Text(_parseHtmlString(widget.detail.description)),
-        )
+        ),
       ]),
     );
   }
