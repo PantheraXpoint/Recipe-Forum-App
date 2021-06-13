@@ -41,6 +41,7 @@ class RecipeSlider extends StatelessWidget {
           height: 20,
         ),
         RecipeCardListHorizontal(
+            canEdit: false,
             canBookmark: true,
             onBookmarkChanged: (value) {
               print("slider");

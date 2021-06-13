@@ -20,6 +20,23 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   final drive = GoogleDrive();
   int changes = 0;
+  List<Recipe> savedRecipes = [];
+  bool refresh = false;
+  Future initSavedRecipes() async {
+    for (int id in Session.profile.savedIDs) {
+      Recipe recipe = await APIs.getRecipe(id);
+      savedRecipes.add(recipe);
+    }
+    setState(() {
+      refresh = true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initSavedRecipes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,11 +217,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             tabs: [
                               Tab(
                                   icon: Icon(
-                                Icons.access_alarm_rounded,
+                                Icons.upload,
                                 color: kSecondaryColor,
                               )),
                               Tab(
-                                  icon: Icon(Icons.access_alarm_sharp,
+                                  icon: Icon(Icons.collections_bookmark,
                                       color: kSecondaryColor)),
                             ],
                           ),
@@ -250,13 +267,15 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                         ],
                                       )),
                                   Padding(
-                                    padding: EdgeInsets.only(left: 20),
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
                                     child: Session.myRecipes.length == 0
                                         ? Padding(
                                             padding: EdgeInsets.only(top: 40),
                                             child: Text(
                                                 "Hãy cùng chia sẻ công thức nấu ăn!"))
                                         : RecipeCardListHorizontal(
+                                            canEdit: true,
                                             canBookmark: false,
                                             onBookmarkChanged: (value) {
                                               print("profile");
@@ -276,31 +295,37 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 ],
                               ),
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                    child: Row(
-                                      children: [
-                                        Text("Bộ sưu tập",
-                                            style: TextStyle(
-                                                color: kSecondaryColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20)),
-                                        SizedBox(
-                                          width: 210,
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          splashColor: kPrimaryColor,
-                                          tooltip: "Xóa bài đăng",
-                                          icon: Icon(
-                                            Icons.delete,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    child: Text("Bộ sưu tập",
+                                        style: TextStyle(
+                                            color: kSecondaryColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20)),
                                   ),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 20, top: 10, right: 20),
+                                      child: !refresh
+                                          ? Center(
+                                              child:
+                                                  CircularProgressIndicator())
+                                          : (Session.profile.savedIDs.length ==
+                                                  0
+                                              ? Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 40),
+                                                  child: Text(
+                                                      "Bạn chưa lưu công thức nào!"))
+                                              : RecipeCardListHorizontal(
+                                                  canEdit: false,
+                                                  scale: 0.9,
+                                                  recipeList: savedRecipes,
+                                                  canDelete: false,
+                                                  onBookmarkChanged: (value) {},
+                                                  canBookmark: true))),
                                 ],
                               ),
                             ],

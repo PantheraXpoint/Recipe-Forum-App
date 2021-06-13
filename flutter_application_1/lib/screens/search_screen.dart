@@ -68,9 +68,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (context, i) => SizedBox(
                       height: 400,
                       child: RecipeCard(
+                        canEdit: false,
                         canBookmark: false,
                         onBookmarkChanged: (value) {},
-                        recipe: list[i],
+                        preview: list[i],
                         canDelete: false,
                       ),
                     ),

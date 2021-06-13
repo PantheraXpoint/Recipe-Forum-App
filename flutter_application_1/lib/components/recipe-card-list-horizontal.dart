@@ -5,20 +5,20 @@ import 'package:flutter_application_2/model/Recipe.dart';
 
 class RecipeCardListHorizontal extends StatefulWidget {
   final bool canBookmark;
-  final ValueChanged<int> onRecipeDeleted;
-  final ValueChanged<bool> onBookmarkChanged;
   final bool canDelete;
   final bool canEdit;
+  final ValueChanged<int> onRecipeDeleted;
+  final ValueChanged<bool> onBookmarkChanged;
   final List<Recipe> recipeList;
   final double scale;
   RecipeCardListHorizontal(
       {@required this.recipeList,
       this.scale,
       @required this.canDelete,
-      this.canEdit,
       this.onRecipeDeleted,
       @required this.onBookmarkChanged,
-      @required this.canBookmark});
+      @required this.canBookmark,
+      @required this.canEdit});
   @override
   State<StatefulWidget> createState() => RecipeCardListHorizontalState();
 }
@@ -33,16 +33,15 @@ class RecipeCardListHorizontalState extends State<RecipeCardListHorizontal> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.recipeList.length,
         itemBuilder: (context, i) => RecipeCard(
-          canBookmark: widget.canBookmark,
-          onBookmarkChanged: (value) {
-            print("horizontal");
-            widget.onBookmarkChanged(value);
-          },
-          onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
-          recipe: widget.recipeList[i],
-          canDelete: widget.canDelete,
-          // canEdit: widget.canEdit,
-        ),
+            canBookmark: widget.canBookmark,
+            canEdit: widget.canEdit,
+            onBookmarkChanged: (value) {
+              print("horizontal");
+              widget.onBookmarkChanged(value);
+            },
+            onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
+            preview: widget.recipeList[i],
+            canDelete: widget.canDelete),
         separatorBuilder: (context, index) => SizedBox(
           width: 20,
         ),

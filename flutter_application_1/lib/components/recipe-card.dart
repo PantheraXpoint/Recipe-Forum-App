@@ -4,34 +4,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
   final ValueChanged<int> onRecipeDeleted;
   final ValueChanged<bool> onBookmarkChanged;
-  final Recipe recipe;
+  final Recipe preview;
   final double scale;
   final bool canDelete;
   // final bool canEdit;
   final bool canBookmark;
+  final bool canEdit;
   RecipeCard(
-      {@required this.recipe,
+      {@required this.preview,
       this.scale,
       @required this.canDelete,
       // this.canEdit,
       this.onRecipeDeleted,
       @required this.onBookmarkChanged,
-      @required this.canBookmark});
+      @required this.canBookmark,
+      @required this.canEdit});
   @override
   State<StatefulWidget> createState() => RecipeCardState();
 }
 
 class RecipeCardState extends State<RecipeCard> {
   bool isBookmark;
+  Recipe recipe;
   @override
   void initState() {
     super.initState();
-    isBookmark = Session.profile.savedIDs.contains(widget.recipe.id);
+    recipe = widget.preview;
+    isBookmark = Session.profile.savedIDs.contains(recipe.id);
   }
 
   @override
@@ -46,9 +51,9 @@ class RecipeCardState extends State<RecipeCard> {
                       print("card");
                       widget.onBookmarkChanged(value);
                     },
-                    recipe: widget.recipe))).then((value) {
+                    recipe: recipe))).then((value) {
           setState(() {
-            isBookmark = Session.profile.savedIDs.contains(widget.recipe.id);
+            isBookmark = Session.profile.savedIDs.contains(recipe.id);
           });
         });
       },
@@ -64,7 +69,7 @@ class RecipeCardState extends State<RecipeCard> {
           ),
           image: DecorationImage(
             image: NetworkImage(
-              widget.recipe.imageUrl,
+              recipe.imageUrl,
             ),
             fit: BoxFit.cover,
           ),
@@ -75,7 +80,7 @@ class RecipeCardState extends State<RecipeCard> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
-                    widget.recipe.imageUrl,
+                    recipe.imageUrl,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -94,15 +99,14 @@ class RecipeCardState extends State<RecipeCard> {
                 child: widget.canDelete
                     ? IconButton(
                         onPressed: () async {
-                          int response =
-                              await APIs.deleteRecipe(widget.recipe.id);
+                          int response = await APIs.deleteRecipe(recipe.id);
                           if (response == 200) {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                       content: Text("Xóa thành công"),
                                     ));
-                            widget.onRecipeDeleted(widget.recipe.id);
+                            widget.onRecipeDeleted(recipe.id);
                           } else
                             showDialog(
                                 context: context,
@@ -110,29 +114,37 @@ class RecipeCardState extends State<RecipeCard> {
                                       content: Text("Xóa thất bại"),
                                     ));
                         },
-                        icon: Icon(Icons.delete))
+                        iconSize: 40,
+                        icon: Icon(Icons.delete, color: Colors.white))
                     : null),
-            // SizedBox(
-            //     child: widget.canEdit
-            //         ? IconButton(
-            //             onPressed: () async {
-            //               // int response = await APIs.editRecipe();
-            //               // if (response == 200) {
-            //               //   showDialog(
-            //               //       context: context,
-            //               //       builder: (context) => AlertDialog(
-            //               //             content: Text("Sửa thành công"),
-            //               //           ));
-            //               //   widget.onRecipeDeleted(widget.recipe.id);
-            //               // } else
-            //               //   showDialog(
-            //               //       context: context,
-            //               //       builder: (context) => AlertDialog(
-            //               //             content: Text("Sửa thất bại"),
-            //               //           ));
-            //             },
-            //             icon: Icon(Icons.edit))
-            //         : null),
+            SizedBox(
+              child: widget.canEdit
+                  ? Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        iconSize: 40,
+                        icon: Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
+                        onPressed: () async {
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          PostRecipeScreen(recipe: recipe)))
+                              .then((value) async {
+                            int index = Session.myRecipes.indexWhere(
+                                (element) => element.id == recipe.id);
+                            recipe = await APIs.getRecipe(recipe.id);
+                            Session.myRecipes[index] = recipe;
+                            setState(() {});
+                          });
+                        },
+                      ),
+                    )
+                  : null,
+            ),
             Padding(
               padding: EdgeInsets.all(10),
               child: Align(
@@ -143,7 +155,7 @@ class RecipeCardState extends State<RecipeCard> {
                       borderRadius: BorderRadius.circular(10)),
                   padding: EdgeInsets.all(10),
                   width: double.infinity,
-                  height: widget.recipe.title.length < 40 ? 90 : 120,
+                  height: recipe.title.length < 40 ? 90 : 120,
                   child: Column(
                     children: [
                       Row(
@@ -153,7 +165,7 @@ class RecipeCardState extends State<RecipeCard> {
                           SizedBox(
                             width: 220,
                             child: Text(
-                              widget.recipe.title,
+                              recipe.title,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -168,27 +180,25 @@ class RecipeCardState extends State<RecipeCard> {
                                     onTap: () async {
                                       int response;
                                       if (isBookmark) {
-                                        response = await APIs.unsaveRecipe(
-                                            widget.recipe.id);
+                                        response =
+                                            await APIs.unsaveRecipe(recipe.id);
                                         Session.profile.savedIDs.removeWhere(
-                                            (element) =>
-                                                element == widget.recipe.id);
+                                            (element) => element == recipe.id);
                                       } else {
-                                        response = await APIs.saveRecipe(
-                                            widget.recipe.id);
-                                        Session.profile.savedIDs
-                                            .add(widget.recipe.id);
+                                        response =
+                                            await APIs.saveRecipe(recipe.id);
+                                        Session.profile.savedIDs.add(recipe.id);
                                       }
                                       print(response);
                                       setState(() {
                                         isBookmark = Session.profile.savedIDs
-                                            .contains(widget.recipe.id);
+                                            .contains(recipe.id);
                                         widget.onBookmarkChanged(true);
                                       });
                                     },
                                     child: Icon(
                                       Session.profile.savedIDs
-                                              .contains(widget.recipe.id)
+                                              .contains(recipe.id)
                                           ? Icons.bookmark
                                           : Icons.bookmark_outline,
                                       color: Colors.yellow,
@@ -202,10 +212,10 @@ class RecipeCardState extends State<RecipeCard> {
                           alignment: Alignment.bottomLeft,
                           child: Row(
                             children: [
-                              Text("${widget.recipe.totalPrepTime} phút | ",
+                              Text("${recipe.totalPrepTime} phút | ",
                                   style: TextStyle(color: Color(0xFF7A7A7A))),
                               Text(
-                                widget.recipe.difficulty,
+                                recipe.difficulty,
                                 style: TextStyle(color: Color(0xFF7A7A7A)),
                               )
                             ],

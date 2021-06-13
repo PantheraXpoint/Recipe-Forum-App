@@ -207,10 +207,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 20),
+                                  padding: EdgeInsets.only(left: 20, right: 20),
                                   child: list == null || list.length == 0
                                       ? CircularProgressIndicator()
                                       : RecipeCardListHorizontal(
+                                        canEdit: false,
                                           canBookmark: false,
                                           onBookmarkChanged: (value) {},
                                           recipeList: list,
