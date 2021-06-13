@@ -21,7 +21,7 @@
 							"formdata": [
 								{
 									"key": "limit",
-									"value": "3",
+									"value": "4",
 									"type": "text"
 								}
 							]
@@ -57,14 +57,13 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:4996/recipe/1",
+							"raw": "localhost:4996/recipe",
 							"host": [
 								"localhost"
 							],
 							"port": "4996",
 							"path": [
-								"recipe",
-								"1"
+								"recipe"
 							]
 						}
 					},
@@ -246,7 +245,7 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/1/rate/5",
+							"raw": "http://localhost:4996/recipe-detail/45/rate/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -254,9 +253,9 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"1",
+								"45",
 								"rate",
-								"5"
+								"3"
 							]
 						}
 					},
@@ -268,7 +267,7 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/1/save",
+							"raw": "http://localhost:4996/recipe-detail/45/save",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -276,7 +275,7 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"1",
+								"45",
 								"save"
 							]
 						}
@@ -542,7 +541,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"PassWord\": \"put old password in here\",\r\n    \"DisplayName\": \"my new name\",\r\n    \"FirstName\":\"Long\",\r\n    \"LastName\":\"lole\",\r\n    \"AvatarUrl\":\"localhost:4996/image/default_avatar.jpg\"\r\n}",
+							"raw": "{\r\n    \"PassWord\": \"123456789\",\r\n    \"DisplayName\": \"test3 is now NEW\",\r\n    \"FirstName\":\"Long\",\r\n    \"LastName\":\"lole\",\r\n    \"AvatarUrl\":\"localhost:4996/image/default_avatar.jpg\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

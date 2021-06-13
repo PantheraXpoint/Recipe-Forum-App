@@ -74,7 +74,7 @@ def accountLookup(username):
     try :
         acc = queryUsername(username)
         if len(acc) == 0:
-            return make_response( {"status": "Not found", "message": "Account not found"}, 404)
+            return make_response( {"status": "Not found", "message": "Account not found, maybe it is deleted"}, 404)
         return jsonify(acc) ,200
     except:
         return make_response( {"status": "Missing paramter", "message": "Enter an username after the url please"}, 400)
@@ -138,6 +138,8 @@ def editAccount():
 def deleteCurrentAccount():
     user = flask_login.current_user
     body = request.get_json()
+    if body == None:
+        return make_response( {"status": "OK", "message": "nothing changed"}, 200)
 
     password = body["PassWord"]
     if checkinAccount(user.get_username(), password) == 0:
@@ -233,7 +235,6 @@ def post_recipe_detail():
     
     user.add_recipe_count(1)
     # user.save()
-
     # templist = RecipeDetail.objects(name=recipe.name)
     # tempId = templist[templist.count()-1].getId()
     # preview = recipe.generatePreview()
@@ -313,6 +314,45 @@ def removeFromCollection(ide):
         user.remove_from_collection(ide)
         user.save()
         return make_response( {"status": "OK", "message": "Recipe removed from collection"}, 200)
+
+@app.route('/recipe-detail/<int:ide>/edit', methods=['PUT'])
+@flask_login.login_required
+def editRecipe(ide):
+    
+    body = request.get_json()
+    
+    if body == None:
+        return make_response( {"status": "OK", "message": "nothing was changed because nothing was in the request body"}, 200)
+    
+    respon = editRecipeFunc(flask_login.current_user.get_username(), ide, body)
+    if respon == 200:
+        return make_response({'status':'OK', 'message' : 'Recipe edited'},200)
+    if respon == 500:
+        return make_response({'status':'Internal server error', 'message' : 'Something wrong happened during editing recipe'},500)
+    if respon == 403:
+        return make_response({'status':'Forbidden', 'message' : 'You do not own this recipe'},403)
+    if respon == 404:
+        return make_response({'status':'Not Found', 'message' : 'Recipe was not found'},404)
+
+
+# @app.route('/nuclearoption', methods = ['GET'])
+# def debugme():
+#     temp = {}
+#     dupe = []
+#     recipes = RecipeDetail.objects
+#     for recipe in recipes:
+#         if recipe["id"] in temp:
+#             temp[recipe["id"]] += 1
+#         else:
+#             temp.update( {recipe["id"] : 0} )
+#     # for ele in temp:
+#     #     if temp[ele] > 0:
+#     #         badoptimiz.update( {ele : temp[ele]} )
+#     # for ids in dupe:
+#         # rep = RecipeDetail.objects(id=ids).delete()
+#         # print(rep)
+#         # rep.delete()
+#     return jsonify(temp)
 
 #
 #   Image handling
