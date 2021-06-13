@@ -56,6 +56,9 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(detail == null);
+    print(detail.creator == null);
+    print(detail.id);
     if (detail != null && detail.creator != null) {
       return Scaffold(
           appBar: AppBar(

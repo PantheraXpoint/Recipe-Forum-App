@@ -7,8 +7,15 @@ import 'package:flutter_application_2/model/Ingredient.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/model/Step.dart' as Step;
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 
 class PostRecipeScreen extends StatefulWidget {
+  final Recipe recipe;
+
+  const PostRecipeScreen({this.recipe});
+
   @override
   _PostRecipeScreenState createState() => _PostRecipeScreenState();
 }
@@ -37,20 +44,23 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
     image;
     ingredients = [];
     steps = [];
-
+    typeID = 0;
     listWidget.add(Introduction(
       onNameChanged: (value) => name = value,
       onDecriptionChanged: (value) => description = value,
       onImageChanged: (value) => image = value,
-      onTypeChanged: (value) => typeID = typesToInt[value],
+      onTypeChanged: (value) => typeID = value,
       onDifficultyChanged: (value) => difficulty = value,
       onTimeChanged: (value) => time = value,
+      recipe: widget.recipe,
     ));
     listWidget.add(Ingredients(
       onListIngredientsChanged: (value) => ingredients = value,
+      recipe: widget.recipe,
     ));
     listWidget.add(Steps(
       onListStepsChanged: (value) => steps = value,
+      recipe: widget.recipe,
     ));
   }
 
@@ -73,13 +83,14 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                     if (name.isEmpty ||
                         description.isEmpty ||
                         ingredients.isEmpty ||
-                        steps.isEmpty)
+                        steps.isEmpty ||
+                        typeID == null ||
+                        difficulty == null)
                       showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                                 title: Text("Lỗi"),
-                                content:
-                                    Text("Vui lòng nhập đầy đủ thông tin main"),
+                                content: Text("Vui lòng nhập đầy đủ thông tin"),
                               ));
                     else if (image == null)
                       showDialog(
@@ -97,7 +108,9 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                                 content: Text("Phút là 1 số"),
                               ));
                     } else {
-                      final recipe = Recipe(
+                      int response = 200;
+                      var recipe = Recipe(
+                          id: widget.recipe == null ? 0 : widget.recipe.id,
                           title: name,
                           description: description,
                           totalPrepTime: int.parse(time),
@@ -106,9 +119,17 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
                           ingredients: ingredients,
                           steps: steps,
                           typeID: typeID);
-                      String response = await APIs.postRecipeDetail(recipe);
-                      print(response);
-                      Navigator.pop(context, recipe);
+                      if (widget.recipe == null)
+                        recipe = await APIs.postRecipeDetail(recipe);
+                      else {
+                        response = await APIs.editRecipeDetail(recipe);
+                      }
+                      if (recipe != null && response == 200)
+                        Navigator.pop(context, recipe);
+                      else
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Không thể đăng công thức"),
+                        ));
                     }
                   },
                   style: ElevatedButton.styleFrom(primary: kSecondaryColor),
@@ -146,8 +167,10 @@ class Introduction extends StatefulWidget {
   final ValueChanged<String> onDifficultyChanged;
   final ValueChanged<String> onTimeChanged;
   final ValueChanged<int> onTypeChanged;
+  final Recipe recipe;
   const Introduction(
-      {@required this.onNameChanged,
+      {this.recipe,
+      @required this.onNameChanged,
       @required this.onDecriptionChanged,
       @required this.onImageChanged,
       @required this.onDifficultyChanged,
@@ -159,8 +182,68 @@ class Introduction extends StatefulWidget {
 
 class _IntroductionState extends State<Introduction> {
   File _image;
-  String level = "";
+  String level;
   String defaultFT = "Khai vị";
+  TextEditingController name;
+  TextEditingController time;
+  TextEditingController description;
+
+  Future initImage() async {
+    final response = await http.get(Uri.http(BASE_URL,
+        widget.recipe.imageUrl.substring(("http://" + BASE_URL).length)));
+    Directory dir = await getTemporaryDirectory();
+
+    _image = File(join(
+        dir.path,
+        widget.recipe.imageUrl
+            .substring(("http://" + BASE_URL + "/image/").length)));
+
+    _image.writeAsBytesSync(response.bodyBytes);
+    widget.onImageChanged(_image);
+    setState(() {
+      print("load image okay");
+      print(_image != null);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.recipe != null) {
+      initImage();
+      name = TextEditingController(text: widget.recipe.title);
+      widget.onNameChanged(widget.recipe.title);
+
+      print(widget.recipe.totalPrepTime.toString());
+      time =
+          TextEditingController(text: widget.recipe.totalPrepTime.toString());
+      widget.onTimeChanged(widget.recipe.totalPrepTime.toString());
+
+      description = TextEditingController(text: widget.recipe.description);
+      widget.onDecriptionChanged(widget.recipe.description);
+
+      level = widget.recipe.difficulty;
+      widget.onDifficultyChanged(widget.recipe.difficulty);
+
+      defaultFT = types[widget.recipe.typeID];
+      widget.onTypeChanged(widget.recipe.typeID);
+    } else {
+      name = TextEditingController();
+      time = TextEditingController();
+      description = TextEditingController();
+      level = "";
+      defaultFT = types[0];
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    name.dispose();
+    time.dispose();
+    description.dispose();
+  }
+
   void lv(String value) {
     widget.onDifficultyChanged(value);
     setState(() {
@@ -169,6 +252,7 @@ class _IntroductionState extends State<Introduction> {
   }
 
   void getFoodType(String value) {
+    widget.onTypeChanged(types.indexWhere((element) => element == value));
     setState(() {
       defaultFT = value;
     });
@@ -273,6 +357,7 @@ class _IntroductionState extends State<Introduction> {
                         primaryColorDark: Colors.red,
                       ),
                       child: TextField(
+                        controller: name,
                         onChanged: (value) => widget.onNameChanged(value),
                         decoration: InputDecoration(
                             hintText: "Cơm chiên cá mặn",
@@ -380,6 +465,7 @@ class _IntroductionState extends State<Introduction> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: TextField(
+                              controller: time,
                               onChanged: (value) {
                                 widget.onTimeChanged(value);
                               },
@@ -395,6 +481,7 @@ class _IntroductionState extends State<Introduction> {
                     ),
                     Padding(padding: EdgeInsets.only(top: 20)),
                     TextField(
+                      controller: description,
                       onChanged: (value) => widget.onDecriptionChanged(value),
                       maxLines: 5,
                       decoration: InputDecoration(
@@ -416,15 +503,21 @@ class _IntroductionState extends State<Introduction> {
 
 class Ingredients extends StatefulWidget {
   final ValueChanged<List<Ingredient>> onListIngredientsChanged;
-
-  const Ingredients({@required this.onListIngredientsChanged});
+  final Recipe recipe;
+  const Ingredients({@required this.onListIngredientsChanged, this.recipe});
 
   @override
   _IngredientsState createState() => _IngredientsState();
 }
 
 class _IngredientsState extends State<Ingredients> {
-  List<Ingredient> ingredients = [];
+  List<Ingredient> ingredients;
+  @override
+  void initState() {
+    super.initState();
+    ingredients = widget.recipe == null ? [] : widget.recipe.ingredients;
+    widget.onListIngredientsChanged(ingredients);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -476,14 +569,46 @@ class _IngredientsState extends State<Ingredients> {
 
 class Steps extends StatefulWidget {
   final ValueChanged<List<Step.Step>> onListStepsChanged;
-
-  const Steps({@required this.onListStepsChanged});
+  final Recipe recipe;
+  const Steps({@required this.onListStepsChanged, this.recipe});
   @override
   _StepsState createState() => _StepsState();
 }
 
 class _StepsState extends State<Steps> {
-  List<Step.Step> steps = [];
+  List<Step.Step> steps;
+
+  Future _initImage() async {
+    for (Step.Step step in steps) {
+      for (String url in step.listImageUrl) {
+        print(url);
+        final response = await http.get(
+            Uri.http(BASE_URL, url.substring(("http://" + BASE_URL).length)));
+        print(url.substring(("http://" + BASE_URL + "/image/").length));
+        Directory dir = await getTemporaryDirectory();
+
+        final image = File(join(dir.path,
+            url.substring(("http://" + BASE_URL + "/image/").length)));
+
+        image.writeAsBytesSync(response.bodyBytes);
+        step.listImageFile.add(image);
+      }
+    }
+    widget.onListStepsChanged(steps);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    steps = widget.recipe == null ? [] : widget.recipe.steps;
+    if (widget.recipe != null) {
+      for (Step.Step step in steps) {
+        step.listImageFile = [];
+      }
+      _initImage();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -571,8 +696,6 @@ class __StepInputState extends State<_StepInput> {
   String content = "";
 
   Future _imgFromCamera() async {
-    // File image = await ImagePicker.pickImage(
-    //     source: ImageSource.camera, imageQuality: 50);
     PickedFile image = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
@@ -650,7 +773,7 @@ class __StepInputState extends State<_StepInput> {
             onChanged: (value) => content = value,
             maxLines: null,
             decoration: InputDecoration(
-              hintText: "Món ăn đậm chất truyền thống,.....",
+              hintText: "Món ăn đậm chất truyền thống,...",
               labelText: "Mô tả",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20.0),

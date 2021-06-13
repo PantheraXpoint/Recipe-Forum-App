@@ -89,7 +89,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    print("ahuhuhuhuhu reset state di ma");
     final sliders = List.generate(
       10,
       (index) => RecipeSlider(

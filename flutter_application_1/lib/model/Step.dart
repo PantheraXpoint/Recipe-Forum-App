@@ -34,6 +34,6 @@ class Step {
       ]);
     });
 
-    return {"content": content, "photo": list};
+    return {"content": content, "photos": list};
   }
 }

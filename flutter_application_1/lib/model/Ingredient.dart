@@ -12,7 +12,7 @@ class Ingredient {
     return Ingredient(
         unit: json['unit'] == null ? ' ' : json['unit']['unit'],
         name: json['name'] == null ? ' ' : json['name'],
-        quantity: json['quantity'] == null ? ' ' : json['quantity']);
+        quantity: json['quantity'] == null ? ' ' : json['quantity'].toString());
   }
 
   Map toJson() {

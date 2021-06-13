@@ -138,12 +138,25 @@ class APIs {
     return "http://" + BASE_URL + "/image/" + json.decode(body)['filename'];
   }
 
-  static Future<String> postRecipeDetail(Recipe recipe) async {
+  static Future<Recipe> postRecipeDetail(Recipe recipe) async {
     final body = json.encode(await recipe.toJson());
     final response = await http.post(Uri.http(BASE_URL, "/recipe-detail"),
         body: body, headers: _headers);
     updateCookie(response);
-    return response.body;
+
+    if (response.statusCode == 200)
+      return Recipe.fromJson(json.decode(response.body));
+    return null;
+  }
+
+  static Future<int> editRecipeDetail(Recipe recipe) async {
+    final body = json.encode(await recipe.toJson());
+    final response = await http.put(
+        Uri.http(BASE_URL, "/recipe-detail/${recipe.id}/edit"),
+        body: body,
+        headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
   }
 
   static Future<List<Recipe>> searchRecipe(String query) async {

@@ -21,16 +21,3 @@ const List<String> types = [
   'Món ăn cho trẻ',
   'Món nhậu'
 ];
-
-const Map<String, int> typesToInt = {
-  'Khai vị': 1,
-  'Tráng miệng': 2,
-  'Món chay': 3,
-  'Món chính': 4,
-  'Món ăn sáng': 5,
-  'Nhanh và dễ': 6,
-  'Thức uống': 7,
-  'Bánh ngọt': 8,
-  'Món ăn cho trẻ': 9,
-  'Món nhậu': 10
-};

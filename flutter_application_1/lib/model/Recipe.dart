@@ -65,7 +65,7 @@ class Recipe {
       Map json = await step.toJson();
       listStepsToMap.add(json);
     }
-
+    print("TYPE IDDDDDDDDDDDDDDD: " + typeID.toString());
     return {
       'name': title,
       'photos': [
@@ -79,7 +79,7 @@ class Recipe {
       'avgRating': '0',
       'ingredients': listIngredientToMap,
       'steps': listStepsToMap,
-      'TypeID': typeID
+      'TypeID': typeID + 1
     };
   }
 }
