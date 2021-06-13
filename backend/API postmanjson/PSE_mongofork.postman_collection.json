@@ -195,7 +195,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/41",
+							"raw": "http://localhost:4996/recipe-detail/45",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -203,7 +203,7 @@
 							"port": "4996",
 							"path": [
 								"recipe-detail",
-								"41"
+								"45"
 							]
 						}
 					},
@@ -244,8 +244,17 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\":3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:4996/recipe-detail/45/rate/3",
+							"raw": "http://localhost:4996/recipe-detail/45/rate",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -254,8 +263,7 @@
 							"path": [
 								"recipe-detail",
 								"45",
-								"rate",
-								"3"
+								"rate"
 							]
 						}
 					},
@@ -429,7 +437,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserName\": \"test3\",\r\n    \"PassWord\": \"123456789\"\r\n}",
+							"raw": "{\r\n    \"UserName\": \"test2\",\r\n    \"PassWord\": \"123456789\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
