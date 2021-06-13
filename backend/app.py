@@ -271,11 +271,15 @@ def increaseView(id):
     except:
         return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
-@app.route('/recipe-detail/<int:ide>/rate/<int:star>', methods=['PUT'])
+@app.route('/recipe-detail/<int:ide>/rate', methods=['PUT'])
 @flask_login.login_required
-def rateePost(ide, star):
+def rateePost(ide):
     if len(RecipeDetail.objects(id=ide)) == 0 :
         return make_response( {"status": "Not found", "message": "Recipe was not found"}, 404)
+    try:
+        star = request.get_json()["rating"]
+    except:
+        return make_response( {"status": "Bad request", "message": "Request body is incorrect"}, 400)
     
     user = flask_login.current_user
     user_id = user.get_id()
