@@ -5,9 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'components/constaints.dart';
+import 'model/Ingredient.dart';
 import 'model/Recipe.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+
+import 'model/Step.dart';
 
 class Session extends ChangeNotifier {
   static Profile profile;
@@ -170,6 +173,16 @@ class APIs {
       return list;
     }
     return null;
+  }
+
+  static Future<int> editRecipe(Recipe recipe) async {
+    final body = json.encode(await recipe.toJson());
+    final response = await http.put(
+        Uri.http(BASE_URL, "/recipe-detail/" + recipe.id.toString() + "/edit"),
+        body: body,
+        headers: _headers);
+    updateCookie(response);
+    return response.statusCode;
   }
 
   static Future<int> deleteRecipe(int id) async {

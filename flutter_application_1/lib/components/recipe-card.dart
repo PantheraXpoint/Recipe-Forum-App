@@ -13,12 +13,14 @@ class RecipeCard extends StatefulWidget {
   final Recipe preview;
   final double scale;
   final bool canDelete;
+  // final bool canEdit;
   final bool canBookmark;
   final bool canEdit;
   RecipeCard(
       {@required this.preview,
       this.scale,
       @required this.canDelete,
+      // this.canEdit,
       this.onRecipeDeleted,
       @required this.onBookmarkChanged,
       @required this.canBookmark,
