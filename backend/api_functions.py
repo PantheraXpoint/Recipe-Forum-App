@@ -3,7 +3,7 @@ from time import time
 from json import loads
 from flask import Flask, request, Response, jsonify, make_response, send_file
 from flask_mongoengine import MongoEngine
-from models.RecipeDetail import RecipeDetail
+from models.RecipeDetail import RecipeDetail, IngredientDetail
 from models.RecipePreview import RecipePreview
 from models.Profile import Profile, Rating
 from bson import ObjectId
@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from copy import copy
 
 db = MongoEngine()
+
 #
 #   RECIPE FUNCTION
 #
@@ -31,11 +32,12 @@ def queryRecipe(id_num):
             print('more than one recipe was found with this id')
             raise ''
         recipe.update(totalView=recipe[0]['totalView']+1)
-        # return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","_id","TypeID","level").to_json()
-        # print(recipe.exclude("_id")[0].getId() )
+
         return recipe.exclude("url","urlRewrite","hasVideo","hasCooked","hasLiked","servings","totalCook","createdOn")
     except:
         raise "id was not provided"
+    # return recipe.only("steps","ingredients","creator","photos","totalLike","avgRating","totalRating","totalView","totalTime","description","name","id","_id","TypeID","level").to_json()
+    # print(recipe.exclude("_id")[0].getId() )
 
 def incrementViewCount(id_num):
     recipe = RecipeDetail.objects(id=id_num)
@@ -83,6 +85,49 @@ def updateRating(user_id, recipe_id, star):
         avgRating= (recipe[0]['avgRating']*currentLikeCount - previousrating + star) / (currentLikeCount)
     )
     user.save()
+
+def editRecipeFunc(username, recipe_id, body):
+    recipe = RecipeDetail.objects(id=recipe_id)
+    rep = RecipeDetail.objects(id=recipe_id).first()
+    if recipe:
+        if recipe[0].checkCreator( username ):
+            # try:
+            recipe.update(
+                name = body.get("name", rep["name"]),
+                description = body.get("description", rep["description"]),
+                TypeID = body.get("TypeID", rep["TypeID"]),
+                level = body.get("level", rep["level"]),
+                totalTime = body.get("totalTime", rep["totalTime"])
+            )
+            step = body.get("steps")
+            photo = body.get("photos")
+            ingredient = body.get("ingredients")
+            # ingredient_list = []
+            # if ingredient:
+            #     for ingredi in ingredient:
+            #         temp = IngredientDetail(
+            #                 name=ingredi["name"],
+            #                 quantity=ingredi["quantity"],
+            #                 unit=ingredi["unit"]
+            #             )
+            #         temp.save()
+            #         recipe.update(ingredients = rep["ingredients"].append(temp.get()) )
+                    # ingredient_list.append( 
+                    #     temp.serialize()
+                    # )
+
+            if step:
+                recipe.update(steps=step)
+            if photo:
+                recipe.update(photos=photo)
+            if ingredient:
+                recipe.update(ingredients = ingredient )
+                # print(ingredient)
+            return 200 #ok
+            # except:
+            #     return make_response({'status':'Internal server error', 'message' : 'Something wrong happened during editing recipe'},500)
+        return 403 #forbidden
+    return 404 #not found
 
 #
 #   ACCOUNT FUNCTION

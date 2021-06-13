@@ -5,10 +5,10 @@ from flask_mongoengine import MongoEngine
 db = MongoEngine()
 
 class Unit(db.EmbeddedDocument):
-    value = db.StringField(required=True, unique=True)
+    value = db.StringField(required=True)
     unit = db.StringField(required=True)
 
-class Ingredient(gj.Document):
+class Ingredient(db.EmbeddedDocument):
     name = db.StringField(required=True)
     unit = db.EmbeddedDocumentField(Unit)
     meta = {'collection': 'recipe_detail', 'allow_inheritance': True}

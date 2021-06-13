@@ -12,6 +12,7 @@ class RecipePreview(gj.Document):
     TotalView = db.IntField(default=0)
     TotalLiked = db.IntField(defaul=0)
     TotalTime = db.IntField(default=0)
+    TotalRating = db.IntField(default=0)
     
     meta = {'collection': 'recipe_filter'}
 
