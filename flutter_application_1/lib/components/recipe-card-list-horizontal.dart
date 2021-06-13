@@ -4,7 +4,9 @@ import 'package:flutter_application_2/components/recipe-card.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 
 class RecipeCardListHorizontal extends StatefulWidget {
+  final bool canBookmark;
   final ValueChanged<int> onRecipeDeleted;
+  final ValueChanged<bool> onBookmarkChanged;
   final bool canDelete;
   final List<Recipe> recipeList;
   final double scale;
@@ -12,7 +14,9 @@ class RecipeCardListHorizontal extends StatefulWidget {
       {@required this.recipeList,
       this.scale,
       @required this.canDelete,
-      this.onRecipeDeleted});
+      this.onRecipeDeleted,
+      @required this.onBookmarkChanged,
+      @required this.canBookmark});
   @override
   State<StatefulWidget> createState() => RecipeCardListHorizontalState();
 }
@@ -27,6 +31,11 @@ class RecipeCardListHorizontalState extends State<RecipeCardListHorizontal> {
         scrollDirection: Axis.horizontal,
         itemCount: widget.recipeList.length,
         itemBuilder: (context, i) => RecipeCard(
+            canBookmark: widget.canBookmark,
+            onBookmarkChanged: (value) {
+              print("horizontal");
+              widget.onBookmarkChanged(value);
+            },
             onRecipeDeleted: (value) => widget.onRecipeDeleted(value),
             recipe: widget.recipeList[i],
             canDelete: widget.canDelete),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/model/Profile.dart';
+import 'package:flutter_application_2/screens/myprofile_screen.dart';
 import 'package:flutter_application_2/screens/profile.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
@@ -9,23 +9,30 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 import '../apis.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
+  final ValueChanged<bool> onBookmarkChanged;
   final Recipe recipe;
-  RecipeDetailScreen({@required this.recipe});
+  RecipeDetailScreen({@required this.recipe, @required this.onBookmarkChanged});
   @override
   _RecipeDetailScreenState createState() => _RecipeDetailScreenState();
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Recipe detail;
-  bool isBookmark = false;
+  bool isBookmark;
   int currentTab = 0;
   final pageController = PageController();
   final listWidget = <Widget>[];
 
   Future<void> initDetail() async {
     detail = widget.recipe;
+    isBookmark = Session.profile.savedIDs.contains(detail.id);
     setState(() {
       listWidget.add(Introduction(
+        onBookmarkChanged: (value) => setState(() {
+          isBookmark = Session.profile.savedIDs.contains(detail.id);
+          print("detail");
+          widget.onBookmarkChanged(value);
+        }),
         detail: detail,
       ));
       listWidget.add(Ingredient(detail: detail));
@@ -64,15 +71,33 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               },
             ),
             actions: [
-              GestureDetector(
-                onTap: () => setState(() {
-                  isBookmark = !isBookmark;
-                }),
-                child: Icon(
-                  isBookmark ? Icons.bookmark : Icons.bookmark_outline,
-                  color: Colors.yellow.shade700,
-                  size: 40,
-                ),
+              SizedBox(
+                child: detail.creator.username == Session.profile.username
+                    ? null
+                    : GestureDetector(
+                        onTap: () async {
+                          int response;
+                          if (isBookmark) {
+                            response =
+                                await APIs.unsaveRecipe(widget.recipe.id);
+                            Session.profile.savedIDs.removeWhere(
+                                (element) => element == widget.recipe.id);
+                          } else {
+                            response = await APIs.saveRecipe(widget.recipe.id);
+                            Session.profile.savedIDs.add(widget.recipe.id);
+                          }
+                          print(response);
+                          setState(() {
+                            isBookmark = Session.profile.savedIDs
+                                .contains(widget.recipe.id);
+                          });
+                        },
+                        child: Icon(
+                          isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+                          color: Colors.yellow.shade700,
+                          size: 40,
+                        ),
+                      ),
               ),
             ],
           ),
@@ -122,9 +147,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 }
 
-class Introduction extends StatelessWidget {
+class Introduction extends StatefulWidget {
   final Recipe detail;
-  Introduction({@required this.detail});
+  final ValueChanged<bool> onBookmarkChanged;
+  Introduction({@required this.detail, @required this.onBookmarkChanged});
+
+  @override
+  _IntroductionState createState() => _IntroductionState();
+}
+
+class _IntroductionState extends State<Introduction> {
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -144,7 +176,7 @@ class Introduction extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 175,
-                      child: Text(detail.title,
+                      child: Text(widget.detail.title,
                           style: TextStyle(
                               color: Color(0xFF2C2E2D), fontSize: 15.8)),
                     ),
@@ -154,22 +186,16 @@ class Introduction extends StatelessWidget {
                   ],
                 )),
             Expanded(
-                child: MaterialButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileScreen(profile: detail.creator)));
-              },
               child: Align(
                 alignment: Alignment.center,
                 child: GestureDetector(
                   child: CircleAvatar(
-                      backgroundImage: NetworkImage(detail.creator.avatarUrl)),
+                      backgroundImage:
+                          NetworkImage(widget.detail.creator.avatarUrl)),
                   onTap: () async {
                     final profile =
-                        await APIs.getProfile(detail.creator.username);
+                        await APIs.getProfile(widget.detail.creator.username);
+
                     if (profile == null)
                       showDialog(
                           context: context,
@@ -181,13 +207,18 @@ class Introduction extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                    profile: profile,
-                                  )));
+                              builder: (context) =>
+                                  profile.username == Session.profile.username
+                                      ? MyProfileScreen()
+                                      : ProfileScreen(
+                                          profile: profile,
+                                        ))).then((value) => setState(() {
+                            widget.onBookmarkChanged(true);
+                          }));
                   },
                 ),
               ),
-            ))
+            )
           ],
         ),
         Row(
@@ -200,14 +231,14 @@ class Introduction extends StatelessWidget {
                         allowHalfRating: true,
                         onRated: (v) {},
                         starCount: 5,
-                        rating: detail.avgRating / 2,
+                        rating: widget.detail.avgRating / 2,
                         size: 25.0,
                         isReadOnly: true,
                         color: Colors.yellow,
                         borderColor: Colors.yellow,
                         spacing: 0.0),
                     Icon(Icons.visibility),
-                    Text(detail.totalView.toString()),
+                    Text(widget.detail.totalView.toString()),
                   ],
                 )),
             Expanded(
@@ -216,7 +247,7 @@ class Introduction extends StatelessWidget {
               child: SizedBox(
                 width: 80,
                 child: Text(
-                  detail.creator.displayName,
+                  widget.detail.creator.displayName,
                   style: TextStyle(color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
@@ -229,7 +260,7 @@ class Introduction extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(right: 20),
-          child: Text(_parseHtmlString(detail.description)),
+          child: Text(_parseHtmlString(widget.detail.description)),
         )
       ]),
     );

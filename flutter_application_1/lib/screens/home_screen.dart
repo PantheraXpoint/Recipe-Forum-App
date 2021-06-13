@@ -5,6 +5,7 @@ import 'package:flutter_application_2/components/recipe-slider.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/search_screen.dart';
 
 import '../apis.dart';
 import 'myprofile_screen.dart';
@@ -16,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   List<Recipe> listRecipe = [];
-  Profile profile;
 
   final listWidget = <Widget>[];
   final pageController = PageController();
@@ -24,14 +24,15 @@ class HomeScreenState extends State<HomeScreen> {
 
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
-    profile = await APIs.getMyProfile();
+    Session.profile = await APIs.getMyProfile();
+    Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
     setState(() {
       listWidget.add(Home(
         list: listRecipe,
-        profile: profile,
+        profile: Session.profile,
       ));
 
-      listWidget.add(MyProfileScreen(myprofile: profile));
+      listWidget.add(MyProfileScreen());
       print(listWidget.length);
     });
   }
@@ -76,17 +77,27 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   final List<Recipe> list;
   final Profile profile;
   Home({@required this.list, @required this.profile});
 
   @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
   Widget build(BuildContext context) {
+    print("ahuhuhuhuhu reset state di ma");
     final sliders = List.generate(
       10,
       (index) => RecipeSlider(
-        list: list,
+        onBookmarkChanged: (value) {
+          print("home");
+          setState(() {});
+        },
+        list: widget.list,
         type: index,
       ),
     );
@@ -99,7 +110,7 @@ class Home extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello ${profile.displayName},",
+              "Hello ${widget.profile.displayName},",
               style: TextStyle(
                 color: kText,
                 fontSize: 25,
@@ -118,30 +129,38 @@ class Home extends StatelessWidget {
             SizedBox(
               height: 30,
             ),
-            TextFormField(
-              enabled: false,
-              onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Scaffold())),
-              style: TextStyle(fontSize: 15),
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: kSecondaryText,
-                ),
-                contentPadding: EdgeInsets.all(10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                filled: true,
-                fillColor: Colors.grey[60],
-                hintText: "Find your favorite recipe here",
-                hintStyle: TextStyle(
-                  color: kUnhighlightedColor,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchScreen()))
+                    .then((value) {
+                  print("home");
+                  setState(() {});
+                });
+              },
+              child: TextFormField(
+                enabled: false,
+                style: TextStyle(fontSize: 15),
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: kSecondaryText,
+                  ),
+                  contentPadding: EdgeInsets.all(10.0),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[60],
+                  hintText: "Find your favorite recipe here",
+                  hintStyle: TextStyle(
+                    color: kUnhighlightedColor,
+                  ),
                 ),
               ),
             ),
@@ -149,7 +168,7 @@ class Home extends StatelessWidget {
               height: 40,
             ),
             SizedBox(
-              child: list == null
+              child: widget.list == null
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
@@ -158,18 +177,34 @@ class Home extends StatelessWidget {
                         Column(
                           children: [
                             RecipeSlider(
-                              list: list,
+                              onBookmarkChanged: (value) {
+                                print("home");
+                                setState(() {});
+                              },
+                              list: widget.list,
                             ),
                             RecipeSlider(
-                              list: list,
+                              onBookmarkChanged: (value) {
+                                print("home");
+                                setState(() {});
+                              },
+                              list: widget.list,
                               difficulty: "Dễ",
                             ),
                             RecipeSlider(
-                              list: list,
+                              onBookmarkChanged: (value) {
+                                print("home");
+                                setState(() {});
+                              },
+                              list: widget.list,
                               difficulty: "Trung bình",
                             ),
                             RecipeSlider(
-                              list: list,
+                              onBookmarkChanged: (value) {
+                                print("home");
+                                setState(() {});
+                              },
+                              list: widget.list,
                               difficulty: "Khó",
                             ),
                           ],

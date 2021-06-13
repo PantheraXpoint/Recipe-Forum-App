@@ -8,20 +8,30 @@ import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
   final ValueChanged<int> onRecipeDeleted;
+  final ValueChanged<bool> onBookmarkChanged;
   final Recipe recipe;
   final double scale;
-  final canDelete;
+  final bool canDelete;
+  final bool canBookmark;
   RecipeCard(
       {@required this.recipe,
       this.scale,
       @required this.canDelete,
-      this.onRecipeDeleted});
+      this.onRecipeDeleted,
+      @required this.onBookmarkChanged,
+      @required this.canBookmark});
   @override
   State<StatefulWidget> createState() => RecipeCardState();
 }
 
 class RecipeCardState extends State<RecipeCard> {
-  bool isBookmark = false;
+  bool isBookmark;
+  @override
+  void initState() {
+    super.initState();
+    isBookmark = Session.profile.savedIDs.contains(widget.recipe.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -29,8 +39,16 @@ class RecipeCardState extends State<RecipeCard> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    RecipeDetailScreen(recipe: widget.recipe)));
+                builder: (context) => RecipeDetailScreen(
+                    onBookmarkChanged: (value) {
+                      print("card");
+                      widget.onBookmarkChanged(value);
+                    },
+                    recipe: widget.recipe))).then((value) {
+          setState(() {
+            isBookmark = Session.profile.savedIDs.contains(widget.recipe.id);
+          });
+        });
       },
       child: Container(
         width: 300,
@@ -102,7 +120,7 @@ class RecipeCardState extends State<RecipeCard> {
                       borderRadius: BorderRadius.circular(10)),
                   padding: EdgeInsets.all(10),
                   width: double.infinity,
-                  height: widget.recipe.title.length < 40 ? 90 : 110,
+                  height: widget.recipe.title.length < 40 ? 90 : 120,
                   child: Column(
                     children: [
                       Row(
@@ -120,16 +138,39 @@ class RecipeCardState extends State<RecipeCard> {
                               ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => setState(() {
-                              isBookmark = !isBookmark;
-                            }),
-                            child: Icon(
-                              isBookmark
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_outline,
-                              color: Colors.yellow,
-                            ),
+                          SizedBox(
+                            child: !widget.canBookmark
+                                ? null
+                                : GestureDetector(
+                                    onTap: () async {
+                                      int response;
+                                      if (isBookmark) {
+                                        response = await APIs.unsaveRecipe(
+                                            widget.recipe.id);
+                                        Session.profile.savedIDs.removeWhere(
+                                            (element) =>
+                                                element == widget.recipe.id);
+                                      } else {
+                                        response = await APIs.saveRecipe(
+                                            widget.recipe.id);
+                                        Session.profile.savedIDs
+                                            .add(widget.recipe.id);
+                                      }
+                                      print(response);
+                                      setState(() {
+                                        isBookmark = Session.profile.savedIDs
+                                            .contains(widget.recipe.id);
+                                        widget.onBookmarkChanged(true);
+                                      });
+                                    },
+                                    child: Icon(
+                                      Session.profile.savedIDs
+                                              .contains(widget.recipe.id)
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_outline,
+                                      color: Colors.yellow,
+                                    ),
+                                  ),
                           )
                         ],
                       ),

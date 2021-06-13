@@ -5,10 +5,15 @@ import 'package:flutter_application_2/model/Recipe.dart';
 import 'constaints.dart';
 
 class RecipeSlider extends StatelessWidget {
+  final ValueChanged<bool> onBookmarkChanged;
   final List<Recipe> list;
   final String difficulty;
   final int type;
-  RecipeSlider({@required this.list, this.difficulty, this.type});
+  RecipeSlider(
+      {@required this.list,
+      this.difficulty,
+      this.type,
+      @required this.onBookmarkChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,7 @@ class RecipeSlider extends StatelessWidget {
       }
     } else
       finalList = list;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,7 +40,14 @@ class RecipeSlider extends StatelessWidget {
         SizedBox(
           height: 20,
         ),
-        RecipeCardListHorizontal(recipeList: finalList, canDelete: false),
+        RecipeCardListHorizontal(
+            canBookmark: true,
+            onBookmarkChanged: (value) {
+              print("slider");
+              onBookmarkChanged(value);
+            },
+            recipeList: finalList,
+            canDelete: false),
         SizedBox(
           height: 40,
         ),
