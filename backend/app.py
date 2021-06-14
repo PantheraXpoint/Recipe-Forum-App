@@ -284,11 +284,11 @@ def rateePost(ide):
     user = flask_login.current_user
     user_id = user.get_id()
     if user.rated(ide):
-        updateRating(user_id, ide, star)
-        return make_response( {"status": "OK", "message": "Previous rating changed"}, 200)
+        newrating = updateRating(user_id, ide, star)
+        return make_response( {"status": "OK", "message": "Previous rating changed", "avgRating": newrating}, 200)
 
-    ratePost( user_id, ide, star )
-    return make_response( {"status": "OK", "message": "New rating submited"}, 200)
+    newrating = ratePost( user_id, ide, star )
+    return make_response( {"status": "OK", "message": "New rating submited", "avgRating": newrating}, 200)
 
 @app.route('/recipe-detail/<int:ide>/save', methods=['PUT'])
 @flask_login.login_required
