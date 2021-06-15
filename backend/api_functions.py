@@ -58,8 +58,10 @@ def ratePost(user_id, recipe_id, star):
         print('more than one recipe was found with this id')
         raise ''
     currentLikeCount = recipe[0]['totalRating']
+
+    ratting= (recipe[0]['avgRating']*currentLikeCount + star) / (currentLikeCount+1)
     recipe.update(
-        avgRating= (recipe[0]['avgRating']*currentLikeCount + star) / (currentLikeCount+1),
+        avgRating= ratting,
         totalRating= currentLikeCount+1
         )
     templist = copy(user[0]['HasLikedList'])
@@ -67,6 +69,7 @@ def ratePost(user_id, recipe_id, star):
     user.update(
         HasLikedList= templist
     )
+    return ratting
 
 def updateRating(user_id, recipe_id, star):
     user = Profile.objects(Id=user_id).first()
@@ -80,11 +83,14 @@ def updateRating(user_id, recipe_id, star):
         if entry.recipe_id == recipe_id:
             previousrating = entry.rating
             entry.rating = star
+            break
 
+    ratting= (recipe[0]['avgRating']*currentLikeCount - previousrating + star) / (currentLikeCount)
     recipe.update(
-        avgRating= (recipe[0]['avgRating']*currentLikeCount - previousrating + star) / (currentLikeCount)
+        avgRating= ratting
     )
     user.save()
+    return ratting
 
 def editRecipeFunc(username, recipe_id, body):
     recipe = RecipeDetail.objects(id=recipe_id)
