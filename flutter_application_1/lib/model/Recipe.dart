@@ -26,15 +26,27 @@ class Recipe {
       @required this.difficulty,
       @required this.typeID,
       @required this.imageUrl,
-      @required this.ingredients,
-      @required this.steps,
+      this.ingredients,
+      this.steps,
       this.creator,
       this.avgRating,
       this.totalView,
       this.likes,
       @required this.description});
 
-  factory Recipe.fromJson(Map json) {
+  factory Recipe.fromJsonPreview(Map json) {
+    return Recipe(
+      id: json['id'],
+      title: json['name'],
+      imageUrl: json['photos'][0][0]['url'],
+      difficulty: json['level'],
+      typeID: json['TypeID'] - 1,
+      description: json['description'],
+      totalPrepTime: json['totalTime'],
+    );
+  }
+
+  factory Recipe.fromJsonDetail(Map json) {
     Iterable ing = json['ingredients'];
     Iterable st = json['steps'];
     return Recipe(
@@ -65,7 +77,6 @@ class Recipe {
       Map json = await step.toJson();
       listStepsToMap.add(json);
     }
-    print("TYPE IDDDDDDDDDDDDDDD: " + typeID.toString());
     return {
       'name': title,
       'photos': [

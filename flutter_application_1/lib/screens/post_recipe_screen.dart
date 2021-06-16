@@ -13,7 +13,6 @@ import 'package:path/path.dart';
 
 class PostRecipeScreen extends StatefulWidget {
   final Recipe recipe;
-
   const PostRecipeScreen({this.recipe});
 
   @override
@@ -24,7 +23,6 @@ class _PostRecipeScreenState extends State<PostRecipeScreen> {
   bool isBookmark = false;
 
   int currentTab = 0;
-
   String name;
   String description;
   File image;

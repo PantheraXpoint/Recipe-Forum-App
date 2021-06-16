@@ -24,7 +24,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final listWidget = <Widget>[];
 
   Future<void> initDetail() async {
-    detail = widget.recipe;
+    detail = await APIs.getRecipe(widget.recipe.id);
     isBookmark = Session.profile.savedIDs.contains(detail.id);
     setState(() {
       listWidget.add(Introduction(
@@ -54,40 +54,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     pageController.dispose();
   }
 
-  void _showRating(context, Recipe detail) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  Center(
-                    child: SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) async {
-                          int response = await APIs.rateRecipe(detail, v);
-                          print(response);
-                          Navigator.pop(context);
-                        },
-                        starCount: 5,
-                        size: 40.0,
-                        color: kSecondaryColor,
-                        borderColor: kSecondaryColor,
-                        spacing: 0.0),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
-    print(detail == null);
-    print(detail.creator == null);
-    print(detail.id);
     if (detail != null && detail.creator != null) {
       return Scaffold(
         appBar: AppBar(
@@ -167,13 +135,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 duration: Duration(milliseconds: 200), curve: Curves.easeIn);
           }),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          icon: Icon(Icons.reviews),
-          label: Text("Rate"),
-          onPressed: () {
-            _showRating(context, detail);
-          },
-        ),
       );
     }
 
@@ -195,6 +156,7 @@ class Introduction extends StatefulWidget {
 }
 
 class _IntroductionState extends State<Introduction> {
+  double rating;
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -202,105 +164,153 @@ class _IntroductionState extends State<Introduction> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, top: 20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          children: [
-            SizedBox(
-                width: 250,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 175,
-                      child: Text(widget.detail.title,
-                          style: TextStyle(
-                              color: Color(0xFF2C2E2D), fontSize: 15.8)),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                  ],
-                )),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  child: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(widget.detail.creator.avatarUrl)),
-                  onTap: () async {
-                    final profile =
-                        await APIs.getProfile(widget.detail.creator.username);
+  void initState() {
+    super.initState();
+    rating = widget.detail.avgRating;
+    print(rating);
+  }
 
-                    if (profile == null)
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text("Lỗi"),
-                                content: Text("Không tìm thấy người dùng"),
-                              ));
-                    else
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  profile.username == Session.profile.username
-                                      ? MyProfileScreen()
-                                      : ProfileScreen(
-                                          profile: profile,
-                                        ))).then((value) => setState(() {
-                            widget.onBookmarkChanged(true);
-                          }));
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-                width: 250,
-                child: Row(
-                  children: [
-                    SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) {},
-                        starCount: 5,
-                        rating: widget.detail.avgRating / 2,
-                        size: 25.0,
-                        isReadOnly: true,
-                        color: kText,
-                        borderColor: kText,
-                        spacing: 0.0),
-                    Icon(Icons.visibility),
-                    Text(widget.detail.totalView.toString()),
-                  ],
-                )),
-            Expanded(
+  @override
+  Widget build(BuildContext context) {
+    print(rating);
+    return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: kSecondaryColor,
+        icon: Icon(Icons.reviews),
+        label: Text("Rate"),
+        onPressed: () async {
+          await showModalBottomSheet(
+              context: context,
+              builder: (BuildContext bc) {
+                return SafeArea(
+                  child: Container(
+                    child: new Wrap(
+                      children: <Widget>[
+                        Center(
+                          child: SmoothStarRating(
+                              allowHalfRating: true,
+                              onRated: (v) async {
+                                print("Asdfasfdasdfasdfasdfasdf  " +
+                                    v.toString());
+                                int response =
+                                    await APIs.rateRecipe(widget.detail, v);
+
+                                Navigator.pop(context);
+                              },
+                              starCount: 5,
+                              size: 40.0,
+                              color: kSecondaryColor,
+                              borderColor: kSecondaryColor,
+                              spacing: 0.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+          rating = (await APIs.getRecipe(widget.detail.id)).avgRating;
+          print(rating);
+          setState(() {});
+        },
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(left: 20, top: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              SizedBox(
+                  width: 250,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 175,
+                        child: Text(widget.detail.title,
+                            style: TextStyle(
+                                color: Color(0xFF2C2E2D), fontSize: 15.8)),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                    ],
+                  )),
+              Expanded(
                 child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 80,
-                child: Text(
-                  widget.detail.creator.displayName,
-                  style: TextStyle(color: Colors.black),
-                  textAlign: TextAlign.center,
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    child: CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(widget.detail.creator.avatarUrl)),
+                    onTap: () async {
+                      final profile =
+                          await APIs.getProfile(widget.detail.creator.username);
+
+                      if (profile == null)
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text("Lỗi"),
+                                  content: Text("Không tìm thấy người dùng"),
+                                ));
+                      else
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    profile.username == Session.profile.username
+                                        ? MyProfileScreen()
+                                        : ProfileScreen(
+                                            profile: profile,
+                                          ))).then((value) => setState(() {
+                              widget.onBookmarkChanged(true);
+                            }));
+                    },
+                  ),
                 ),
-              ),
-            ))
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: Text(_parseHtmlString(widget.detail.description)),
-        ),
-      ]),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                  width: 250,
+                  child: Row(
+                    children: [
+                      SmoothStarRating(
+                          allowHalfRating: true,
+                          starCount: 5,
+                          rating: rating / 2,
+                          size: 25.0,
+                          isReadOnly: true,
+                          color: kText,
+                          borderColor: kText,
+                          spacing: 0.0),
+                      Icon(Icons.visibility),
+                      Text(widget.detail.totalView.toString()),
+                    ],
+                  )),
+              Expanded(
+                  child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 80,
+                  child: Text(
+                    widget.detail.creator.displayName,
+                    style: TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ))
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Text(_parseHtmlString(widget.detail.description)),
+          ),
+        ]),
+      ),
     );
   }
 }

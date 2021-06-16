@@ -21,7 +21,7 @@ class Step {
     }
   }
 
-  Future<Map<String, dynamic>> toJson() async {
+  Future<Map> toJson() async {
     listImageUrl = [];
     for (File image in listImageFile) {
       String url = await APIs.getImageUrl(image);
@@ -30,7 +30,7 @@ class Step {
     List<List<Map>> list = [];
     listImageUrl.forEach((element) {
       list.add([
-        {'url': element, 'height': '0', 'width': '0'}
+        {'url': element, 'height': '0', 'width': '0'},
       ]);
     });
 

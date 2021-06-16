@@ -29,7 +29,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
       return list;
     }
     return null;
@@ -40,7 +40,7 @@ class APIs {
         headers: _headers);
     updateCookie(response);
     if (response.statusCode == 200)
-      return Recipe.fromJson(json.decode(response.body)[0]);
+      return Recipe.fromJsonDetail(json.decode(response.body)[0]);
     return null;
   }
 
@@ -122,7 +122,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonDetail(e)).toList());
       return list;
     }
     return null;
@@ -148,7 +148,7 @@ class APIs {
     updateCookie(response);
 
     if (response.statusCode == 200)
-      return Recipe.fromJson(json.decode(response.body));
+      return Recipe.fromJsonDetail(json.decode(response.body));
     return null;
   }
 
@@ -169,7 +169,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
       return list;
     }
     return null;
@@ -182,6 +182,7 @@ class APIs {
         body: json.encode(body),
         headers: _headers);
     updateCookie(response);
+    print(response.body);
     return response.statusCode;
   }
 
