@@ -126,6 +126,12 @@ class LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(color: kText),
                   ),
                 ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                ),
                 Container(
                   child: MediaQuery.of(context).viewInsets.bottom != 0
                       ? null

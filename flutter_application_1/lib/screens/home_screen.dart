@@ -25,9 +25,12 @@ class HomeScreenState extends State<HomeScreen> {
     listRecipe = await APIs.getListRecipes();
     Session.profile = await APIs.getMyProfile();
     Session.isLogin = Session.profile != null;
-    if (Session.profile != null) {
+    print(Session.isLogin);
+    if (Session.isLogin) {
+      Session.savedRecipes = Session.profile.savedIDs;
       Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
     }
+
     setState(() {
       listWidget.add(Home(
         list: listRecipe,
@@ -56,8 +59,9 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (listRecipe.length != 0)
       return Scaffold(
-          bottomNavigationBar: Session.isLogin
-              ? BottomNavigationBar(
+          bottomNavigationBar: !Session.isLogin
+              ? null
+              : BottomNavigationBar(
                   items: [
                     BottomNavigationBarItem(
                         icon: Icon(Icons.home), label: "Home"),
@@ -73,8 +77,7 @@ class HomeScreenState extends State<HomeScreen> {
                         duration: Duration(milliseconds: 200),
                         curve: Curves.easeIn);
                   }),
-                )
-              : null,
+                ),
           resizeToAvoidBottomInset: false,
           body: PageView(
             controller: pageController,
@@ -117,7 +120,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.profile != null
+              Session.isLogin
                   ? "Hello ${widget.profile.displayName},"
                   : "Hello user",
               style: TextStyle(

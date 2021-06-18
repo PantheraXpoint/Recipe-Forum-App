@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 class Session {
   static Profile profile;
   static List<Recipe> myRecipes;
+  static List<int> savedRecipes;
   static bool isLogin;
 }
 
@@ -19,6 +20,11 @@ class APIs {
     'Content-Type': 'application/json; charset=UTF-8'
   };
 
+  static void removeCookies() {
+    _headers['cookie'] = null;
+    print("cookie: ${_headers['cookie']}");
+  }
+
   static Future<List<Recipe>> getListRecipes() async {
     final response =
         await http.get(Uri.http(BASE_URL, "/recipe-detail"), headers: _headers);
@@ -26,7 +32,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
       return list;
     }
     return null;
@@ -37,7 +43,7 @@ class APIs {
         headers: _headers);
     updateCookie(response);
     if (response.statusCode == 200)
-      return Recipe.fromJson(json.decode(response.body)[0]);
+      return Recipe.fromJsonDetail(json.decode(response.body)[0]);
     return null;
   }
 
@@ -119,7 +125,7 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonDetail(e)).toList());
       return list;
     }
     return null;
@@ -145,7 +151,7 @@ class APIs {
     updateCookie(response);
 
     if (response.statusCode == 200)
-      return Recipe.fromJson(json.decode(response.body));
+      return Recipe.fromJsonDetail(json.decode(response.body));
     return null;
   }
 
@@ -166,20 +172,21 @@ class APIs {
     if (response.statusCode == 200) {
       Iterable i = json.decode(response.body);
       List<Recipe> list =
-          List<Recipe>.from(i.map((e) => Recipe.fromJson(e)).toList());
+          List<Recipe>.from(i.map((e) => Recipe.fromJsonPreview(e)).toList());
       return list;
     }
     return null;
   }
 
-  static Future<int> rateRecipe(Recipe recipe, double value) async {
+  static Future<double> rateRecipe(int id, double value) async {
     Map<String, double> body = {"rating": value};
     final response = await http.put(
-        Uri.http(BASE_URL, "/recipe-detail/" + recipe.id.toString() + "/rate"),
+        Uri.http(BASE_URL, "/recipe-detail/$id/rate"),
         body: json.encode(body),
         headers: _headers);
     updateCookie(response);
-    return response.statusCode;
+    print(response.body);
+    return json.decode(response.body)['avgRating'];
   }
 
   static Future<int> editRecipe(Recipe recipe) async {

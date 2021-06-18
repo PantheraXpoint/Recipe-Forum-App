@@ -8,17 +8,18 @@ class RecipeCardListHorizontal extends StatefulWidget {
   final bool canDelete;
   final bool canEdit;
   final ValueChanged<int> onRecipeDeleted;
-  final ValueChanged<bool> onBookmarkChanged;
+  final ValueChanged<int> onBookmarkChanged;
   final List<Recipe> recipeList;
   final double scale;
-  RecipeCardListHorizontal(
-      {@required this.recipeList,
-      this.scale,
-      @required this.canDelete,
-      this.onRecipeDeleted,
-      @required this.onBookmarkChanged,
-      @required this.canBookmark,
-      @required this.canEdit});
+  RecipeCardListHorizontal({
+    @required this.recipeList,
+    this.scale,
+    @required this.canDelete,
+    this.onRecipeDeleted,
+    @required this.onBookmarkChanged,
+    @required this.canBookmark,
+    @required this.canEdit,
+  });
   @override
   State<StatefulWidget> createState() => RecipeCardListHorizontalState();
 }

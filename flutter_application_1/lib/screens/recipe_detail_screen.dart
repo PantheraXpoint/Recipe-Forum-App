@@ -8,8 +8,22 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:rating_bar/rating_bar.dart';
 import '../apis.dart';
 
+class RecipeDetail extends InheritedWidget {
+  final double rating;
+  RecipeDetail({Widget child, this.rating}) : super(child: child) {}
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
+  }
+
+  static RecipeDetail of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RecipeDetail>();
+  }
+}
+
 class RecipeDetailScreen extends StatefulWidget {
-  final ValueChanged<bool> onBookmarkChanged;
+  final ValueChanged<int> onBookmarkChanged;
   final Recipe recipe;
   RecipeDetailScreen({@required this.recipe, @required this.onBookmarkChanged});
   @override
@@ -18,6 +32,7 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Recipe detail;
+  double rating;
   bool isBookmark;
   int currentTab = 0;
   final pageController = PageController();
@@ -25,60 +40,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> initDetail() async {
     detail = await APIs.getRecipe(widget.recipe.id);
-    print(detail.avgRating);
-    if (Session.isLogin) {
+    rating = detail.avgRating;
+    if (Session.isLogin)
       isBookmark = Session.profile.savedIDs.contains(detail.id);
-    }
     setState(() {
       listWidget.add(Introduction(
         detail: detail,
+        onRatingChanged: (value) => setState(() => rating = value),
       ));
       listWidget.add(Ingredient(detail: detail));
       listWidget.add(Steps(
         detail: detail,
       ));
     });
-  }
-
-  void _showRating(context, Recipe detail) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              child: new Wrap(
-                children: <Widget>[
-                  Center(
-                    child: SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) async {
-                          int response = await APIs.rateRecipe(detail, v * 2);
-                          print(response);
-                          Navigator.pop(context);
-                          detail = await APIs.getRecipe(widget.recipe.id);
-                          // setState(() {
-                          //   listWidget[0] = Introduction(
-                          //     onBookmarkChanged: (value) => setState(() {
-                          //       isBookmark = Session.profile.savedIDs
-                          //           .contains(detail.id);
-                          //       print("detail");
-                          //       widget.onBookmarkChanged(value);
-                          //     }),
-                          //     detail: detail,
-                          //   );
-                          // });
-                        },
-                        starCount: 5,
-                        size: 40.0,
-                        color: kSecondaryColor,
-                        borderColor: kSecondaryColor,
-                        spacing: 0.0),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   @override
@@ -96,6 +70,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (detail != null && detail.creator != null) {
+      print(detail.title);
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -141,22 +116,25 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ],
         ),
         resizeToAvoidBottomInset: false,
-        body: Column(children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 280,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(widget.recipe.imageUrl))),
-          ),
-          Expanded(
-              child: PageView(
-            children: listWidget,
-            controller: pageController,
-            onPageChanged: (value) => setState(() => currentTab = value),
-          ))
-        ]),
+        body: RecipeDetail(
+          rating: rating,
+          child: Column(children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 280,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.recipe.imageUrl))),
+            ),
+            Expanded(
+                child: PageView(
+              children: listWidget,
+              controller: pageController,
+              onPageChanged: (value) => setState(() => currentTab = value),
+            ))
+          ]),
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
@@ -175,13 +153,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 duration: Duration(milliseconds: 200), curve: Curves.easeIn);
           }),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          icon: Icon(Icons.reviews),
-          label: Text("Rate"),
-          onPressed: () {
-            _showRating(context, detail);
-          },
-        ),
       );
     }
 
@@ -194,14 +165,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 }
 
 class Introduction extends StatefulWidget {
+  final ValueChanged<double> onRatingChanged;
   final Recipe detail;
-  Introduction({@required this.detail});
+  Introduction({@required this.onRatingChanged, @required this.detail});
 
   @override
   _IntroductionState createState() => _IntroductionState();
 }
 
 class _IntroductionState extends State<Introduction> {
+  double rating;
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -217,8 +190,47 @@ class _IntroductionState extends State<Introduction> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.detail.avgRating);
+    rating = RecipeDetail.of(context).rating;
+    print(widget.detail.title);
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: kSecondaryColor,
+        icon: Icon(Icons.reviews),
+        label: Text("Rate"),
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (BuildContext bc) {
+                return SafeArea(
+                  child: Container(
+                    child: new Wrap(
+                      children: <Widget>[
+                        Center(
+                          child: SmoothStarRating(
+                              allowHalfRating: true,
+                              onRated: (v) async {
+                                print("Asdfasfdasdfasdfasdfasdf  " +
+                                    v.toString());
+                                rating = await APIs.rateRecipe(
+                                    widget.detail.id, v * 2);
+
+                                widget.onRatingChanged(rating);
+                                setState(() {});
+                                Navigator.pop(context);
+                              },
+                              starCount: 5,
+                              size: 40.0,
+                              color: kSecondaryColor,
+                              borderColor: kSecondaryColor,
+                              spacing: 0.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        },
+      ),
       body: Padding(
         padding: EdgeInsets.only(left: 20, top: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -249,6 +261,7 @@ class _IntroductionState extends State<Introduction> {
                     onTap: () async {
                       final profile =
                           await APIs.getProfile(widget.detail.creator.username);
+
                       if (profile == null)
                         showDialog(
                             context: context,
@@ -280,14 +293,16 @@ class _IntroductionState extends State<Introduction> {
                   child: Row(
                     children: [
                       RatingBar.readOnly(
-                          initialRating: widget.detail.avgRating / 2,
-                          isHalfAllowed: true,
-                          halfFilledIcon: Icons.star_half,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          filledColor: kSecondaryColor,
-                          size: 25,
-                          emptyColor: kPrimaryColor),
+                        isHalfAllowed: true,
+                        filledIcon: Icons.star,
+                        emptyIcon: Icons.star_border,
+                        halfFilledIcon: Icons.star_half,
+                        initialRating: rating / 2,
+                        size: 30,
+                        emptyColor: kSecondaryColor,
+                        filledColor: kSecondaryColor,
+                        halfFilledColor: kSecondaryColor,
+                      ),
                       Icon(Icons.visibility),
                       Text(widget.detail.totalView.toString()),
                     ],

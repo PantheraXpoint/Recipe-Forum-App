@@ -5,7 +5,7 @@ import 'package:flutter_application_2/model/Recipe.dart';
 import 'constaints.dart';
 
 class RecipeSlider extends StatelessWidget {
-  final ValueChanged<bool> onBookmarkChanged;
+  final ValueChanged<int> onBookmarkChanged;
   final List<Recipe> list;
   final String difficulty;
   final int type;
