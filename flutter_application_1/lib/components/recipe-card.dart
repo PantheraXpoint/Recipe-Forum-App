@@ -9,22 +9,23 @@ import 'package:flutter_application_2/screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatefulWidget {
   final ValueChanged<int> onRecipeDeleted;
-  final ValueChanged<bool> onBookmarkChanged;
+  final ValueChanged<int> onBookmarkChanged;
   final Recipe preview;
   final double scale;
   final bool canDelete;
   // final bool canEdit;
   final bool canBookmark;
   final bool canEdit;
-  RecipeCard(
-      {@required this.preview,
-      this.scale,
-      @required this.canDelete,
-      // this.canEdit,
-      this.onRecipeDeleted,
-      @required this.onBookmarkChanged,
-      @required this.canBookmark,
-      @required this.canEdit});
+  RecipeCard({
+    @required this.preview,
+    this.scale,
+    @required this.canDelete,
+    // this.canEdit,
+    this.onRecipeDeleted,
+    @required this.onBookmarkChanged,
+    @required this.canBookmark,
+    @required this.canEdit,
+  }) : super(key: ValueKey(preview.id));
   @override
   State<StatefulWidget> createState() => RecipeCardState();
 }
@@ -51,15 +52,15 @@ class RecipeCardState extends State<RecipeCard> {
                 builder: (context) => RecipeDetailScreen(
                     onBookmarkChanged: (value) {
                       print("card");
+                      setState(() {
+                        if (Session.isLogin) {
+                          isBookmark =
+                              Session.profile.savedIDs.contains(recipe.id);
+                        }
+                      });
                       widget.onBookmarkChanged(value);
                     },
-                    recipe: recipe))).then((value) {
-          setState(() {
-            if (Session.isLogin) {
-              isBookmark = Session.profile.savedIDs.contains(recipe.id);
-            }
-          });
-        });
+                    recipe: recipe)));
       },
       child: Container(
         width: 300,
@@ -197,7 +198,7 @@ class RecipeCardState extends State<RecipeCard> {
                                       setState(() {
                                         isBookmark = Session.profile.savedIDs
                                             .contains(recipe.id);
-                                        widget.onBookmarkChanged(true);
+                                        widget.onBookmarkChanged(recipe.id);
                                       });
                                     },
                                     child: Icon(

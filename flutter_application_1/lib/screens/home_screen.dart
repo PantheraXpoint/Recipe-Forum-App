@@ -26,8 +26,11 @@ class HomeScreenState extends State<HomeScreen> {
     Session.profile = await APIs.getMyProfile();
     Session.isLogin = Session.profile != null;
     print(Session.isLogin);
-    if (Session.isLogin)
+    if (Session.isLogin) {
+      Session.savedRecipes = Session.profile.savedIDs;
       Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
+    }
+
     setState(() {
       listWidget.add(Home(
         list: listRecipe,

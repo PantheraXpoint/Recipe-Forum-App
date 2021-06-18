@@ -15,6 +15,7 @@ import 'model/Step.dart';
 class Session {
   static Profile profile;
   static List<Recipe> myRecipes;
+  static List<int> savedRecipes;
   static bool isLogin;
 }
 
@@ -181,7 +182,7 @@ class APIs {
     return null;
   }
 
-  static Future<int> rateRecipe(int id, double value) async {
+  static Future<double> rateRecipe(int id, double value) async {
     Map<String, double> body = {"rating": value};
     final response = await http.put(
         Uri.http(BASE_URL, "/recipe-detail/$id/rate"),
@@ -189,7 +190,7 @@ class APIs {
         headers: _headers);
     updateCookie(response);
     print(response.body);
-    return response.statusCode;
+    return json.decode(response.body)['avgRating'];
   }
 
   static Future<int> editRecipe(Recipe recipe) async {
