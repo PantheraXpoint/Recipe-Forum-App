@@ -1,3 +1,5 @@
+import 'package:email_validator/email_validator.dart';
+
 import '../apis.dart';
 import '../components/constaints.dart';
 import '../components/email_input.dart';
@@ -24,6 +26,10 @@ class SignupScreenState extends State<SignupScreen> {
   }
 
   bool isValidInput() {
+    if (!EmailValidator.validate(username)) {
+      message = "Invalid email!";
+      return false;
+    }
     if (username.isEmpty || password.isEmpty || display.isEmpty) {
       message = "Please enter full information!";
       return false;

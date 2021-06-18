@@ -113,7 +113,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   width: 90,
                                   child: Text(
                                     //(myprofile.totalRecipe + changes)
-                                    1.toString(),
+                                    Session.profile.totalRecipe.toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 15,

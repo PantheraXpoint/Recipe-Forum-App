@@ -20,11 +20,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final drive = GoogleDrive();
   List<Recipe> list = [];
+  List<Recipe> savedRecipes = [];
   // Profile myprofile;
   // _MyProfileScreenState({@required this.myprofile});
   // int _index = 0;
   Future<void> initProfileRecipeList() async {
     list = await APIs.getProfileRecipe(widget.profile.username);
+    //print(widget.profile.savedIDs[0]);
+    for (int id in widget.profile.savedIDs) {
+      Recipe recipe = await APIs.getRecipe(id);
+      savedRecipes.add(recipe);
+    }
+    print(savedRecipes.length);
     setState(() {
       print(list.length);
     });
@@ -140,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             SizedBox(
                                 width: 90,
                                 child: Text(
-                                  widget.profile.totalRecipe.toString(),
+                                  widget.profile.savedIDs.length.toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
@@ -207,18 +214,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: list == null || list.length == 0
-                                      ? CircularProgressIndicator()
-                                      : RecipeCardListHorizontal(
-                                        canEdit: false,
-                                          canBookmark: false,
-                                          onBookmarkChanged: (value) {},
-                                          recipeList: list,
-                                          scale: 0.9,
-                                          canDelete: false,
-                                        ),
-                                )
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: list == null || list.length == 0
+                                        ? CircularProgressIndicator()
+                                        : RecipeCardListHorizontal(
+                                            canEdit: false,
+                                            canBookmark: false,
+                                            onBookmarkChanged: (value) {},
+                                            recipeList: list,
+                                            scale: 0.9,
+                                            canDelete: false,
+                                          ))
                               ],
                             ),
                             Column(
@@ -234,8 +241,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             color: kSecondaryColor,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20)),
+                                    SizedBox(width: 60),
                                   ],
                                 ),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: savedRecipes.length == 0
+                                        ? Padding(
+                                            padding: EdgeInsets.only(top: 40),
+                                            child: Text(
+                                                "Chưa có công thức nào được lưu"))
+                                        : RecipeCardListHorizontal(
+                                            canEdit: false,
+                                            scale: 0.9,
+                                            recipeList: savedRecipes,
+                                            canDelete: false,
+                                            onBookmarkChanged: (value) {},
+                                            canBookmark: false))
                               ],
                             ),
                           ],

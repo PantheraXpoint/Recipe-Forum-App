@@ -36,8 +36,9 @@ class RecipeCardState extends State<RecipeCard> {
   void initState() {
     super.initState();
     recipe = widget.preview;
-    if (Session.isLogin)
+    if (Session.isLogin) {
       isBookmark = Session.profile.savedIDs.contains(recipe.id);
+    }
   }
 
   @override
@@ -54,8 +55,9 @@ class RecipeCardState extends State<RecipeCard> {
                     },
                     recipe: recipe))).then((value) {
           setState(() {
-            if (Session.isLogin)
+            if (Session.isLogin) {
               isBookmark = Session.profile.savedIDs.contains(recipe.id);
+            }
           });
         });
       },
@@ -176,7 +178,7 @@ class RecipeCardState extends State<RecipeCard> {
                             ),
                           ),
                           SizedBox(
-                            child: (!Session.isLogin || !widget.canBookmark)
+                            child: !Session.isLogin || !widget.canBookmark
                                 ? null
                                 : GestureDetector(
                                     onTap: () async {

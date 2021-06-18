@@ -17,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   List<Recipe> listRecipe = [];
-
   final listWidget = <Widget>[];
   final pageController = PageController();
   int currentTab = 0;
@@ -34,8 +33,9 @@ class HomeScreenState extends State<HomeScreen> {
         list: listRecipe,
         profile: Session.profile,
       ));
-
-      listWidget.add(MyProfileScreen());
+      if (Session.profile != null) {
+        listWidget.add(MyProfileScreen());
+      }
       print(listWidget.length);
     });
   }

@@ -67,8 +67,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initDetail();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print("building home");
     if (detail != null && detail.creator != null) {
       return Scaffold(
         appBar: AppBar(
