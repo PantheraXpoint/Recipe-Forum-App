@@ -25,10 +25,6 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   bool isValidInput() {
-    // if (!EmailValidator.validate(email)) {
-    //   message = "Invalid email!";
-    //   return false;
-    // }
     if (username.isEmpty || password.isEmpty) {
       message = "Email or password missing!";
       return false;
@@ -59,7 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
                       : Container(
                           padding: EdgeInsets.only(top: 60, bottom: 45),
                           child: Text(
-                            "Cooky",
+                            "eRecipe",
                             style: TextStyle(color: kText, fontSize: 50),
                           ),
                         ),
@@ -113,9 +109,15 @@ class LoginScreenState extends State<LoginScreen> {
                       )),
                 ),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()))
+                        .then((value) => APIs.logout());
+                  },
                   child: Text(
-                    "Forgot Password?",
+                    "Login as guest",
                     style: TextStyle(color: kText),
                   ),
                 ),

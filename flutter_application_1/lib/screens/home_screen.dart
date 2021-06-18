@@ -17,7 +17,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   List<Recipe> listRecipe = [];
-
   final listWidget = <Widget>[];
   final pageController = PageController();
   int currentTab = 0;
@@ -25,14 +24,18 @@ class HomeScreenState extends State<HomeScreen> {
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
     Session.profile = await APIs.getMyProfile();
-    Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
+    Session.isLogin = Session.profile != null;
+    if (Session.profile != null) {
+      Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
+    }
     setState(() {
       listWidget.add(Home(
         list: listRecipe,
         profile: Session.profile,
       ));
-
-      listWidget.add(MyProfileScreen());
+      if (Session.profile != null) {
+        listWidget.add(MyProfileScreen());
+      }
       print(listWidget.length);
     });
   }
@@ -53,20 +56,25 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (listRecipe.length != 0)
       return Scaffold(
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(icon: Icon(Icons.book), label: "Profile")
-            ],
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentTab,
-            selectedItemColor: kSecondaryColor,
-            onTap: (value) => setState(() {
-              currentTab = value;
-              pageController.animateToPage(value,
-                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-            }),
-          ),
+          bottomNavigationBar: Session.isLogin
+              ? BottomNavigationBar(
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.home), label: "Home"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.book), label: "Profile")
+                  ],
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: currentTab,
+                  selectedItemColor: kSecondaryColor,
+                  onTap: (value) => setState(() {
+                    currentTab = value;
+                    pageController.animateToPage(value,
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.easeIn);
+                  }),
+                )
+              : null,
           resizeToAvoidBottomInset: false,
           body: PageView(
             controller: pageController,
@@ -109,7 +117,9 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello ${widget.profile.displayName},",
+              widget.profile != null
+                  ? "Hello ${widget.profile.displayName},"
+                  : "Hello user",
               style: TextStyle(
                 color: kText,
                 fontSize: 25,

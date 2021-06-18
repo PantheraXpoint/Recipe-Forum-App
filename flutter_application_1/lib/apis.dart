@@ -12,9 +12,10 @@ import 'package:http_parser/http_parser.dart';
 
 import 'model/Step.dart';
 
-class Session extends ChangeNotifier {
+class Session {
   static Profile profile;
   static List<Recipe> myRecipes;
+  static bool isLogin;
 }
 
 class APIs {

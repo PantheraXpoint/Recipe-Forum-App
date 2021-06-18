@@ -63,23 +63,26 @@ class _SearchScreenState extends State<SearchScreen> {
                   height: 15,
                 ),
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: list.length,
-                    itemBuilder: (context, i) => SizedBox(
-                      height: 400,
-                      child: RecipeCard(
-                        canEdit: false,
-                        canBookmark: false,
-                        onBookmarkChanged: (value) {},
-                        preview: list[i],
-                        canDelete: false,
-                      ),
-                    ),
-                    separatorBuilder: (BuildContext context, int index) =>
-                        SizedBox(
-                      height: 15,
-                    ),
-                  ),
+                  child: list.length != 0
+                      ? ListView.separated(
+                          itemCount: list.length,
+                          itemBuilder: (context, i) => SizedBox(
+                            height: 400,
+                            child: RecipeCard(
+                              canEdit: false,
+                              canBookmark: false,
+                              onBookmarkChanged: (value) {},
+                              preview: list[i],
+                              canDelete: false,
+                            ),
+                          ),
+                          separatorBuilder: (BuildContext context, int index) =>
+                              SizedBox(
+                            height: 15,
+                          ),
+                        )
+                      : Center(
+                          child: Text("Chưa có công thức nấu ăn phù hợp !")),
                 )
               ],
             ),

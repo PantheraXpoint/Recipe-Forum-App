@@ -5,7 +5,7 @@ import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-
+import 'package:rating_bar/rating_bar.dart';
 import '../apis.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
@@ -24,15 +24,13 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   final listWidget = <Widget>[];
 
   Future<void> initDetail() async {
-    detail = widget.recipe;
-    isBookmark = Session.profile.savedIDs.contains(detail.id);
+    detail = await APIs.getRecipe(widget.recipe.id);
+    print(detail.avgRating);
+    if (Session.isLogin) {
+      isBookmark = Session.profile.savedIDs.contains(detail.id);
+    }
     setState(() {
       listWidget.add(Introduction(
-        onBookmarkChanged: (value) => setState(() {
-          isBookmark = Session.profile.savedIDs.contains(detail.id);
-          print("detail");
-          widget.onBookmarkChanged(value);
-        }),
         detail: detail,
       ));
       listWidget.add(Ingredient(detail: detail));
@@ -40,18 +38,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         detail: detail,
       ));
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initDetail();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    pageController.dispose();
   }
 
   void _showRating(context, Recipe detail) {
@@ -66,9 +52,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     child: SmoothStarRating(
                         allowHalfRating: true,
                         onRated: (v) async {
-                          int response = await APIs.rateRecipe(detail, v);
+                          int response = await APIs.rateRecipe(detail, v * 2);
                           print(response);
                           Navigator.pop(context);
+                          detail = await APIs.getRecipe(widget.recipe.id);
+                          // setState(() {
+                          //   listWidget[0] = Introduction(
+                          //     onBookmarkChanged: (value) => setState(() {
+                          //       isBookmark = Session.profile.savedIDs
+                          //           .contains(detail.id);
+                          //       print("detail");
+                          //       widget.onBookmarkChanged(value);
+                          //     }),
+                          //     detail: detail,
+                          //   );
+                          // });
                         },
                         starCount: 5,
                         size: 40.0,
@@ -84,10 +82,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initDetail();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(detail == null);
-    print(detail.creator == null);
-    print(detail.id);
     if (detail != null && detail.creator != null) {
       return Scaffold(
         appBar: AppBar(
@@ -104,7 +111,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ),
           actions: [
             SizedBox(
-              child: detail.creator.username == Session.profile.username
+              child: !Session.isLogin ||
+                      detail.creator.username == Session.profile.username
                   ? null
                   : GestureDetector(
                       onTap: () async {
@@ -187,8 +195,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
 class Introduction extends StatefulWidget {
   final Recipe detail;
-  final ValueChanged<bool> onBookmarkChanged;
-  Introduction({@required this.detail, @required this.onBookmarkChanged});
+  Introduction({@required this.detail});
 
   @override
   _IntroductionState createState() => _IntroductionState();
@@ -202,105 +209,111 @@ class _IntroductionState extends State<Introduction> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, top: 20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          children: [
-            SizedBox(
-                width: 250,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 175,
-                      child: Text(widget.detail.title,
-                          style: TextStyle(
-                              color: Color(0xFF2C2E2D), fontSize: 15.8)),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                  ],
-                )),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  child: CircleAvatar(
-                      backgroundImage:
-                          NetworkImage(widget.detail.creator.avatarUrl)),
-                  onTap: () async {
-                    final profile =
-                        await APIs.getProfile(widget.detail.creator.username);
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
-                    if (profile == null)
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text("Lỗi"),
-                                content: Text("Không tìm thấy người dùng"),
-                              ));
-                    else
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  profile.username == Session.profile.username
-                                      ? MyProfileScreen()
-                                      : ProfileScreen(
-                                          profile: profile,
-                                        ))).then((value) => setState(() {
-                            widget.onBookmarkChanged(true);
-                          }));
-                  },
-                ),
-              ),
-            )
-          ],
-        ),
-        Row(
-          children: [
-            SizedBox(
-                width: 250,
-                child: Row(
-                  children: [
-                    SmoothStarRating(
-                        allowHalfRating: true,
-                        onRated: (v) {},
-                        starCount: 5,
-                        rating: widget.detail.avgRating / 2,
-                        size: 25.0,
-                        isReadOnly: true,
-                        color: kText,
-                        borderColor: kText,
-                        spacing: 0.0),
-                    Icon(Icons.visibility),
-                    Text(widget.detail.totalView.toString()),
-                  ],
-                )),
-            Expanded(
+  @override
+  Widget build(BuildContext context) {
+    print(widget.detail.avgRating);
+    return Scaffold(
+      body: Padding(
+        padding: EdgeInsets.only(left: 20, top: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              SizedBox(
+                  width: 250,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 175,
+                        child: Text(widget.detail.title,
+                            style: TextStyle(
+                                color: Color(0xFF2C2E2D), fontSize: 15.8)),
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                    ],
+                  )),
+              Expanded(
                 child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 80,
-                child: Text(
-                  widget.detail.creator.displayName,
-                  style: TextStyle(color: Colors.black),
-                  textAlign: TextAlign.center,
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    child: CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(widget.detail.creator.avatarUrl)),
+                    onTap: () async {
+                      final profile =
+                          await APIs.getProfile(widget.detail.creator.username);
+                      if (profile == null)
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text("Lỗi"),
+                                  content: Text("Không tìm thấy người dùng"),
+                                ));
+                      else
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Session.isLogin &&
+                                        profile.username ==
+                                            Session.profile.username
+                                    ? MyProfileScreen()
+                                    : ProfileScreen(
+                                        profile: profile,
+                                      )));
+                    },
+                  ),
                 ),
-              ),
-            ))
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: 20),
-          child: Text(_parseHtmlString(widget.detail.description)),
-        ),
-      ]),
+              )
+            ],
+          ),
+          Row(
+            children: [
+              SizedBox(
+                  width: 250,
+                  child: Row(
+                    children: [
+                      RatingBar.readOnly(
+                          initialRating: widget.detail.avgRating / 2,
+                          isHalfAllowed: true,
+                          halfFilledIcon: Icons.star_half,
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          filledColor: kSecondaryColor,
+                          size: 25,
+                          emptyColor: kPrimaryColor),
+                      Icon(Icons.visibility),
+                      Text(widget.detail.totalView.toString()),
+                    ],
+                  )),
+              Expanded(
+                  child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 80,
+                  child: Text(
+                    widget.detail.creator.displayName,
+                    style: TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ))
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.only(right: 20),
+            child: Text(_parseHtmlString(widget.detail.description)),
+          ),
+        ]),
+      ),
     );
   }
 }
