@@ -1,16 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'components/constaints.dart';
-import 'model/Ingredient.dart';
 import 'model/Recipe.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-
-import 'model/Step.dart';
 
 class Session {
   static Profile profile;

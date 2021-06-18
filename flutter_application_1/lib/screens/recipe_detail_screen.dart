@@ -210,6 +210,7 @@ class _IntroductionState extends State<Introduction> {
 
   @override
   void initState() {
+    // ignore: todo
     // TODO: implement initState
     super.initState();
   }

@@ -87,9 +87,14 @@ class LoginScreenState extends State<LoginScreen> {
                             APIs.login(username, password).then((value) {
                               if (value)
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomeScreen()))
+                                    .then((value) => APIs.logout());
+                              else
+                                setState(() {
+                                  message = "Wrong username or password";
+                                });
                             });
                         });
                       },
