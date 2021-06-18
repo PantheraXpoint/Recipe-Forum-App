@@ -25,7 +25,10 @@ class HomeScreenState extends State<HomeScreen> {
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
     Session.profile = await APIs.getMyProfile();
-    Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
+    Session.isLogin = Session.profile != null;
+    print(Session.isLogin);
+    if (Session.isLogin)
+      Session.myRecipes = await APIs.getProfileRecipe(Session.profile.username);
     setState(() {
       listWidget.add(Home(
         list: listRecipe,
@@ -53,20 +56,25 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     if (listRecipe.length != 0)
       return Scaffold(
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(icon: Icon(Icons.book), label: "Profile")
-            ],
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentTab,
-            selectedItemColor: kSecondaryColor,
-            onTap: (value) => setState(() {
-              currentTab = value;
-              pageController.animateToPage(value,
-                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-            }),
-          ),
+          bottomNavigationBar: !Session.isLogin
+              ? null
+              : BottomNavigationBar(
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.home), label: "Home"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.book), label: "Profile")
+                  ],
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: currentTab,
+                  selectedItemColor: kSecondaryColor,
+                  onTap: (value) => setState(() {
+                    currentTab = value;
+                    pageController.animateToPage(value,
+                        duration: Duration(milliseconds: 200),
+                        curve: Curves.easeIn);
+                  }),
+                ),
           resizeToAvoidBottomInset: false,
           body: PageView(
             controller: pageController,
@@ -109,7 +117,9 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Hello ${widget.profile.displayName},",
+              Session.isLogin
+                  ? "Hello ${widget.profile.displayName},"
+                  : "Hello user",
               style: TextStyle(
                 color: kText,
                 fontSize: 25,

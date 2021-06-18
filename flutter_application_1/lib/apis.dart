@@ -15,12 +15,18 @@ import 'model/Step.dart';
 class Session extends ChangeNotifier {
   static Profile profile;
   static List<Recipe> myRecipes;
+  static bool isLogin;
 }
 
 class APIs {
   static Map<String, String> _headers = <String, String>{
     'Content-Type': 'application/json; charset=UTF-8'
   };
+
+  static void removeCookies() {
+    _headers['cookie'] = null;
+    print("cookie: ${_headers['cookie']}");
+  }
 
   static Future<List<Recipe>> getListRecipes() async {
     final response =
@@ -175,10 +181,10 @@ class APIs {
     return null;
   }
 
-  static Future<int> rateRecipe(Recipe recipe, double value) async {
+  static Future<int> rateRecipe(int id, double value) async {
     Map<String, double> body = {"rating": value};
     final response = await http.put(
-        Uri.http(BASE_URL, "/recipe-detail/" + recipe.id.toString() + "/rate"),
+        Uri.http(BASE_URL, "/recipe-detail/$id/rate"),
         body: json.encode(body),
         headers: _headers);
     updateCookie(response);

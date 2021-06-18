@@ -5,8 +5,24 @@ import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-
+import 'package:rating_bar/rating_bar.dart';
 import '../apis.dart';
+
+class RecipeDetail extends InheritedWidget {
+  final Recipe recipe;
+  RecipeDetail({Widget child, this.recipe}) : super(child: child) {
+    print(recipe.title);
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
+  }
+
+  static RecipeDetail of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RecipeDetail>();
+  }
+}
 
 class RecipeDetailScreen extends StatefulWidget {
   final ValueChanged<bool> onBookmarkChanged;
@@ -25,15 +41,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   Future<void> initDetail() async {
     detail = await APIs.getRecipe(widget.recipe.id);
-    isBookmark = Session.profile.savedIDs.contains(detail.id);
+    if (Session.isLogin)
+      isBookmark = Session.profile.savedIDs.contains(detail.id);
     setState(() {
       listWidget.add(Introduction(
-        onBookmarkChanged: (value) => setState(() {
-          isBookmark = Session.profile.savedIDs.contains(detail.id);
-          print("detail");
-          widget.onBookmarkChanged(value);
-        }),
-        detail: detail,
+        onRecipeChanged: (value) => setState(() => detail = value),
       ));
       listWidget.add(Ingredient(detail: detail));
       listWidget.add(Steps(
@@ -56,6 +68,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("building home");
     if (detail != null && detail.creator != null) {
       return Scaffold(
         appBar: AppBar(
@@ -72,7 +85,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ),
           actions: [
             SizedBox(
-              child: detail.creator.username == Session.profile.username
+              child: !Session.isLogin ||
+                      detail.creator.username == Session.profile.username
                   ? null
                   : GestureDetector(
                       onTap: () async {
@@ -101,22 +115,25 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ],
         ),
         resizeToAvoidBottomInset: false,
-        body: Column(children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 280,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(widget.recipe.imageUrl))),
-          ),
-          Expanded(
-              child: PageView(
-            children: listWidget,
-            controller: pageController,
-            onPageChanged: (value) => setState(() => currentTab = value),
-          ))
-        ]),
+        body: RecipeDetail(
+          recipe: detail,
+          child: Column(children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 280,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.recipe.imageUrl))),
+            ),
+            Expanded(
+                child: PageView(
+              children: listWidget,
+              controller: pageController,
+              onPageChanged: (value) => setState(() => currentTab = value),
+            ))
+          ]),
+        ),
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
@@ -147,16 +164,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 }
 
 class Introduction extends StatefulWidget {
-  final Recipe detail;
-  final ValueChanged<bool> onBookmarkChanged;
-  Introduction({@required this.detail, @required this.onBookmarkChanged});
+  final ValueChanged<Recipe> onRecipeChanged;
+  Introduction({@required this.onRecipeChanged});
 
   @override
   _IntroductionState createState() => _IntroductionState();
 }
 
 class _IntroductionState extends State<Introduction> {
-  double rating;
+  Recipe detail;
+
   String _parseHtmlString(String htmlString) {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
@@ -164,22 +181,15 @@ class _IntroductionState extends State<Introduction> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    rating = widget.detail.avgRating;
-    print(rating);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    print(rating);
+    detail = RecipeDetail.of(context).recipe;
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kSecondaryColor,
         icon: Icon(Icons.reviews),
         label: Text("Rate"),
-        onPressed: () async {
-          await showModalBottomSheet(
+        onPressed: () {
+          showModalBottomSheet(
               context: context,
               builder: (BuildContext bc) {
                 return SafeArea(
@@ -193,8 +203,10 @@ class _IntroductionState extends State<Introduction> {
                                 print("Asdfasfdasdfasdfasdfasdf  " +
                                     v.toString());
                                 int response =
-                                    await APIs.rateRecipe(widget.detail, v);
-
+                                    await APIs.rateRecipe(detail.id, v * 2);
+                                detail = (await APIs.getRecipe(detail.id));
+                                widget.onRecipeChanged(detail);
+                                setState(() {});
                                 Navigator.pop(context);
                               },
                               starCount: 5,
@@ -208,9 +220,6 @@ class _IntroductionState extends State<Introduction> {
                   ),
                 );
               });
-          rating = (await APIs.getRecipe(widget.detail.id)).avgRating;
-          print(rating);
-          setState(() {});
         },
       ),
       body: Padding(
@@ -224,7 +233,7 @@ class _IntroductionState extends State<Introduction> {
                     children: [
                       SizedBox(
                         width: 175,
-                        child: Text(widget.detail.title,
+                        child: Text(detail.title,
                             style: TextStyle(
                                 color: Color(0xFF2C2E2D), fontSize: 15.8)),
                       ),
@@ -239,10 +248,10 @@ class _IntroductionState extends State<Introduction> {
                   child: GestureDetector(
                     child: CircleAvatar(
                         backgroundImage:
-                            NetworkImage(widget.detail.creator.avatarUrl)),
+                            NetworkImage(detail.creator.avatarUrl)),
                     onTap: () async {
                       final profile =
-                          await APIs.getProfile(widget.detail.creator.username);
+                          await APIs.getProfile(detail.creator.username);
 
                       if (profile == null)
                         showDialog(
@@ -255,14 +264,13 @@ class _IntroductionState extends State<Introduction> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    profile.username == Session.profile.username
-                                        ? MyProfileScreen()
-                                        : ProfileScreen(
-                                            profile: profile,
-                                          ))).then((value) => setState(() {
-                              widget.onBookmarkChanged(true);
-                            }));
+                                builder: (context) => Session.isLogin &&
+                                        profile.username ==
+                                            Session.profile.username
+                                    ? MyProfileScreen()
+                                    : ProfileScreen(
+                                        profile: profile,
+                                      )));
                     },
                   ),
                 ),
@@ -275,17 +283,19 @@ class _IntroductionState extends State<Introduction> {
                   width: 250,
                   child: Row(
                     children: [
-                      SmoothStarRating(
-                          allowHalfRating: true,
-                          starCount: 5,
-                          rating: rating / 2,
-                          size: 25.0,
-                          isReadOnly: true,
-                          color: kText,
-                          borderColor: kText,
-                          spacing: 0.0),
+                      RatingBar.readOnly(
+                        isHalfAllowed: true,
+                        filledIcon: Icons.star,
+                        emptyIcon: Icons.star_border,
+                        halfFilledIcon: Icons.star_half,
+                        initialRating: detail.avgRating / 2,
+                        size: 30,
+                        emptyColor: kSecondaryColor,
+                        filledColor: kSecondaryColor,
+                        halfFilledColor: kSecondaryColor,
+                      ),
                       Icon(Icons.visibility),
-                      Text(widget.detail.totalView.toString()),
+                      Text(detail.totalView.toString()),
                     ],
                   )),
               Expanded(
@@ -294,7 +304,7 @@ class _IntroductionState extends State<Introduction> {
                 child: SizedBox(
                   width: 80,
                   child: Text(
-                    widget.detail.creator.displayName,
+                    detail.creator.displayName,
                     style: TextStyle(color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
@@ -307,7 +317,7 @@ class _IntroductionState extends State<Introduction> {
           ),
           Padding(
             padding: EdgeInsets.only(right: 20),
-            child: Text(_parseHtmlString(widget.detail.description)),
+            child: Text(_parseHtmlString(detail.description)),
           ),
         ]),
       ),

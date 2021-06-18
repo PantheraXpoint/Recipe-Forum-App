@@ -91,9 +91,10 @@ class LoginScreenState extends State<LoginScreen> {
                             APIs.login(username, password).then((value) {
                               if (value)
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomeScreen()));
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomeScreen()))
+                                    .then((value) => APIs.logout());
                             });
                         });
                       },
@@ -116,6 +117,16 @@ class LoginScreenState extends State<LoginScreen> {
                   onPressed: () {},
                   child: Text(
                     "Forgot Password?",
+                    style: TextStyle(color: kText),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                  child: Text(
+                    "Login as guest",
                     style: TextStyle(color: kText),
                   ),
                 ),
