@@ -10,7 +10,7 @@ import 'package:flutter_application_2/screens/notification.dart';
 import 'package:flutter_application_2/screens/search_screen.dart';
 
 import '../apis.dart';
-import 'chatspace.dart';
+import 'note_taking.dart';
 import 'myprofile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class HomeScreenState extends State<HomeScreen> {
       if (Session.profile != null) {
         listWidget.add(MyProfileScreen());
       }
-      listWidget.add(MessageScreen());
+      listWidget.add(NoteScreen());
       print(listWidget.length);
     });
   }
