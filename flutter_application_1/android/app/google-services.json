@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:589548408013:android:39641954b77e9ee5a4ad84",
+        "mobilesdk_app_id": "1:589548408013:android:a2078f2c31a67a0ea4ad84",
         "android_client_info": {
-          "package_name": "com.filledstacks.eRecipe"
+          "package_name": "com.example.flutter_application_2"
         }
       },
       "oauth_client": [

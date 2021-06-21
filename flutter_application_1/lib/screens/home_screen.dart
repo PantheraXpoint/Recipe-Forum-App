@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/components/constaints.dart';
+import 'package:flutter_application_2/components/dynamic_links_service/dynamic_link_service.dart';
 import 'package:flutter_application_2/components/recipe-slider.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
@@ -21,7 +22,12 @@ class HomeScreenState extends State<HomeScreen> {
   List<Recipe> listRecipe = [];
   final listWidget = <Widget>[];
   final pageController = PageController();
+  final DynamicLinkService _dynamicLinkService = DynamicLinkService();
   int currentTab = 0;
+
+  Future handleStartUp() async {
+    await _dynamicLinkService.handleDynamicLinks();
+  }
 
   Future<void> initRecipeList() async {
     listRecipe = await APIs.getListRecipes();
@@ -49,6 +55,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    handleStartUp();
     initRecipeList();
   }
 
