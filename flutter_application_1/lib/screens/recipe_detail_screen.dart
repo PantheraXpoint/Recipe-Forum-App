@@ -193,44 +193,46 @@ class _IntroductionState extends State<Introduction> {
     rating = RecipeDetail.of(context).rating;
     print(widget.detail.title);
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: kSecondaryColor,
-        icon: Icon(Icons.reviews),
-        label: Text("Rate"),
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (BuildContext bc) {
-                return SafeArea(
-                  child: Container(
-                    child: new Wrap(
-                      children: <Widget>[
-                        Center(
-                          child: SmoothStarRating(
-                              allowHalfRating: true,
-                              onRated: (v) async {
-                                print("Asdfasfdasdfasdfasdfasdf  " +
-                                    v.toString());
-                                rating = await APIs.rateRecipe(
-                                    widget.detail.id, v * 2);
+      floatingActionButton: Session.isLogin
+          ? FloatingActionButton.extended(
+              backgroundColor: kSecondaryColor,
+              icon: Icon(Icons.reviews),
+              label: Text("Rate"),
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext bc) {
+                      return SafeArea(
+                        child: Container(
+                          child: new Wrap(
+                            children: <Widget>[
+                              Center(
+                                child: SmoothStarRating(
+                                    allowHalfRating: true,
+                                    onRated: (v) async {
+                                      print("Asdfasfdasdfasdfasdfasdf  " +
+                                          v.toString());
+                                      rating = await APIs.rateRecipe(
+                                          widget.detail.id, v * 2);
 
-                                widget.onRatingChanged(rating);
-                                setState(() {});
-                                Navigator.pop(context);
-                              },
-                              starCount: 5,
-                              size: 40.0,
-                              color: kSecondaryColor,
-                              borderColor: kSecondaryColor,
-                              spacing: 0.0),
+                                      widget.onRatingChanged(rating);
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    },
+                                    starCount: 5,
+                                    size: 40.0,
+                                    color: kSecondaryColor,
+                                    borderColor: kSecondaryColor,
+                                    spacing: 0.0),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              });
-        },
-      ),
+                      );
+                    });
+              },
+            )
+          : null,
       body: Padding(
         padding: EdgeInsets.only(left: 20, top: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
