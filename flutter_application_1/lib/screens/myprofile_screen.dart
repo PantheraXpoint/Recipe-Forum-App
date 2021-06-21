@@ -4,11 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/apis.dart';
 import 'package:flutter_application_2/components/constaints.dart';
+import 'package:flutter_application_2/components/drive_integration/ggDrive.dart';
 import 'package:flutter_application_2/components/recipe-card-list-horizontal.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
 import 'package:flutter_application_2/screens/post_recipe_screen.dart';
 
-import 'drive_integration/ggDrive.dart';
 import 'edit_profile_screen.dart';
 
 class MyProfileScreen extends StatefulWidget {
