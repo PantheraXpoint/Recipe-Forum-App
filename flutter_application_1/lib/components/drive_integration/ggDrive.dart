@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_application_2/screens/drive_integration/secureStorage.dart';
+import 'package:flutter_application_2/components/drive_integration/secureStorage.dart';
 import 'package:googleapis/drive/v3.dart' as ga;
 import 'package:googleapis_auth/auth_io.dart';
 import 'package:http/http.dart' as http;

@@ -5,9 +5,11 @@ import 'package:flutter_application_2/components/recipe-slider.dart';
 import 'package:flutter_application_2/model/Profile.dart';
 
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:flutter_application_2/screens/notification.dart';
 import 'package:flutter_application_2/screens/search_screen.dart';
 
 import '../apis.dart';
+import 'chatspace.dart';
 import 'myprofile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -39,6 +41,7 @@ class HomeScreenState extends State<HomeScreen> {
       if (Session.profile != null) {
         listWidget.add(MyProfileScreen());
       }
+      listWidget.add(MessageScreen());
       print(listWidget.length);
     });
   }
@@ -66,7 +69,9 @@ class HomeScreenState extends State<HomeScreen> {
                     BottomNavigationBarItem(
                         icon: Icon(Icons.home), label: "Home"),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.book), label: "Profile")
+                        icon: Icon(Icons.book), label: "Profile"),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.message), label: "Message")
                   ],
                   type: BottomNavigationBarType.fixed,
                   currentIndex: currentTab,
@@ -112,120 +117,152 @@ class _HomeState extends State<Home> {
       ),
     );
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Container(
-        padding: EdgeInsets.fromLTRB(30, 100, 30, 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              Session.isLogin
-                  ? "Hello ${widget.profile.displayName},"
-                  : "Hello user",
-              style: TextStyle(
-                color: kText,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 1,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: kText,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          SizedBox(
+              child: IconButton(
+            icon: Icon(
+              Icons.notifications_active,
+              color: kText,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationScreen()));
+            },
+          )),
+        ],
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(30, 50, 30, 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Session.isLogin
+                    ? "Hello ${widget.profile.displayName},"
+                    : "Hello user",
+                style: TextStyle(
+                  color: kText,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              "Looking for some fresh recipe?",
-              style: TextStyle(
-                color: kSecondaryText,
+              SizedBox(
+                height: 10,
               ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SearchScreen()))
-                    .then((value) {
-                  print("home");
-                  setState(() {});
-                });
-              },
-              child: TextFormField(
-                enabled: false,
-                style: TextStyle(fontSize: 15),
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: kSecondaryText,
-                  ),
-                  contentPadding: EdgeInsets.all(10.0),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[60],
-                  hintText: "Find your favorite recipe here",
-                  hintStyle: TextStyle(
-                    color: kUnhighlightedColor,
+              Text(
+                "Looking for some fresh recipe?",
+                style: TextStyle(
+                  color: kSecondaryText,
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SearchScreen())).then((value) {
+                    print("home");
+                    setState(() {});
+                  });
+                },
+                child: TextFormField(
+                  enabled: false,
+                  style: TextStyle(fontSize: 15),
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: kSecondaryText,
+                    ),
+                    contentPadding: EdgeInsets.all(10.0),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[60],
+                    hintText: "Find your favorite recipe here",
+                    hintStyle: TextStyle(
+                      color: kUnhighlightedColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            SizedBox(
-              child: widget.list == null
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Column(
-                      children: [
-                        Column(
-                          children: [
-                            RecipeSlider(
-                              onBookmarkChanged: (value) {
-                                print("home");
-                                setState(() {});
-                              },
-                              list: widget.list,
-                            ),
-                            RecipeSlider(
-                              onBookmarkChanged: (value) {
-                                print("home");
-                                setState(() {});
-                              },
-                              list: widget.list,
-                              difficulty: "Dễ",
-                            ),
-                            RecipeSlider(
-                              onBookmarkChanged: (value) {
-                                print("home");
-                                setState(() {});
-                              },
-                              list: widget.list,
-                              difficulty: "Trung bình",
-                            ),
-                            RecipeSlider(
-                              onBookmarkChanged: (value) {
-                                print("home");
-                                setState(() {});
-                              },
-                              list: widget.list,
-                              difficulty: "Khó",
-                            ),
-                          ],
-                        ),
-                        Column(children: sliders),
-                      ],
-                    ),
-            )
-          ],
+              SizedBox(
+                height: 40,
+              ),
+              SizedBox(
+                child: widget.list == null
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : Column(
+                        children: [
+                          Column(
+                            children: [
+                              RecipeSlider(
+                                onBookmarkChanged: (value) {
+                                  print("home");
+                                  setState(() {});
+                                },
+                                list: widget.list,
+                              ),
+                              RecipeSlider(
+                                onBookmarkChanged: (value) {
+                                  print("home");
+                                  setState(() {});
+                                },
+                                list: widget.list,
+                                difficulty: "Dễ",
+                              ),
+                              RecipeSlider(
+                                onBookmarkChanged: (value) {
+                                  print("home");
+                                  setState(() {});
+                                },
+                                list: widget.list,
+                                difficulty: "Trung bình",
+                              ),
+                              RecipeSlider(
+                                onBookmarkChanged: (value) {
+                                  print("home");
+                                  setState(() {});
+                                },
+                                list: widget.list,
+                                difficulty: "Khó",
+                              ),
+                            ],
+                          ),
+                          Column(children: sliders),
+                        ],
+                      ),
+              )
+            ],
+          ),
         ),
       ),
     );
