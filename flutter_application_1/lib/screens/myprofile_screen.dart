@@ -26,9 +26,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       Recipe recipe = await APIs.getRecipe(id);
       savedRecipes.add(recipe);
     }
-    setState(() {
-      refresh = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        refresh = true;
+      });
+    }
   }
 
   @override
