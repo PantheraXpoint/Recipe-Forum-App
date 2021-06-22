@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/components/constaints.dart';
 
 class NoteScreen extends StatefulWidget {
   @override
@@ -8,6 +9,11 @@ class NoteScreen extends StatefulWidget {
 class _NoteScreenState extends State<NoteScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Your Notes"),
+        backgroundColor: kSecondaryColor,
+      ),
+    );
   }
 }

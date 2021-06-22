@@ -40,6 +40,8 @@ dependencies:
   path_provider: ^2.0.2
   rating_bar: ^0.2.0
   firebase_dynamic_links: ^2.0.6
+  sqflite: ^2.0.0+3
+  path: ^1.8.0
 
 dev_dependencies:
   flutter_test:

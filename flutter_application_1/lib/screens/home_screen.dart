@@ -78,7 +78,7 @@ class HomeScreenState extends State<HomeScreen> {
                     BottomNavigationBarItem(
                         icon: Icon(Icons.book), label: "Profile"),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.message), label: "Message")
+                        icon: Icon(Icons.note), label: "Note")
                   ],
                   type: BottomNavigationBarType.fixed,
                   currentIndex: currentTab,
