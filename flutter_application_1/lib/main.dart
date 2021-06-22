@@ -16,10 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       home: LoginScreen(),
-      // routes: {
-      //   "ShowNote": (context) => ShowNoteScreen(),
-      //   "NoteScreen": (context) => NoteScreen()
-      // },
+      routes: {
+        // "ShowNote": (context) => ShowNoteScreen(),
+        "NoteScreen": (context) => NoteScreen()
+      },
     );
   }
 }

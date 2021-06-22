@@ -47,8 +47,8 @@ class HomeScreenState extends State<HomeScreen> {
       if (Session.profile != null) {
         listWidget.add(MyProfileScreen());
       }
-      // listWidget.add(NoteScreen());
-      // print(listWidget.length);
+      listWidget.add(NoteScreen());
+      print(listWidget.length);
     });
   }
 
