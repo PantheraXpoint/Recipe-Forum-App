@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       home: LoginScreen(),
       routes: {
-        // "ShowNote": (context) => ShowNoteScreen(),
+        "ShowNote": (context) => ShowNoteScreen(),
         "NoteScreen": (context) => NoteScreen()
       },
     );

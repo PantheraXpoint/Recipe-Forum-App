@@ -3,6 +3,8 @@ import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/note_db.dart';
 import 'package:flutter_application_2/model/notes.dart';
 
+import 'home_screen.dart';
+
 class AddNoteScreen extends StatefulWidget {
   @override
   _AddNoteScreenState createState() => _AddNoteScreenState();
@@ -63,7 +65,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             NoteModel note =
                 NoteModel(title: title, body: body, creation_date: date);
             addNote(note);
-            Navigator.pop(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomeScreen()));
           },
           label: Text("Save Note"),
           icon: Icon(Icons.save)),

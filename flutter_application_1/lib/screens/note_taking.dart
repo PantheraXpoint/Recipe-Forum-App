@@ -74,8 +74,8 @@ class _NoteScreenState extends State<NoteScreen> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.push(context,
-          //     MaterialPageRoute(builder: (context) => AddNoteScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddNoteScreen()));
         },
         child: Icon(Icons.note_add),
       ),

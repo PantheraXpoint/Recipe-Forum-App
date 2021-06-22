@@ -3,6 +3,7 @@ import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/note_db.dart';
 import 'package:flutter_application_2/model/notes.dart';
 
+import 'home_screen.dart';
 import 'note_taking.dart';
 
 class ShowNoteScreen extends StatefulWidget {
@@ -27,8 +28,8 @@ class _ShowNoteScreenState extends State<ShowNoteScreen> {
               icon: Icon(Icons.delete),
               onPressed: () {
                 DatabaseProvider.db.deleteNote(note.id);
-                Navigator.pushNamedAndRemoveUntil(
-                    context, 'NoteScreen', (route) => false);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               },
             )
           ],
