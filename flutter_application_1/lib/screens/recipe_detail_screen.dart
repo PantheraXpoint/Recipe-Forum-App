@@ -4,6 +4,7 @@ import 'package:flutter_application_2/screens/profile.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';
+import 'package:share/share.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:rating_bar/rating_bar.dart';
 import '../apis.dart';
@@ -54,8 +55,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       ));
     });
   }
-
-  void share(BuildContext context, Recipe recipe) {}
 
   @override
   void initState() {
@@ -181,6 +180,40 @@ class _IntroductionState extends State<Introduction> {
     final document = parse(htmlString);
     final String parsedString = parse(document.body.text).documentElement.text;
     return parsedString;
+  }
+
+  void share(BuildContext context, Recipe recipe) {
+    String title = "${recipe.title}\n";
+    String description = "1. MÔ TẢ CHUNG:\n\n${recipe.description}\n";
+    String ingre = "2. NGUYÊN LIỆU:\n\n";
+    String step = "3. HƯỚNG DẪN THỰC HIỆN:\n\n";
+    int idx = 0;
+    recipe.ingredients.forEach((element) {
+      idx += 1;
+      ingre += idx.toString() +
+          ". " +
+          element.name +
+          "     " +
+          element.quantity +
+          " " +
+          element.unit +
+          "\n";
+    });
+    idx = 0;
+    recipe.steps.forEach((element) {
+      idx += 1;
+      step += idx.toString() + ". " + element.content + "\n\n";
+      element.listImageUrl.forEach((elem) {
+        step += elem + "\n";
+      });
+      step += "\n\n";
+    });
+    final String res = _parseHtmlString(
+        title + "\n" + description + "\n" + ingre + "\n" + step);
+    final RenderBox box = context.findRenderObject();
+    Share.share(res,
+        subject: recipe.title,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 
   @override
@@ -327,7 +360,9 @@ class _IntroductionState extends State<Introduction> {
           ),
           MaterialButton(
               color: kSecondaryColor,
-              onPressed: () {},
+              onPressed: () {
+                return share(context, widget.detail);
+              },
               child: SizedBox(
                 width: 70,
                 child: Row(
