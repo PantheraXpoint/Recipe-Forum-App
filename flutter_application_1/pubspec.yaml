@@ -43,6 +43,7 @@ dependencies:
   sqflite: ^2.0.0+3
   path: ^1.8.0
   share: ^2.0.4
+  flutter_local_notifications: ^6.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/model/noti.dart';
+import 'package:flutter_application_2/model/noti_db.dart';
 import 'package:flutter_application_2/screens/myprofile_screen.dart';
 import 'package:flutter_application_2/screens/profile.dart';
 import 'package:googleapis/trafficdirector/v2.dart';
@@ -33,12 +35,19 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  String title;
+  DateTime date;
   Recipe detail;
   double rating;
   bool isBookmark;
   int currentTab = 0;
   final pageController = PageController();
   final listWidget = <Widget>[];
+
+  addNoti(NotiModel noti) {
+    DatabaseProvider.db.addNewNote(noti);
+    print("noti added successfully");
+  }
 
   Future<void> initDetail() async {
     detail = await APIs.getRecipe(widget.recipe.id);
@@ -106,7 +115,12 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                         setState(() {
                           isBookmark = Session.profile.savedIDs
                               .contains(widget.recipe.id);
+                          title =
+                              "Lưu công thức ${widget.recipe.title} vào bộ sưu tập";
+                          date = DateTime.now();
                         });
+                        NotiModel noti = NotiModel(title: title, date: date);
+                        addNoti(noti);
                       },
                       child: Icon(
                         isBookmark ? Icons.bookmark : Icons.bookmark_outline,
