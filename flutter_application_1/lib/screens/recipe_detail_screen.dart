@@ -55,6 +55,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     });
   }
 
+  void share(BuildContext context, Recipe recipe) {}
+
   @override
   void initState() {
     super.initState();
@@ -323,6 +325,22 @@ class _IntroductionState extends State<Introduction> {
               ))
             ],
           ),
+          MaterialButton(
+              color: kSecondaryColor,
+              onPressed: () {},
+              child: SizedBox(
+                width: 70,
+                child: Row(
+                  children: [
+                    Text("Share", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 5),
+                    Icon(
+                      Icons.share,
+                      color: Colors.white,
+                    )
+                  ],
+                ),
+              )),
           SizedBox(
             height: 20,
           ),
