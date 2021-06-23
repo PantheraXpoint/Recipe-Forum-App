@@ -1,5 +1,6 @@
 import 'package:flutter_application_2/screens/home_screen.dart';
 import 'package:flutter_application_2/screens/signup_screen.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../apis.dart';
 import '../components/constaints.dart';
@@ -13,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  // FlutterLocalNotificationsPlugin localNotification;
   String username;
   String password;
   String message;
@@ -22,7 +24,21 @@ class LoginScreenState extends State<LoginScreen> {
     username = "";
     password = "";
     message = "";
+    // var androidInitialize = new AndroidInitializationSettings('ic_launcher');
+    // var initializationSettings =
+    //     new InitializationSettings(android: androidInitialize);
+    // localNotification = new FlutterLocalNotificationsPlugin();
+    // localNotification.initialize(initializationSettings);
   }
+
+  // Future _showNotification() async {
+  //   var androidDetails = new AndroidNotificationDetails(
+  //       "channelId", "Local Notification", "channelDescription",
+  //       importance: Importance.max);
+  //   var generalNotificationDetails =
+  //       new NotificationDetails(android: androidDetails);
+  //   await localNotification.show(0, "s", "S", generalNotificationDetails);
+  // }
 
   bool isValidInput() {
     if (username.isEmpty || password.isEmpty) {
@@ -82,16 +98,17 @@ class LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.only(top: 15),
                   child: ElevatedButton(
                       onPressed: () {
+                        // _showNotification();
                         setState(() {
                           if (isValidInput())
                             APIs.login(username, password).then((value) {
-                              if (value)
+                              if (value) {
                                 Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => HomeScreen()))
                                     .then((value) => APIs.logout());
-                              else
+                              } else
                                 setState(() {
                                   message = "Wrong username or password";
                                 });
