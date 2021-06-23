@@ -18,7 +18,8 @@ db = MongoEngine()
 #
 def queryBrowse(lim):
     lst = []
-    for repc in RecipeDetail.objects[:lim]:
+    for repc in RecipeDetail.objects[:lim]: #search latest recipes first
+    # for repc in RecipeDetail.objects().order_by('+id').limit(lim): #search oldest recipes first
         lst.append( repc.generatePreview() )
     return lst
 

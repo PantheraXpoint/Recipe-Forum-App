@@ -59,7 +59,7 @@ def loginAccount():
 
 @app.route("/logout")
 @flask_login.login_required
-def logout():
+def logoutAccount():
     try:
         flask_login.logout_user()
         return make_response( {"status": "OK", "message": "Logout successful"}, 200)
@@ -175,7 +175,7 @@ def getMyCreations():
 #       Recipe request handling
 #
 @app.route('/recipe', methods=["GET"])
-def list_recipe_preview():
+def listRecipePreview():
     try:
         lim = request.get_json()['limit']
         recipes = queryBrowse(lim)
@@ -194,7 +194,7 @@ def list_recipe_preview():
             return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
 @app.route('/recipe/<int:limitt>', methods=["GET"])
-def list_recipe_preview_arg(limitt):
+def listRecipePreviewArg(limitt):
     try:
         recipes = queryBrowse(limitt)
         return jsonify(recipes)
@@ -203,7 +203,7 @@ def list_recipe_preview_arg(limitt):
         return make_response({'status':'Bad Request', 'message' : 'Something went wrong'},400)
 
 @app.route('/recipe/search', methods=["GET"])
-def name_search():
+def nameSearch():
     recipe_name = request.args.get('name')
     typee = request.args.get('TypeID',None)
     if typee:
@@ -218,13 +218,13 @@ def name_search():
 #     return Response(recipes, mimetype="application/json", status=200)
 
 @app.route('/recipe-detail', methods=["GET"])
-def get_recipe_detail():
+def getRecipeDetail():
     recipes = RecipeDetail.objects
     return jsonify(recipes),200
 
 @app.route('/recipe-detail', methods=["POST"])
 @flask_login.login_required
-def post_recipe_detail():
+def postRecipeDetail():
 
     user = flask_login.current_user
 
@@ -362,7 +362,7 @@ def editRecipe(ide):
 #   Image handling
 #
 @ app.route('/image/<string:filename>', methods=['GET'])
-def handle_image(filename):
+def handleImage(filename):
     try:
         print(os.path.join(uploads_dir, filename))
         return send_file(os.path.join(uploads_dir, filename), mimetype='image/jpg')
@@ -370,7 +370,7 @@ def handle_image(filename):
         return make_response({'status':'Bad request', 'message' : 'File not found, or the requested file has the wrong extension'},400)
 
 @app.route('/image', methods=['POST'])
-def send_image():
+def receiveImage():
     saved_image = request.files["image"]
     # print(what(saved_image))
     img_name = str(time())+'.jpg'
@@ -378,7 +378,7 @@ def send_image():
     return make_response({'status':'OK', 'filename':img_name},200)
 
 @app.route('/images', methods=['POST'])
-def send_images():
+def receiveManyImages():
     lst = {}
     try:
         for key in request.files:
