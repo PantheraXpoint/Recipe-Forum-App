@@ -3,7 +3,6 @@ import 'package:flutter_application_2/model/noti.dart';
 import 'package:flutter_application_2/model/noti_db.dart';
 import 'package:flutter_application_2/screens/myprofile_screen.dart';
 import 'package:flutter_application_2/screens/profile.dart';
-import 'package:googleapis/trafficdirector/v2.dart';
 import 'package:html/parser.dart';
 import 'package:flutter_application_2/components/constaints.dart';
 import 'package:flutter_application_2/model/Recipe.dart';

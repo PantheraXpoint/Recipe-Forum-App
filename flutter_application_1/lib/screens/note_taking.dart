@@ -4,7 +4,6 @@ import 'package:flutter_application_2/model/note_db.dart';
 import 'package:flutter_application_2/model/notes.dart';
 
 import 'add_note_screen.dart';
-import 'display_note_screen.dart';
 
 class NoteScreen extends StatefulWidget {
   @override

@@ -1,6 +1,5 @@
 import 'package:flutter_application_2/screens/home_screen.dart';
 import 'package:flutter_application_2/screens/signup_screen.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../apis.dart';
 import '../components/constaints.dart';
