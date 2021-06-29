@@ -392,7 +392,7 @@ class _IntroductionState extends State<Introduction> {
                       ],
                     ),
                   ))
-              : NullMatch,
+              : SizedBox(width: 0),
           SizedBox(
             height: 20,
           ),
