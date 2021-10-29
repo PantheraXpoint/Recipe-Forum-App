@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-const String BASE_URL = "127.0.0.1:4996";
+const String BASE_URL = "10.0.2.2:4996";
 
 const Color kPrimaryColor = Color(0x66CA8383);
 const Color kSecondaryColor = Color(0xFF6B0000);

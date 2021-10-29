@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.secret_key = b'supasecretstring'
 
 app.config['MONGODB_SETTINGS'] = {
-    'host': 'mongodb+srv://QuangTau:panthera02@cluster0.g3n9q.mongodb.net/RECIPE_APP'
+    'host': 'mongodb+srv://QuangTau:panthera02@cluster0.g3n9q.mongodb.net/RECIPE_APP?ssl=true&ssl_cert_reqs=CERT_NONE'
 }
 
 # mongoengine init for queries
